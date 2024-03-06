@@ -1,16 +1,15 @@
 // TODO, remove scaffolding
 
-
 // **** Variables **** //
 
-const INVALID_CONSTRUCTOR_PARAM = 'nameOrObj arg must a string or an ' + 
-  'object with the appropriate user keys.';
+const INVALID_CONSTRUCTOR_PARAM =
+  "nameOrObj arg must a string or an " +
+  "object with the appropriate user keys.";
 
 export enum UserRoles {
   Standard,
   Admin,
 }
-
 
 // **** Types **** //
 
@@ -26,9 +25,8 @@ export interface ISessionUser {
   id: number;
   email: string;
   name: string;
-  role: IUser['role'];
+  role: IUser["role"];
 }
-
 
 // **** Functions **** //
 
@@ -43,11 +41,11 @@ function new_(
   id?: number, // id last cause usually set by db
 ): IUser {
   return {
-    id: (id ?? -1),
-    name: (name ?? ''),
-    email: (email ?? ''),
-    role: (role ?? UserRoles.Standard),
-    pwdHash: (pwdHash ?? ''),
+    id: id ?? -1,
+    name: name ?? "",
+    email: email ?? "",
+    role: role ?? UserRoles.Standard,
+    pwdHash: pwdHash ?? "",
   };
 }
 
@@ -70,14 +68,13 @@ function from(param: object): IUser {
 function isUser(arg: unknown): boolean {
   return (
     !!arg &&
-    typeof arg === 'object' &&
-    'id' in arg &&
-    'email' in arg &&
-    'name' in arg &&
-    'role' in arg
+    typeof arg === "object" &&
+    "id" in arg &&
+    "email" in arg &&
+    "name" in arg &&
+    "role" in arg
   );
 }
-
 
 // **** Export default **** //
 
