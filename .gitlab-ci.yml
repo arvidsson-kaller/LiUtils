@@ -7,8 +7,8 @@ frontend-linter:
   script:
     - cd frontend
     - npm ci
-    - npx prettier ./ --check --end-of-line auto
     - npm run lint
+    - npx prettier ./ --check --end-of-line auto
   only:
     changes:
       - frontend/**/*.*
@@ -19,8 +19,8 @@ backend-linter:
   script:
     - cd backend
     - npm ci
-    - npx prettier ./ --check --end-of-line auto
     - npm run lint
+    - npx prettier ./ --check --end-of-line auto
   only:
     changes:
       - backend/**/*.*
