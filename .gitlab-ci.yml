@@ -1,11 +1,26 @@
 stages: 
   - test
 
-linter:
+frontend-linter:
   stage: test
   image: node:20.11-alpine3.18
   script:
     - cd frontend
     - npm ci
-    - npx prettier ./ --check --end-of-line auto
     - npm run lint
+    - npx prettier ./ --check --end-of-line auto
+  only:
+    changes:
+      - frontend/**/*.*
+
+backend-linter:
+  stage: test
+  image: node:20.11-alpine3.18
+  script:
+    - cd backend
+    - npm ci
+    - npm run lint
+    - npx prettier ./ --check --end-of-line auto
+  only:
+    changes:
+      - backend/**/*.*
