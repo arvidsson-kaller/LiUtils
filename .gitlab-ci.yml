@@ -27,6 +27,18 @@ backend-linter:
       - backend/**/*.*
       - .gitlab-ci.yml
 
+backup-backend-linter:
+  stage: lint
+  image: node:20.11-alpine3.18
+  script:
+    - cd backup-backend
+    - npm ci
+    - npx prettier ./ --check --end-of-line auto
+  only:
+    changes:
+      - backup-backend/**/*.*
+      - .gitlab-ci.yml
+
 common-linter:
   stage: lint
   image: node:20.11-alpine3.18
