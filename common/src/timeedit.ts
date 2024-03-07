@@ -1,141 +1,62 @@
-const fetch = require('node-fetch');
+import { CAMPUS, FILTER, HOUSE, INSTITUTIONS, ROOMTYPE, TYPE, URL } from "./timeeditConstants";
 
-const TimeeditTypes = {
-    COURSES: 219,
-    CLASSES: 205,
-    ROOMS: 195,
+export {
+    CAMPUS,
+    HOUSE,
+    INSTITUTIONS,
+    ROOMTYPE,
+    TYPE,
 }
 
-const TimeeditFilter = {
-    ROOMS: 11,
-    CAMPUS: 23,
-    HOUSE: 26,
-    INSTITUTION: 58,
+interface TimeeditSearchOptions {
+    max?: number | null;
+    search_text?: string | null;
+    roomtypes?: string[] | null;
+    houses?: string[] | null;
+    institutions?: string[] | null;
+    campus?: string[] | null;
 }
 
-const TimeeditRoomType = {
-    LINUX: 'Datorsal%20Linux',
-    MAC: 'Datorsal%20mac',
-    WINDOWS: 'Datorsal%20Windows',
-    COMPUTERS: `Datorsal%20Linux,Datorsal%20mac,Datorsal%20Windows`,
-    LECTURE: 'Gradängsal,Flexi%20sal',
-    STANDARD: 'Platt%20sal,ALC',
-    GROUP: 'Grupprum',
-    LABB: 'Labbsal',
+interface TimeeditUrlOptions {
+    baseUrl: string;
+    keyValues: string[];
+    extra?: string;
 }
 
-const TimeeditCampus = {
-    VALLA: 'Valla',
-}
-
-const TimeeditHouses = {
-    A: 'A-huset',
-    B: 'B-huset',
-    C: 'C-huset',
-    D: 'D-huset',
-    E: 'E-huset',
-    FYSIK: 'Fysikhuset',
-    G: 'G-Huset',
-    I: 'I-huset%2C%201%20%26%202,I-huset%2C%203',
-    KEY: 'Key',
-    STUDENT: 'Studenthuset',
-    VALLFARTEN: 'Vallfarten',
-}
-
-const TimeeditInstitutions = {
-    BKV: 'BKV',
-    CE: 'CE',
-    CLI: 'Clinicum',
-    DRS: 'DRS',
-    FFK: 'FFK',
-    GEL: 'GEL',
-    GEM: 'GEM',
-    HMV: 'HMV',
-    IBL: 'IBL',
-    IDA: 'IDA',
-    IEI: 'IEI',
-    IFM: 'IFM',
-    IFSA: 'IFSA',
-    IKE: 'IKE',
-    IKK: 'IKK',
-    IKOS: 'IKOS',
-    IMH: 'IMH',
-    IMT: 'IMT',
-    ISAK: 'ISAK',
-    ISV: 'ISV',
-    ISY: 'ISY',
-    ITN: 'ITN',
-    KALMAR: 'KALMAR',
-    KFU: 'KFU',
-    KS: 'KS',
-    LIULOK1: 'LIULOK1',
-    LIULOK2: 'LIULOK2',
-    LOKE3: 'LOKE%203',
-    LOTS: 'LOTS',
-    MAI: 'MAI',
-    med: 'med',
-    MEDFAK: 'MEDFAK',
-    SENIOR: 'SENIOR',
-    SPECIAL: 'SPECIAL',
-    STUDENT: 'STUDENT',
-    STUDORG: 'STUDORG',
-    TEMA: 'TEMA',
-    TEST: 'TEST',
-    TFK: 'TFK',
-    UB: 'UB',
-    UF: 'UF',
-    ULED: 'ULED',
-    ULIU: 'ULIU',
-    ÖVR: 'ÖVR',
-}
-
-const searchTimeedit = (type, {
+export const searchLink = (type: number, {
     max = null,
     search_text = null,
     roomtypes = null,
     houses = null,
     institutions = null,
     campus = null
-}) => {
-    let url = `https://cloud.timeedit.net/liu/web/schema/objects.html?partajax=t&sid=3&objects=&types=${type}&fe=132.0`;
-    url += max != null ? `&max=${max}` : "";
-    url += roomtypes !== null ? `&fe=${TimeeditFilter.ROOMS}.${roomtypes.join(',')}` : "";
-    url += institutions !== null ? `&fe=${TimeeditFilter.INSTITUTION}.${institutions.join(',')}` : "";
-    url += houses !== null ? `&fe=${TimeeditFilter.HOUSE}.${houses.join(',')}` : "";
-    url += campus != null ? `&fe=${TimeeditFilter.CAMPUS}.${campus.join(',')}` : "";
-    url += search_text != null ? `&search_text=${search_text}` : "";
+}: TimeeditSearchOptions): string => {
+    let url = `${URL.OBJECTS}?partajax=t&sid=3&objects=&types=${type}&fe=132.0`;
+    url += max !== null ? `&max=${max}` : '';
+    url += roomtypes !== null ? `&fe=${FILTER.ROOMS}.${roomtypes.join(',')}` : '';
+    url += institutions !== null ? `&fe=${FILTER.INSTITUTION}.${institutions.join(',')}` : '';
+    url += houses !== null ? `&fe=${FILTER.HOUSE}.${houses.join(',')}` : '';
+    url += campus !== null ? `&fe=${FILTER.CAMPUS}.${campus.join(',')}` : '';
+    url += search_text !== null ? `&search_text=${search_text}` : '';
     return url;
+};
+
+export const parseSearch = (html: string): Record<string, string> => {
+    const objectIdRegex = /data-id="(\d+\.\d+)"/g;
+    const nameRegex = /data-name="([^"]*)"/g;
+    const result: Record<string, string> = {
+    };
+
+    let objectIdMatch;
+    let nameMatch;
+
+    while ((objectIdMatch = objectIdRegex.exec(html)) !== null && (nameMatch = nameRegex.exec(html)) !== null) {
+        result[nameMatch[1]] = objectIdMatch[1];
+    }
+    return result;
 }
 
-const fetchObjectIdFromCourseCode = (course) => {
-    return new Promise((resolve, reject) => {
-        const url = `https://cloud.timeedit.net/liu/web/schema/objects.html?max=1&partajax=t&sid=3&objects=&types=219&fe=132.0&search_text=${course}`;
-
-        fetch(url)
-            .then((response) => {
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch data from the server. Status: ${response.status}`);
-                }
-                return response.text();
-            })
-            .then((htmlData) => {
-                const regex = /data-id="(\d+\.\d+)"/g;
-                const dataIds = [];
-                let match;
-
-                while ((match = regex.exec(htmlData)) !== null) {
-                    dataIds.push(match[1]);
-                }
-
-                resolve(dataIds[0]);
-            })
-            .catch((error) => {
-                console.error(error);
-            });
-    })
-}
-
-const asURL = (baseUrl, keyValues, extra) => {
+export const scrambleUrl = (keyValues: any): string => {
     // help functions
     const toString = (string) => {
         if (isEmpty(string)) {
@@ -245,13 +166,13 @@ const asURL = (baseUrl, keyValues, extra) => {
     };
 
     // beginning of function
-    const url = baseUrl;
+    const url = URL.SCHEMA;
     keyValues = keyValues.map((value) => toString(value).replace(/[+]/g, " "));
 
     const lastSlash = toString(url).lastIndexOf("/");
     const page = url.substring(lastSlash + 1, url.length);
     if (page.indexOf("r") !== 0) {
-        return `${url}?i=${scramble(keyValues.join("&") + toString(extra))}`;
+        return `${url}?i=${scramble(keyValues.join("&"))}`;
     }
     let dot = ".html";
     const lastDot = toString(url).lastIndexOf(".");
@@ -262,16 +183,5 @@ const asURL = (baseUrl, keyValues, extra) => {
     if (lastSlash !== -1) {
         modifiedURL = url.substring(0, lastSlash + 1);
     }
-    return `${modifiedURL}ri${scramble(keyValues.join("&") + toString(extra))}${dot}`;
+    return `${modifiedURL}ri${scramble(keyValues.join("&"))}${dot}`;
 };
-
-module.exports = {
-    fetchObjectIdFromCourseCode,
-    timeeditScamble: asURL,
-    TimeeditRoomType,
-    searchTimeedit,
-    TimeeditCampus,
-    TimeeditHouses,
-    TimeeditTypes,
-    TimeeditInstitutions
-}

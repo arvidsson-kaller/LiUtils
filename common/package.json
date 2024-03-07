@@ -2,13 +2,19 @@
   "name": "common",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
   "scripts": {
-    "test": "node test.js"
+    "test": "npx ts-node src/test.ts",
+    "build": "tsc"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "assert": "^2.1.0",
     "node-fetch": "^2.7.0"
   }
 }
