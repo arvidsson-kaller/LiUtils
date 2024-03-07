@@ -1,7 +1,21 @@
+import { rooms } from "@/allrooms";
 import { MazeMapComponent } from "@/components/MazeMapComponent";
 import { Container } from "@mui/material";
-import { GetStaticPaths } from "next";
 import { Metadata } from "next";
+
+// export const dynamicParams = false;
+
+export const generateStaticParams = async () => {
+  // const res = await fetch(process.env.URL + "/api/allrooms", { next: { revalidate: 3600 } });
+  // if (!res.ok) {
+  //   return [];
+  // }
+  // const rooms: string[] = await res.json();
+  const paths = rooms.map((room) => ({
+    params: { room: encodeURIComponent(room) },
+  }));
+  return paths;
+};
 
 export const generateMetadata = ({
   params,
@@ -37,14 +51,3 @@ export default async function Room({ params }: { params: RoomParam }) {
     </Container>
   );
 }
-
-export const getStaticPaths = (async () => {
-  const res = await fetch(process.env.URL + "/api/allrooms");
-  const rooms: string[] = await res.json();
-  const paths = rooms.map((room) => ({
-    params: { room: encodeURIComponent(room) },
-  }));
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false };
-}) satisfies GetStaticPaths;
