@@ -9,7 +9,8 @@
   ],
   "scripts": {
     "test": "npx ts-node src/test.ts",
-    "build": "tsc"
+    "build": "tsc",
+    "prettier": "npx prettier ./ --write --end-of-line auto"
   },
   "author": "",
   "license": "ISC",
