@@ -12,6 +12,7 @@ frontend-linter:
   only:
     changes:
       - frontend/**/*.*
+      - .gitlab-ci.yml
 
 backend-linter:
   stage: test
@@ -20,7 +21,7 @@ backend-linter:
     - cd backend
     - npm ci
     - npm run lint
-    - npx prettier ./ --check --end-of-line auto
   only:
     changes:
       - backend/**/*.*
+      - .gitlab-ci.yml

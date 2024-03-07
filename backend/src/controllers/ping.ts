@@ -1,15 +1,15 @@
-import { Controller, Get, Route } from "tsoa";
+import { Controller, Get, Route } from 'tsoa';
 
 interface PingResponse {
   message: string;
 }
 
-@Route("ping")
+@Route('ping')
 export class PingController extends Controller {
-  @Get("/")
+  @Get('/')
   public getMessage(): PingResponse {
     return {
-      message: "hello",
+      message: 'hello',
     };
   }
 }

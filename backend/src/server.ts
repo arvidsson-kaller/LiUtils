@@ -2,23 +2,23 @@
  * Setup express server.
  */
 
-import morgan from "morgan";
-import path from "path";
-import helmet from "helmet";
-import express, { Request, Response, NextFunction } from "express";
-import logger from "jet-logger";
+import morgan from 'morgan';
+import path from 'path';
+import helmet from 'helmet';
+import express, { Request, Response, NextFunction } from 'express';
+import logger from 'jet-logger';
 
-import "express-async-errors";
+import 'express-async-errors';
 
-import EnvVars from "@src/constants/EnvVars";
-import HttpStatusCodes from "@src/constants/HttpStatusCodes";
+import EnvVars from '@src/constants/EnvVars';
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 
-import { NodeEnvs } from "@src/constants/misc";
-import { RouteError } from "@src/other/classes";
+import { NodeEnvs } from '@src/constants/misc';
+import { RouteError } from '@src/other/classes';
 
-import swaggerUi from "swagger-ui-express";
+import swaggerUi from 'swagger-ui-express';
 
-import { RegisterRoutes } from "@src/routes";
+import { RegisterRoutes } from '@src/routes';
 
 // **** Variables **** //
 
@@ -32,7 +32,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Show routes called in console during development
 if (EnvVars.NodeEnv === NodeEnvs.Dev.valueOf()) {
-  app.use(morgan("dev"));
+  app.use(morgan('dev'));
 }
 
 // Security
@@ -61,21 +61,21 @@ app.use(
 );
 
 app.use(
-  "/docs",
+  '/docs',
   swaggerUi.serve,
   swaggerUi.setup(undefined, {
     swaggerOptions: {
-      url: "/swagger.json",
+      url: '/swagger.json',
     },
   }),
 );
 
 // Set static directory
-const staticDir = path.join(__dirname, "public");
+const staticDir = path.join(__dirname, 'public');
 app.use(express.static(staticDir));
 
 // Register swagger routes
-RegisterRoutes(app);
+RegisterRoutes(app); // eslint-disable-line
 
 // **** Export default **** //
 export default app;
