@@ -3,7 +3,7 @@ import { getUserSession } from "@/lib/session";
 import SignIn from "@/components/SignIn";
 
 export default async function Home() {
-  const user = await getUserSession()
+  const user = await getUserSession();
   return (
     <Container>
       <Box
