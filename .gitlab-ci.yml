@@ -1,18 +1,6 @@
 stages: 
   - lint
-  - build
-
-common-linter:
-  stage: lint
-  image: node:20.11-alpine3.18
-  script:
-    - cd common
-    - npm ci
-    - npx prettier ./ --check --end-of-line auto
-  only:
-    changes:
-      - common/**/*.*
-      - .gitlab-ci.yml
+  - test
 
 frontend-linter:
   stage: lint
@@ -39,13 +27,24 @@ backend-linter:
       - backend/**/*.*
       - .gitlab-ci.yml
 
-common-build:
-  stage: build
+common-linter:
+  stage: lint
   image: node:20.11-alpine3.18
   script:
     - cd common
     - npm ci
-    - npm run build
+    - npx prettier ./ --check --end-of-line auto
+  only:
+    changes:
+      - common/**/*.*
+      - .gitlab-ci.yml
+
+common-build:
+  stage: test
+  image: node:20.11-alpine3.18
+  script:
+    - cd common
+    - npm ci
     - npm run test
   only:
     changes:
