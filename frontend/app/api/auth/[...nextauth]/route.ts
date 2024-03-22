@@ -4,7 +4,7 @@ import DiscordProvider from "next-auth/providers/discord";
 import { session } from "@/lib/session";
 import { NextAuthOptions } from "next-auth";
 
-export const authOptions: NextAuthOptions = {
+const authOptions: NextAuthOptions = {
   session: {
     strategy: "jwt",
   },

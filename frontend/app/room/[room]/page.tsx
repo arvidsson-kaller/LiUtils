@@ -1,14 +1,30 @@
+import { rooms } from "@/lib/allrooms";
 import { MazeMapComponent } from "@/components/MazeMapComponent";
 import { Container } from "@mui/material";
-import { GetStaticPaths } from "next";
 import { Metadata } from "next";
+import { deepURIDecode } from "@/lib/utils";
+
+export const dynamicParams = false;
+
+export const generateStaticParams = async () => {
+  // TODO: Request backend for list of rooms instead of using static list
+  // const res = await fetch(process.env.URL + "/api/allrooms", { next: { revalidate: 3600 } });
+  // if (!res.ok) {
+  //   return [];
+  // }
+  // const rooms: string[] = await res.json();
+  const paths = rooms.map((room) => ({
+    room: encodeURIComponent(room),
+  }));
+  return paths;
+};
 
 export const generateMetadata = ({
   params,
 }: {
   params: RoomParam;
 }): Metadata => {
-  const roomName = decodeURIComponent(params.room);
+  const roomName = deepURIDecode(params.room);
   return {
     title: roomName,
     description: `All relevant information about Linköping University LiU room ${roomName}. 
@@ -20,7 +36,7 @@ interface RoomParam {
 }
 
 export default async function Room({ params }: { params: RoomParam }) {
-  const roomName = decodeURIComponent(params.room);
+  const roomName = deepURIDecode(params.room);
   return (
     <Container
       sx={{
@@ -37,14 +53,3 @@ export default async function Room({ params }: { params: RoomParam }) {
     </Container>
   );
 }
-
-export const getStaticPaths = (async () => {
-  const res = await fetch(process.env.URL + "/api/allrooms");
-  const rooms: string[] = await res.json();
-  const paths = rooms.map((room) => ({
-    params: { room: encodeURIComponent(room) },
-  }));
-  // We'll pre-render only these paths at build time.
-  // { fallback: false } means other routes should 404.
-  return { paths, fallback: false };
-}) satisfies GetStaticPaths;
