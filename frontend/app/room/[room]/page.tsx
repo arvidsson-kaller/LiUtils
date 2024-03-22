@@ -1,4 +1,4 @@
-import { rooms } from "@/allrooms";
+import { rooms } from "@/lib/allrooms";
 import { MazeMapComponent } from "@/components/MazeMapComponent";
 import { Container } from "@mui/material";
 import { Metadata } from "next";
@@ -6,6 +6,7 @@ import { Metadata } from "next";
 export const dynamicParams = false;
 
 export const generateStaticParams = async () => {
+  // TODO: Request backend for list of rooms instead of using static list
   // const res = await fetch(process.env.URL + "/api/allrooms", { next: { revalidate: 3600 } });
   // if (!res.ok) {
   //   return [];

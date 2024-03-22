@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { rooms } from "@/allrooms";
+import { rooms } from "@/lib/allrooms";
 
 const indexURL = process.env.URL || "https://www.liutils.se";
 
