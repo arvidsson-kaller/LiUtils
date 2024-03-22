@@ -38,5 +38,8 @@
     "node": {
       "tryExtensions": [".js", ".json", ".node", ".ts"]
     }
-  }
+  },
+  "ignorePatterns": [
+    "src/models/"
+  ]
 }
