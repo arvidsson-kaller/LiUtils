@@ -68,7 +68,7 @@ export const MazeMapComponent = async ({ roomName }: { roomName: string }) => {
     );
     const mazeMapSearch: MazeMapSearchApiResponse = await staticData.json();
     roomData = mazeMapSearch.result
-      .filter((room) => room.poiNames.includes(roomName))
+      .filter((room) => room?.poiNames?.includes(roomName))
       .at(0);
     if (roomData) {
       seletedCampus = campusId;

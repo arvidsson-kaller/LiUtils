@@ -3,7 +3,7 @@ import { MazeMapComponent } from "@/components/MazeMapComponent";
 import { Container } from "@mui/material";
 import { Metadata } from "next";
 
-// export const dynamicParams = false;
+export const dynamicParams = false;
 
 export const generateStaticParams = async () => {
   // const res = await fetch(process.env.URL + "/api/allrooms", { next: { revalidate: 3600 } });
@@ -12,7 +12,7 @@ export const generateStaticParams = async () => {
   // }
   // const rooms: string[] = await res.json();
   const paths = rooms.map((room) => ({
-    params: { room: encodeURIComponent(room) },
+    room: encodeURIComponent(room),
   }));
   return paths;
 };
