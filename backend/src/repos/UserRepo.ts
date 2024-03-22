@@ -4,7 +4,7 @@ import { UsersInitializer } from '@src/models/Users';
 
 async function getAll(): Promise<Users[]> {
   const res = await db.query('SELECT * from users');
-  return res.rows;
+  return res.rows as Users[];
 }
 
 async function create(user: UsersInitializer): Promise<void> {
@@ -18,5 +18,5 @@ async function create(user: UsersInitializer): Promise<void> {
 
 export default {
   getAll,
-  create
+  create,
 } as const;

@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Route } from 'tsoa';
-import userRepo from '@src/repos/UserRepo'
+import userRepo from '@src/repos/UserRepo';
 import Users, { UsersInitializer } from '@src/models/Users';
 
-export default interface UserDTO {
+interface UserDTO {
   id: number;
   name: string;
   createdAt: Date;
@@ -12,9 +12,9 @@ export const mapUserToDTO = (user: Users): UserDTO => {
   return {
     id: user.id,
     name: user.name,
-    createdAt: user.createdAt
+    createdAt: user.createdAt,
   };
-}
+};
 
 interface UsersResponseDTO {
   users: UserDTO[];
@@ -31,16 +31,16 @@ export class UserController extends Controller {
     const users = await userRepo.getAll();
     const UserDTOs = users.map(mapUserToDTO);
     return {
-      users: UserDTOs
-    }
+      users: UserDTOs,
+    };
   }
 
   @Post()
   public async createUser(
-    @Body() request: CreateUserRequestDTO
+    @Body() request: CreateUserRequestDTO,
   ) {
     const user: UsersInitializer = {
-      name: request.name
+      name: request.name,
     };
     await userRepo.create(user);
   }

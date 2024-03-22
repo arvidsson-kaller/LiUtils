@@ -64,7 +64,7 @@ common-build:
       - .gitlab-ci.yml
 
 backend-build:
-  stage: lint
+  stage: test
   image: node:20.11-alpine3.18
   script:
     - cd backend

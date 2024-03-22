@@ -1,8 +1,9 @@
-import { Client } from 'pg'
+import { Client } from 'pg';
+import EnvVars from '@src/constants/EnvVars';
 
 const db = new Client({
-    connectionString: process.env.POSTGRES_URL,
-})
+  connectionString: EnvVars.PostgreConnectionString,
+});
 db.connect();
 
 export default db;
