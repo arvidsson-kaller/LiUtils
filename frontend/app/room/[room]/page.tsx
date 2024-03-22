@@ -2,6 +2,7 @@ import { rooms } from "@/lib/allrooms";
 import { MazeMapComponent } from "@/components/MazeMapComponent";
 import { Container } from "@mui/material";
 import { Metadata } from "next";
+import { deepURIDecode } from "@/lib/utils";
 
 export const dynamicParams = false;
 
@@ -23,7 +24,7 @@ export const generateMetadata = ({
 }: {
   params: RoomParam;
 }): Metadata => {
-  const roomName = decodeURIComponent(params.room);
+  const roomName = deepURIDecode(params.room);
   return {
     title: roomName,
     description: `All relevant information about Linköping University LiU room ${roomName}. 
@@ -35,7 +36,7 @@ interface RoomParam {
 }
 
 export default async function Room({ params }: { params: RoomParam }) {
-  const roomName = decodeURIComponent(params.room);
+  const roomName = deepURIDecode(params.room);
   return (
     <Container
       sx={{
