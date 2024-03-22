@@ -1,5 +1,5 @@
 import { MetadataRoute } from "next";
-import { rooms } from "@/lib/allrooms";
+import { getAllRooms } from "@/lib/allrooms";
 
 const indexURL = "https://www.liutils.se";
 
@@ -22,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 }
 
 const getAllRoomSitemapEntries = (): MetadataRoute.Sitemap => {
-  return rooms.map((room) => {
+  return getAllRooms().map((room) => {
     return {
       url: indexURL + `/room/${encodeURIComponent(room)}`,
       lastModified: new Date(),

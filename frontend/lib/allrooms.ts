@@ -1,4 +1,5 @@
-export const rooms = [
+// TODO: Request backend for list of rooms instead of using static list
+export const getAllRooms = () => [
   "33:303",
   "A1",
   "A2",

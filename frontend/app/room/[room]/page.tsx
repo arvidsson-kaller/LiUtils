@@ -1,4 +1,4 @@
-import { rooms } from "@/lib/allrooms";
+import { getAllRooms } from "@/lib/allrooms";
 import { MazeMapComponent } from "@/components/MazeMapComponent";
 import { Container } from "@mui/material";
 import { Metadata } from "next";
@@ -7,13 +7,12 @@ import { deepURIDecode } from "@/lib/utils";
 export const dynamicParams = false;
 
 export const generateStaticParams = async () => {
-  // TODO: Request backend for list of rooms instead of using static list
   // const res = await fetch(process.env.URL + "/api/allrooms", { next: { revalidate: 3600 } });
   // if (!res.ok) {
   //   return [];
   // }
   // const rooms: string[] = await res.json();
-  const paths = rooms.map((room) => ({
+  const paths = getAllRooms().map((room) => ({
     room: encodeURIComponent(room),
   }));
   return paths;
@@ -44,7 +43,6 @@ export default async function Room({ params }: { params: RoomParam }) {
         flexDirection: "column",
         alignItems: "center",
         gap: 1.5,
-        minHeight: "100vh",
         overflowY: "hidden",
       }}
     >
