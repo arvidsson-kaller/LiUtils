@@ -52,11 +52,11 @@ interface MazeMapSearchApiResponse {
 }
 
 export interface MazeMapRoomData {
-  campusName: String;
-  buildingName: String;
-  typeName: String;
-  campusId: Number;
-  poiId: Number;
+  campusName: string;
+  buildingName: string;
+  typeName: string;
+  campusId: number;
+  poiId: number;
 }
 
 export const getMazeMapRoomData = async (
