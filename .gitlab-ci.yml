@@ -62,3 +62,15 @@ common-build:
     changes:
       - common/**/*.*
       - .gitlab-ci.yml
+
+backend-build:
+  stage: lint
+  image: node:20.11-alpine3.18
+  script:
+    - cd backend
+    - npm ci
+    - npm run build
+  only:
+    changes:
+      - backend/**/*.*
+      - .gitlab-ci.yml
