@@ -9,7 +9,7 @@
     "dev": " tsoa spec-and-routes && concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
     "swagger": "tsoa spec",
     "tsoa": "tsoa routes",
-    "copy-db-types": "xcopy /E /I ..\\database\\models\\public .\\src\\models"
+    "copy-types": "xcopy /E /I ..\\database\\models\\public .\\src\\models"
   },
   "nodemonConfig": {
     "watch": [

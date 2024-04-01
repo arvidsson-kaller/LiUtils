@@ -4,9 +4,17 @@
   "noImplicitAdditionalProperties": "throw-on-extras",
   "spec": {
     "outputDirectory": "src/public",
-    "specVersion": 3
+    "specVersion": 3,
+    "securityDefinitions": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "Api-Key",
+        "in":  "header"
+      }
+    }
   },
   "routes": {
+    "authenticationModule": "src/authentication.ts",
     "routesDir": "src/"
   }
 }

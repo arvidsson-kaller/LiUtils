@@ -13,4 +13,5 @@ Full documentation https://salsita.github.io/node-pg-migrate/#/migrations
 `npm run migrade up` will apply migration to database  
 `npm run migrate down` will remove migration from database  
 ## Generate types
+`npm run types`
 Full documentation https://kristiandupont.github.io/kanel/ 
