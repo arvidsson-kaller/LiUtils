@@ -16,8 +16,10 @@ export class UserController extends Controller {
 
   @Security('api_key')
   @Get('/me')
-  public getMyUser(@Request() request: AuthenticatedRequest): MyUserResponseDTO {
-    const user = request.user as User;
+  public getMyUser(
+    @Request() request: AuthenticatedRequest,
+  ): MyUserResponseDTO {
+    const user = request.user;
     return {
       myUser: mapUserToDTO(user),
     };
