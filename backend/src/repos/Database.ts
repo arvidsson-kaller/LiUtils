@@ -1,9 +1,8 @@
-import { Client } from 'pg';
+import { Pool } from 'pg';
 import EnvVars from '@src/constants/EnvVars';
 
-const db = new Client({
+const db = new Pool({
   connectionString: EnvVars.PostgreConnectionString,
 });
-db.connect();
 
 export default db;
