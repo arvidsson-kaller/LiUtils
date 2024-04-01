@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 const proxy = async (
   request: NextRequest,
-  { params }: { params: { endpoint: string[] } }
+  { params }: { params: { endpoint: string[] } },
 ) => {
   const user = await getUserSession();
   if (!user?.id) {
@@ -18,11 +18,11 @@ const proxy = async (
   }
   const backendRequest = new NextRequest(
     `${process.env.BACKEND_URL!}/${params.endpoint.join("/")}`,
-    request
+    request,
   );
   backendRequest.headers.append(
     "api-key",
-    `${process.env.BACKEND_API_KEY!}${user.id}`
+    `${process.env.BACKEND_API_KEY!}${user.id}`,
   );
   return await fetch(backendRequest);
 };
