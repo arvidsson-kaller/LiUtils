@@ -10,7 +10,7 @@ Replace `************` with password
 ## Database migration
 Full documentation https://salsita.github.io/node-pg-migrate/#/migrations  
 `npm run migrate create my_migration` will create a new migration file  
-`npm run migrade up` will apply migration to database  
+`npm run migrate up` will apply migration to database  
 `npm run migrate down` will remove migration from database  
 ## Generate types
 `npm run types`
