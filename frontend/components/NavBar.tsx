@@ -34,8 +34,8 @@ const NavBarLink = ({ link, label }: { link: string; label: string }) => {
           alignItems: "center",
           justifyContent: "center",
           "&:hover": {
-            backgroundColor: "#2575d0"
-          }
+            backgroundColor: "#2575d0",
+          },
         }}
       >
         {label}

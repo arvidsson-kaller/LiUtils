@@ -11,13 +11,18 @@ export const metadata: Metadata = {
 
 export default function Rooms() {
   return (
-    <Container sx={{display: "flex", flexDirection: "column", gap: 0.2, paddingBottom: 10}}>
+    <Container
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 0.2,
+        paddingBottom: 10,
+      }}
+    >
       <h1>Room Index</h1>
       {getAllRooms().map((room) => (
         <Box key={room}>
-          <Link href={`/room/${room}`}>
-            {room}
-          </Link>
+          <Link href={`/room/${room}`}>{room}</Link>
         </Box>
       ))}
     </Container>
