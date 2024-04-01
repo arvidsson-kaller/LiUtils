@@ -1,22 +1,32 @@
-import Users from '@src/models/Users';
 import db from './Database';
-import { UsersInitializer } from '@src/models/Users';
+import User, { UserId, UserInitializer } from '@src/models/User';
+import logger from 'jet-logger';
 
-async function getAll(): Promise<Users[]> {
-  const res = await db.query('SELECT * from users');
-  return res.rows as Users[];
+async function getAll(): Promise<User[]> {
+  const res = await db.query('SELECT * from "User"');
+  return res.rows as User[];
 }
 
-async function create(user: UsersInitializer): Promise<void> {
+async function create(user: UserInitializer): Promise<void> {
   try {
-    await db.query('INSERT INTO users (name) VALUES ($1)', [user.name]);
+    await db.query('INSERT INTO "User" (name, email) VALUES ($1, $2)',
+      [user.name, user.email]);
   } catch (error) {
-    // Handle error appropriately
+    logger.err(error);
     throw new Error('Failed to create user');
   }
+}
+
+async function findById(userId: UserId): Promise<User> {
+  const res = await db.query('SELECT * from "User" where id = ($1)', [userId]);
+  if (res.rows.length == 1) {
+    return res.rows[0] as User;
+  }
+  throw new Error('Not found');
 }
 
 export default {
   getAll,
   create,
+  findById,
 } as const;
