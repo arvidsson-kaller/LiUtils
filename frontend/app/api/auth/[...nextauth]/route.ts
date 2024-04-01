@@ -30,6 +30,10 @@ const authOptions: NextAuthOptions = {
       return "/";
     },
     session,
+    async jwt({ token }) {
+      token.id = 1;
+      return token;
+    },
   },
 };
 
