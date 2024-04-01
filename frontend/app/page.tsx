@@ -8,7 +8,7 @@ export default async function Home() {
     <Container>
       <Box
         sx={{
-          height: "100vh",
+          height: "calc(100vh - 64px)",
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
