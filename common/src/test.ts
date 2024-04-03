@@ -61,12 +61,12 @@ const fetchHtml = (url: string): Promise<string> => {
   const res = {};
   const baseURL = "https://studieinfo.liu.se";
   const allProgramsHTML = await fetchHtml(
-    `${baseURL}/en?Term=Master&Type=programme`
+    `${baseURL}/en?Term=Master&Type=programme`,
   );
   const allProgramsDOM = new JSDOM(allProgramsHTML);
   const allPrograms = [
     ...allProgramsDOM.window.document.querySelectorAll(
-      "#study-guide-search-results-programme a"
+      "#study-guide-search-results-programme a",
     ),
   ]
     .map((a) => {
@@ -80,7 +80,7 @@ const fetchHtml = (url: string): Promise<string> => {
     const programDOM = new JSDOM(programHTML);
     const allStartYears = [
       ...programDOM.window.document.querySelectorAll(
-        "#related_entity_navigation option"
+        "#related_entity_navigation option",
       ),
     ].map((o) => {
       return { year: o.textContent.trim(), url: o.value };
@@ -90,7 +90,7 @@ const fetchHtml = (url: string): Promise<string> => {
       const coursesHTML = await fetchHtml(`${baseURL}/${startYear.url}`);
       const coursesDOM = new JSDOM(coursesHTML);
       const allSemesterDOMs = coursesDOM.window.document.querySelectorAll(
-        "section.accordion.semester"
+        "section.accordion.semester",
       );
       for (const semesterDOM of allSemesterDOMs) {
         const semester = semesterDOM
@@ -107,30 +107,41 @@ const fetchHtml = (url: string): Promise<string> => {
                 .querySelector("span") ||
               specializationDOM.querySelector("caption")
             ).textContent.trim() || "Courses";
-          const allCourses = [
-            ...specializationDOM.querySelectorAll("tr.main-row"),
-          ]
-            .map((tr) =>
-              [
-                ...tr.querySelectorAll("td"),
-                [...tr.nextElementSibling?.classList]?.includes("details-row")
-                  ? tr.nextElementSibling
-                  : "",
-              ].map((td) => td?.textContent?.trim())
-            )
-            .map((course) => {
-              return {
-                courseCode: course.at(0),
-                courseName: course.at(1),
-                credits: course.at(2),
-                level: course.at(3),
-                timetableModule: course.at(4),
-                ECV: course.at(5),
-                info: course.at(6),
-              };
-            });
-          res[program.name][startYear.year][semester][specialization] =
-            allCourses;
+          const allPeriodsDOM =
+            specializationDOM.querySelectorAll("tbody.period");
+          for (const periodDOM of allPeriodsDOM) {
+            const period = periodDOM
+              .querySelector("th[colspan='7']")
+              .textContent.trim();
+            const allCourses = [...periodDOM.querySelectorAll("tr.main-row")]
+              .map((tr) =>
+                [
+                  ...tr.querySelectorAll("td"),
+                  [...tr.nextElementSibling?.classList]?.includes("details-row")
+                    ? tr.nextElementSibling
+                    : "",
+                ].map((td) => td?.textContent?.trim()),
+              )
+              .map((course) => {
+                return {
+                  courseCode: course.at(0),
+                  courseName: course.at(1),
+                  credits: course.at(2),
+                  level: course.at(3),
+                  timetableModule: course.at(4),
+                  ECV: course.at(5),
+                  info: course.at(6),
+                };
+              });
+            if (
+              !(specialization in res[program.name][startYear.year][semester])
+            ) {
+              res[program.name][startYear.year][semester][specialization] = {};
+            }
+            res[program.name][startYear.year][semester][specialization][
+              period
+            ] = allCourses;
+          }
         }
       }
     }
