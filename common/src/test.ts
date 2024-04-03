@@ -57,8 +57,66 @@ const fetchHtml = (url: string): Promise<string> => {
 //   await fetchHtml(link2);
 // })();
 
+export interface MasterPrograms {
+  programs: Program[];
+}
+
+export interface Program {
+  name: string;
+  startYears: StartYear[];
+}
+
+export interface StartYear {
+  name: string;
+  semesters: Semester[];
+}
+
+export interface Semester {
+  name: string;
+  specializations: Specialization[];
+}
+
+export interface Specialization {
+  name: string;
+  periods: Period[];
+}
+
+export interface Period {
+  name: Name;
+  courses: Course[];
+}
+
+export interface Course {
+  courseCode: string;
+  courseName: string;
+  credits: string;
+  level: Level;
+  timetableModule: string;
+  ECV: Ecv;
+  info: string;
+}
+
+export enum Ecv {
+  C = "C",
+  CE = "C/E",
+  E = "E",
+  V = "V",
+}
+
+export enum Level {
+  A1X = "A1X",
+  G1X = "G1X",
+  G2X = "G2X",
+}
+
+export enum Name {
+  Period0 = "Period 0",
+  Period1 = "Period 1",
+  Period2 = "Period 2",
+}
+
 (async () => {
-  const res = {};
+  const res: MasterPrograms = { programs: [] };
   const baseURL = "https://studieinfo.liu.se";
   const allProgramsHTML = await fetchHtml(
     `${baseURL}/en?Term=Master&Type=programme`,
@@ -73,9 +131,11 @@ const fetchHtml = (url: string): Promise<string> => {
       return { name: a.textContent, url: a.href };
     })
     .filter((a) => a.url.includes("program"));
+  console.log(`Fetching ${allPrograms.length} programs`);
   for (const program of allPrograms) {
-    if (!program.name.includes("Software")) continue; // To just test one for now
-    res[program.name] = {};
+    if (!program.name.includes("Computer")) continue; // To just test one for now
+    console.log(`Fetching ${program.name}...`);
+    const programRes: Program = { name: program.name, startYears: [] };
     const programHTML = await fetchHtml(`${baseURL}/${program.url}`);
     const programDOM = new JSDOM(programHTML);
     const allStartYears = [
@@ -86,7 +146,7 @@ const fetchHtml = (url: string): Promise<string> => {
       return { year: o.textContent.trim(), url: o.value };
     });
     for (const startYear of allStartYears) {
-      res[program.name][startYear.year] = {};
+      const yearRes: StartYear = { name: startYear.year, semesters: [] };
       const coursesHTML = await fetchHtml(`${baseURL}/${startYear.url}`);
       const coursesDOM = new JSDOM(coursesHTML);
       const allSemesterDOMs = coursesDOM.window.document.querySelectorAll(
@@ -96,7 +156,7 @@ const fetchHtml = (url: string): Promise<string> => {
         const semester = semesterDOM
           .querySelector("header h3")
           .textContent.trim();
-        res[program.name][startYear.year][semester] = {};
+        const semesterRes: Semester = { name: semester, specializations: [] };
         const specializationDOMs =
           semesterDOM.querySelectorAll("div.specialization");
         for (const specializationDOM of specializationDOMs) {
@@ -106,21 +166,27 @@ const fetchHtml = (url: string): Promise<string> => {
                 .querySelector("caption")
                 .querySelector("span") ||
               specializationDOM.querySelector("caption")
-            ).textContent.trim() || "Courses";
+            )?.textContent?.trim() || "Courses";
+          const specializationRes: Specialization = {
+            name: specialization,
+            periods: [],
+          };
           const allPeriodsDOM =
             specializationDOM.querySelectorAll("tbody.period");
           for (const periodDOM of allPeriodsDOM) {
-            const period = periodDOM
-              .querySelector("th[colspan='7']")
-              .textContent.trim();
-            const allCourses = [...periodDOM.querySelectorAll("tr.main-row")]
+            const period =
+              periodDOM.querySelector("th[colspan='7']")?.textContent?.trim() ||
+              "Period";
+            const allCourses: Course[] = [
+              ...periodDOM.querySelectorAll("tr.main-row"),
+            ]
               .map((tr) =>
                 [
                   ...tr.querySelectorAll("td"),
                   [...tr.nextElementSibling?.classList]?.includes("details-row")
                     ? tr.nextElementSibling
                     : "",
-                ].map((td) => td?.textContent?.trim()),
+                ].map((td) => td?.textContent?.trim() || ""),
               )
               .map((course) => {
                 return {
@@ -133,21 +199,17 @@ const fetchHtml = (url: string): Promise<string> => {
                   info: course.at(6),
                 };
               });
-            if (
-              !(specialization in res[program.name][startYear.year][semester])
-            ) {
-              res[program.name][startYear.year][semester][specialization] = {};
-            }
-            res[program.name][startYear.year][semester][specialization][
-              period
-            ] = allCourses;
+            const periodRes: Period = { name: period, courses: allCourses };
+            specializationRes.periods.push(periodRes);
           }
+          semesterRes.specializations.push(specializationRes);
         }
+        yearRes.semesters.push(semesterRes);
       }
+      programRes.startYears.push(yearRes);
     }
+    console.log(`Finished fetching ${program.name}`);
+    res.programs.push(programRes);
   }
   fs.writeFile("output.json", JSON.stringify(res), console.log);
-  // const studeinfoIndex = await fetchHtml(studeinfoIndexURL);
-  // const dom = new JSDOM(studeinfoIndex);
-  // console.log(dom.window.document.querySelector("p").textContent); // "Hello world"
 })();
