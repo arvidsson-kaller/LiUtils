@@ -1,8 +1,8 @@
 # TDDD27_2024_LiUtils
 
 ## Disclaimer
-We will do a lot of scraping of public data from LiU and assosiated resourses.
-To avoid introducing any signifcant load on LiU resourses, we will do a lot of caching of this data.
+We will do a lot of scraping of public data from LiU and associated resources.
+To avoid introducing any significant load on LiU resources, we will do a lot of caching of this data.
 
 ## Features
 
@@ -18,7 +18,7 @@ The idea is to help with planning which Master's courses to attend, heavy user i
   * Evaliuate
   * Exam Statistics
 * Plan courses to study
-* Verify fulfilment of Master's requirement
+* Verify fulfillment of Master's requirement
 * Share plan
   * Make plan available through link
   * Make plan public on site
@@ -57,7 +57,7 @@ Since `old.liu.se/karta` is removed and rooms are no indexed in search engines, 
 
 
 ### Backend `Node.js`
-For the more complex backend tasks, statefulness and more resoures are required.
+For the more complex backend tasks, statefulness and more resources are required.
 * Typescript based
 * Rest API with `Swagger/OpenAPI` 
   * `tsoa` generates `Express.js` endpoints
