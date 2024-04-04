@@ -15,6 +15,8 @@
     "@emotion/styled": "^11.11.0",
     "@hey-api/openapi-ts": "^0.34.5",
     "@mui/material": "^5.15.12",
+    "@mui/x-data-grid": "^7.1.0",
+    "common": "file:./common",
     "next": "14.1.2",
     "next-auth": "^4.24.7",
     "react": "^18",

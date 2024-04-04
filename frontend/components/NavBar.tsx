@@ -19,6 +19,7 @@ export default function NavBar() {
         <Image alt="Home Button" src="/favicon.ico" width={64} height={64} />
       </Link>
       <NavBarLink link="/rooms" label="Rooms" />
+      <NavBarLink link="/master" label="Master Planning" />
     </Box>
   );
 }
