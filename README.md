@@ -74,7 +74,7 @@ For the more complex backend tasks, statefulness and more resources are required
 * Migrations with `node-pg-migrate`
 * Typescript types generated from tables with `kanel`
 
-## Common library
+### Common library
 Package with common code for projects. Mostly for the scripting to extract data from e.g. timeedit.
 * Typescript based
 * Can be used by both Frontend and Backend
