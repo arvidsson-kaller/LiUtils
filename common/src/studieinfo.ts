@@ -126,14 +126,22 @@ export const getAllMasterData = async () => {
             const allCourses: Course[] = [
               ...periodDOM.querySelectorAll("tr.main-row"),
             ]
-              .map((tr) =>
-                [
-                  ...tr.querySelectorAll("td"),
+              .map((tr) => {
+                const dataPoints = [...tr.querySelectorAll("td")].map(
+                  (td) => td?.textContent?.trim() || "",
+                );
+  
+                if (
                   [...tr.nextElementSibling?.classList]?.includes("details-row")
-                    ? tr.nextElementSibling
-                    : "",
-                ].map((td) => td?.textContent?.trim() || ""),
-              )
+                ) {
+                  dataPoints.push(
+                    tr.nextElementSibling?.textContent?.trim() || "",
+                  );
+                } else {
+                  dataPoints.push("");
+                }
+                return dataPoints;
+              })
               .map((course) => {
                 return {
                   courseCode: course.at(0),
@@ -142,7 +150,7 @@ export const getAllMasterData = async () => {
                   level: course.at(3),
                   timetableModule: course.at(4),
                   ECV: course.at(5),
-                  info: course.at(6),
+                  info: course.at(7),
                 };
               });
             const periodRes: Period = { name: period, courses: allCourses };
