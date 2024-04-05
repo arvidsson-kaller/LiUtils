@@ -2,24 +2,24 @@
  * Setup express server.
  */
 
-import morgan from 'morgan';
-import path from 'path';
-import helmet from 'helmet';
-import express, { Request, Response, NextFunction } from 'express';
-import logger from 'jet-logger';
+import morgan from "morgan";
+import path from "path";
+import helmet from "helmet";
+import express, { Request, Response, NextFunction } from "express";
+import logger from "jet-logger";
 
-import 'express-async-errors';
+import "express-async-errors";
 
-import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import EnvVars from "@src/constants/EnvVars";
+import HttpStatusCodes from "@src/constants/HttpStatusCodes";
 
-import { NodeEnvs } from '@src/constants/misc';
-import { InvalidContextError, RouteError } from '@src/other/classes';
+import { NodeEnvs } from "@src/constants/misc";
+import { InvalidContextError, RouteError } from "@src/other/classes";
 
-import swaggerUi from 'swagger-ui-express';
-import { ValidateError } from 'tsoa';
+import swaggerUi from "swagger-ui-express";
+import { ValidateError } from "tsoa";
 
-import { RegisterRoutes } from '@src/routes';
+import { RegisterRoutes } from "@src/routes";
 
 // **** Variables **** //
 
@@ -33,7 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // Show routes called in console during development
 if (EnvVars.NodeEnv === NodeEnvs.Dev.valueOf()) {
-  app.use(morgan('dev'));
+  app.use(morgan("dev"));
 }
 
 // Security
@@ -42,17 +42,17 @@ if (EnvVars.NodeEnv === NodeEnvs.Production.valueOf()) {
 }
 
 app.use(
-  '/docs',
+  "/docs",
   swaggerUi.serve,
   swaggerUi.setup(undefined, {
     swaggerOptions: {
-      url: '/swagger.json',
+      url: "/swagger.json",
     },
   }),
 );
 
 // Set static directory
-const staticDir = path.join(__dirname, 'public');
+const staticDir = path.join(__dirname, "public");
 app.use(express.static(staticDir));
 
 // Register swagger routes
@@ -73,14 +73,14 @@ app.use(
     if (err instanceof ValidateError) {
       logger.warn(`Caught Validation Error for ${req.path}:`);
       return res.status(422).json({
-        message: 'Validation Failed',
+        message: "Validation Failed",
         details: err?.fields,
       });
     }
     let status = HttpStatusCodes.INTERNAL_SERVER_ERROR;
     if (err instanceof RouteError) {
       status = err.status;
-    } else if(err instanceof InvalidContextError){
+    } else if (err instanceof InvalidContextError) {
       status = HttpStatusCodes.BAD_REQUEST;
     }
     return res.status(status).json({ error: err.message });

@@ -1,7 +1,7 @@
-import jwt  from 'jsonwebtoken';
-import EnvVars from '@src/constants/EnvVars';
-import { AuthUser } from '@src/authentication';
-import User from '@src/models/User';
+import jwt from "jsonwebtoken";
+import EnvVars from "@src/constants/EnvVars";
+import { AuthUser } from "@src/authentication";
+import User from "@src/models/User";
 
 const encode = (user: User): string => {
   const data: AuthUser = {

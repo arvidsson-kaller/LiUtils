@@ -5,6 +5,7 @@
     "build": "npx ts-node build.ts",
     "lint": "npx eslint --ext .ts src/",
     "lint-fix": "npx eslint --fix --ext .ts src/",
+    "prettier": "npx prettier ./ --write --end-of-line auto",
     "start": "node -r module-alias/register ./dist --env=production",
     "dev": " tsoa spec-and-routes && concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
     "swagger": "tsoa spec",

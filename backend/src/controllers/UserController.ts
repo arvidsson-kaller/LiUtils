@@ -1,12 +1,12 @@
-import { Body, Controller, Get, Post, Route, Security, Request } from 'tsoa';
-import User, { UserInitializer } from '@src/models/User';
-import { AuthenticatedRequest } from '@src/authentication';
-import JwtService from '@src/services/JwtService';
-import UserRepo from '@src/repos/UserRepo';
+import { Body, Controller, Get, Post, Route, Security, Request } from "tsoa";
+import User, { UserInitializer } from "@src/models/User";
+import { AuthenticatedRequest } from "@src/authentication";
+import JwtService from "@src/services/JwtService";
+import UserRepo from "@src/repos/UserRepo";
 
-@Route('users')
+@Route("users")
 export class UserController extends Controller {
-  @Security('jwt')
+  @Security("jwt")
   @Get()
   public async getUsers(): Promise<UsersResponseDTO> {
     const users = await UserRepo.getAll();
@@ -16,8 +16,8 @@ export class UserController extends Controller {
     };
   }
 
-  @Security('jwt')
-  @Get('/me')
+  @Security("jwt")
+  @Get("/me")
   public async getMyUser(
     @Request() request: AuthenticatedRequest,
   ): Promise<MyUserResponseDTO> {
@@ -31,12 +31,12 @@ export class UserController extends Controller {
   /**
    * Should be called after oauth2 sign in, creates or updates user.
    */
-  @Security('api_key')
-  @Post('/oauth2')
+  @Security("api_key")
+  @Post("/oauth2")
   public async oauth2SignIn(
     @Body() request: SignedInRequestDTO,
   ): Promise<SignedInResponseDTO> {
-    const {authProvider, authUserId} = request;
+    const { authProvider, authUserId } = request;
     let user = await UserRepo.findByOAuth(authProvider, authUserId);
     if (user == null) {
       user = await UserRepo.create({
@@ -55,11 +55,9 @@ export class UserController extends Controller {
   /**
    * Can be used to create a user manually, requires API KEY
    */
-  @Security('api_key')
+  @Security("api_key")
   @Post()
-  public async createUser(
-    @Body() request: CreateUserRequestDTO,
-  ) {
+  public async createUser(@Body() request: CreateUserRequestDTO) {
     const user: UserInitializer = {
       name: request.name,
       email: request.email,
@@ -73,7 +71,7 @@ export class UserController extends Controller {
 interface UserDTO {
   id: number;
   name: string;
-  email: string,
+  email: string;
   createdAt: Date;
 }
 
@@ -93,36 +91,36 @@ interface UsersResponseDTO {
 interface CreateUserRequestDTO {
   /**
    * @minLength 3
-  */
-  name: string,
+   */
+  name: string;
 
   /**
    * @pattern ^(.+)@(.+)$ please provide correct email
    */
-  email: string,
+  email: string;
 
-  authProvider: string | null,
-  authUserId: string | null
+  authProvider: string | null;
+  authUserId: string | null;
 }
 
 interface SignedInRequestDTO {
   /**
    * @minLength 3
-  */
-  name: string,
+   */
+  name: string;
   /**
    * @pattern ^(.+)@(.+)$ please provide correct email
    */
-  email: string,
-  authProvider: string,
+  email: string;
+  authProvider: string;
   /**
    * @minLength 3
-  */
-  authUserId: string
+   */
+  authUserId: string;
 }
 
 interface SignedInResponseDTO {
-  jwt: string
+  jwt: string;
 }
 
 interface MyUserResponseDTO {
