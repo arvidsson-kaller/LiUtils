@@ -64,8 +64,7 @@ export const $SignedInRequestDTO = {
 	pattern: '^(.+)@(.+)$',
 },
 		authProvider: {
-	type: 'Enum',
-	enum: ['discord',],
+	type: 'string',
 	isRequired: true,
 },
 		authUserId: {
@@ -89,8 +88,7 @@ export const $CreateUserRequestDTO = {
 	pattern: '^(.+)@(.+)$',
 },
 		authProvider: {
-	type: 'Enum',
-	enum: ['discord',],
+	type: 'string',
 	isRequired: true,
 	isNullable: true,
 },

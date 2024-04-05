@@ -83,11 +83,7 @@
 						"pattern": "^(.+)@(.+)$"
 					},
 					"authProvider": {
-						"type": "string",
-						"enum": [
-							"discord"
-						],
-						"nullable": false
+						"type": "string"
 					},
 					"authUserId": {
 						"type": "string",
@@ -115,9 +111,6 @@
 					},
 					"authProvider": {
 						"type": "string",
-						"enum": [
-							"discord"
-						],
 						"nullable": true
 					},
 					"authUserId": {

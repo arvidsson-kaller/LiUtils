@@ -38,7 +38,7 @@ const authOptions: NextAuthOptions = {
           requestBody: {
             name: user.name!,
             email: user.email!,
-            authProvider: "discord",
+            authProvider: account?.provider!,
             authUserId: account?.providerAccountId!,
           },
         });

@@ -101,7 +101,7 @@ interface CreateUserRequestDTO {
    */
   email: string,
 
-  authProvider: 'discord' | null,
+  authProvider: string | null,
   authUserId: string | null
 }
 
@@ -114,7 +114,7 @@ interface SignedInRequestDTO {
    * @pattern ^(.+)@(.+)$ please provide correct email
    */
   email: string,
-  authProvider: 'discord',
+  authProvider: string,
   /**
    * @minLength 3
   */

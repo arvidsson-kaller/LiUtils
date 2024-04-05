@@ -28,18 +28,16 @@ export type SignedInResponseDTO = {
 export type SignedInRequestDTO = {
 	name: string;
 	email: string;
-	authProvider: 'discord';
+	authProvider: string;
 	authUserId: string;
 };
-
 
 
 
 export type CreateUserRequestDTO = {
 	name: string;
 	email: string;
-	authProvider: 'discord' | null;
+	authProvider: string | null;
 	authUserId: string | null;
 };
-
 

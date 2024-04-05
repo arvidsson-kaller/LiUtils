@@ -58,7 +58,7 @@ requestBody,
 	}
 
 	/**
-	 * Should be called after oauth2 sign in with API KEY, creates or updates user.
+	 * Should be called after oauth2 sign in, creates or updates user.
 	 * @returns SignedInResponseDTO Ok
 	 * @throws ApiError
 	 */
