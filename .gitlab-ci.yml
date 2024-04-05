@@ -8,6 +8,7 @@ frontend-linter:
   script:
     - cd frontend
     - npm ci
+    - npm run openapi-ts
     - npm run lint
     - npx prettier ./ --check --end-of-line auto
   only:
