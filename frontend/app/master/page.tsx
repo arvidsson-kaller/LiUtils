@@ -21,6 +21,7 @@ import {
 } from "@mui/x-data-grid";
 import InfoIcon from "@mui/icons-material/Info";
 import AssessmentIcon from "@mui/icons-material/Assessment";
+import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
 import Link from "next/link";
 import React from "react";
 import { CourseSelectionSummary } from "@/components/master/CourseSelectionSummary";
@@ -67,6 +68,21 @@ const columns: GridColDef[] = [
         href={`https://ysektionen.se/student/tentastatistik/${params.row.courseCode}`}
       >
         <AssessmentIcon />
+      </Link>
+    ),
+  },
+  {
+    field: "evaliuate",
+    headerName: "Evaliuate",
+    flex: 1,
+    renderCell: (params: GridRenderCellParams<any, Date>) => (
+      <Link
+        style={{ display: "flex", alignItems: "center", height: "100%" }}
+        target="_blank"
+        referrerPolicy="no-referrer"
+        href={`https://admin.evaliuate.liu.se/search/#${params.row.courseCode}`} // The course code has no effect on the link, it is just there to indicate which link was pressed
+      >
+        <HistoryEduIcon />
       </Link>
     ),
   },
