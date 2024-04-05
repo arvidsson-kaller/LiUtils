@@ -21,6 +21,7 @@ backend-linter:
   script:
     - cd backend
     - npm ci
+    - npm run db-types
     - npm run lint
   only:
     changes:
