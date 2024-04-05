@@ -1,2 +1,2 @@
 # PATH/PATTERN TYPE
-frontend/lib/backend-client/* binary
+frontend/lib/backend-client/**/* binary
