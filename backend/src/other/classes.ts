@@ -2,7 +2,7 @@
  * Miscellaneous shared classes go here.
  */
 
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import HttpStatusCodes from "@src/constants/HttpStatusCodes";
 
 /**
  * Error with status code and message
@@ -15,3 +15,5 @@ export class RouteError extends Error {
     this.status = status;
   }
 }
+
+export class InvalidContextError extends Error {}

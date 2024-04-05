@@ -5,11 +5,12 @@
     "build": "npx ts-node build.ts",
     "lint": "npx eslint --ext .ts src/",
     "lint-fix": "npx eslint --fix --ext .ts src/",
+    "prettier": "npx prettier ./ --write --end-of-line auto",
     "start": "node -r module-alias/register ./dist --env=production",
     "dev": " tsoa spec-and-routes && concurrently \"nodemon\" \"nodemon -x tsoa spec-and-routes\"",
     "swagger": "tsoa spec",
     "tsoa": "tsoa routes",
-    "copy-types": "xcopy /E /I ..\\database\\models\\public .\\src\\models"
+    "db-types": "rm -rf ./src/models && mkdir -p ./src/models && cp -r ../database/models/public/* ./src/models/"
   },
   "nodemonConfig": {
     "watch": [
@@ -39,6 +40,7 @@
     "jet-paths": "^1.0.6",
     "jet-validator": "^1.1.1",
     "jsonfile": "^6.1.0",
+    "jsonwebtoken": "^9.0.2",
     "module-alias": "^2.2.3",
     "morgan": "^1.10.0",
     "pg": "^8.11.3",
@@ -51,6 +53,7 @@
     "@types/find": "^0.2.4",
     "@types/fs-extra": "^11.0.4",
     "@types/jsonfile": "^6.1.4",
+    "@types/jsonwebtoken": "^9.0.6",
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.24",
     "@types/pg": "^8.11.4",

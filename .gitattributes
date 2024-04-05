@@ -1,0 +1,3 @@
+# PATH/PATTERN TYPE
+frontend/lib/backend-client/** binary
+backend/src/public/swagger.json binary

@@ -9,7 +9,11 @@
       "api_key": {
         "type": "apiKey",
         "name": "Api-Key",
-        "in":  "header"
+        "in": "header"
+      },
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   },

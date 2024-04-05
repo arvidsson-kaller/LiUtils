@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 // import AzureADProvider from "next-auth/providers/azure-ad";
 import DiscordProvider from "next-auth/providers/discord";
-import { session } from "@/lib/session";
 import { NextAuthOptions } from "next-auth";
+import { BackendService } from "@/lib/backend";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -23,15 +23,29 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ account, profile }) {
+    async signIn({ user, account, profile, email, credentials }) {
       return true;
     },
-    async redirect({ baseUrl, url }) {
-      return "/";
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
     },
-    session,
-    async jwt({ token }) {
-      token.id = 1;
+    async session({ session, user, token }) {
+      return session;
+    },
+    async jwt({ token, user, account, profile }) {
+      try {
+        const respone = await BackendService.oauth2SignIn({
+          requestBody: {
+            name: user.name!,
+            email: user.email!,
+            authProvider: account?.provider!,
+            authUserId: account?.providerAccountId!,
+          },
+        });
+        token.backendJwt = respone.jwt;
+      } catch (error) {
+        console.error("Backend failed");
+      }
       return token;
     },
   },

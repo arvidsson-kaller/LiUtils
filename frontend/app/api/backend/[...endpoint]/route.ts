@@ -6,12 +6,7 @@ const proxy = async (
   { params }: { params: { endpoint: string[] } },
 ) => {
   const user = await getUserSession();
-  if (!user?.id) {
-    return new NextResponse("Unauthorized", {
-      status: 401,
-    });
-  }
-  if (!process.env.BACKEND_URL || !process.env.BACKEND_API_KEY) {
+  if (!process.env.BACKEND_URL) {
     return new NextResponse("Incorrectly configured backend options", {
       status: 500,
     });
@@ -20,10 +15,10 @@ const proxy = async (
     `${process.env.BACKEND_URL!}/${params.endpoint.join("/")}`,
     request,
   );
-  backendRequest.headers.append(
-    "api-key",
-    `${process.env.BACKEND_API_KEY!}${user.id}`,
-  );
+  if (user?.backendJwt) {
+    // If user is logged in, add authentication in request.
+    backendRequest.headers.append("authorization", `Bearer ${user.backendJwt}`);
+  }
   return await fetch(backendRequest);
 };
 

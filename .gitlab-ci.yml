@@ -8,6 +8,7 @@ frontend-linter:
   script:
     - cd frontend
     - npm ci
+    - npm run openapi-ts
     - npm run lint
     - npx prettier ./ --check --end-of-line auto
   only:
@@ -21,7 +22,9 @@ backend-linter:
   script:
     - cd backend
     - npm ci
+    - npm run db-types
     - npm run lint
+    - npx prettier ./ --check --end-of-line auto
   only:
     changes:
       - backend/**/*.*
