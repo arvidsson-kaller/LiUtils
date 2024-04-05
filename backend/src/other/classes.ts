@@ -15,3 +15,7 @@ export class RouteError extends Error {
     this.status = status;
   }
 }
+
+export class InvalidContextError extends Error {
+  
+}

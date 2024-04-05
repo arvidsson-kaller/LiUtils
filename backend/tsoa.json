@@ -1,6 +1,8 @@
 {
   "entryFile": "src/index.ts",
-  "controllerPathGlobs": ["src/**/controllers/*.ts"],
+  "controllerPathGlobs": [
+    "src/**/controllers/*.ts"
+  ],
   "noImplicitAdditionalProperties": "throw-on-extras",
   "spec": {
     "outputDirectory": "src/public",
@@ -9,7 +11,11 @@
       "api_key": {
         "type": "apiKey",
         "name": "Api-Key",
-        "in":  "header"
+        "in": "header"
+      },
+      "jwt": {
+        "type": "http",
+        "scheme": "bearer"
       }
     }
   },

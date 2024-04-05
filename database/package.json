@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "migrate": ".\\node_modules\\.bin\\node-pg-migrate",
+    "migrate": "./node_modules/.bin/node-pg-migrate",
     "types": "npx kanel"
   },
   "author": "",
@@ -11,7 +11,7 @@
   "dependencies": {
     "dotenv": "^16.4.5",
     "node-pg-migrate": "^6.2.2",
-    "pg": "^8.11.3"
+    "pg": "^8.11.5"
   },
   "devDependencies": {
     "kanel": "^3.8.8"

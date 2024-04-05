@@ -1,0 +1,267 @@
+{
+	"openapi": "3.0.0",
+	"components": {
+		"examples": {},
+		"headers": {},
+		"parameters": {},
+		"requestBodies": {},
+		"responses": {},
+		"schemas": {
+			"UserDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time"
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"email",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UsersResponseDTO": {
+				"properties": {
+					"users": {
+						"items": {
+							"$ref": "#/components/schemas/UserDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"users"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MyUserResponseDTO": {
+				"properties": {
+					"myUser": {
+						"$ref": "#/components/schemas/UserDTO"
+					}
+				},
+				"required": [
+					"myUser"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignedInResponseDTO": {
+				"properties": {
+					"jwt": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"jwt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SignedInRequestDTO": {
+				"properties": {
+					"name": {
+						"type": "string",
+						"minLength": 3
+					},
+					"email": {
+						"type": "string",
+						"pattern": "^(.+)@(.+)$"
+					},
+					"authProvider": {
+						"type": "string",
+						"enum": [
+							"discord"
+						],
+						"nullable": false
+					},
+					"authUserId": {
+						"type": "string",
+						"minLength": 3
+					}
+				},
+				"required": [
+					"name",
+					"email",
+					"authProvider",
+					"authUserId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUserRequestDTO": {
+				"properties": {
+					"name": {
+						"type": "string",
+						"minLength": 3
+					},
+					"email": {
+						"type": "string",
+						"pattern": "^(.+)@(.+)$"
+					},
+					"authProvider": {
+						"type": "string",
+						"enum": [
+							"discord"
+						],
+						"nullable": true
+					},
+					"authUserId": {
+						"type": "string",
+						"nullable": true
+					}
+				},
+				"required": [
+					"name",
+					"email",
+					"authProvider",
+					"authUserId"
+				],
+				"type": "object",
+				"additionalProperties": false
+			}
+		},
+		"securitySchemes": {
+			"api_key": {
+				"type": "apiKey",
+				"name": "Api-Key",
+				"in": "header"
+			},
+			"jwt": {
+				"type": "http",
+				"scheme": "bearer"
+			}
+		}
+	},
+	"info": {
+		"title": "big-backend",
+		"version": "0.0.0",
+		"contact": {}
+	},
+	"paths": {
+		"/users": {
+			"get": {
+				"operationId": "GetUsers",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UsersResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateUser",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"description": "Can be used to create a user manually, requires API KEY",
+				"security": [
+					{
+						"api_key": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUserRequestDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/users/me": {
+			"get": {
+				"operationId": "GetMyUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MyUserResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/users/oauth2": {
+			"post": {
+				"operationId": "Oauth2SignIn",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/SignedInResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"description": "Should be called after oauth2 sign in, creates or updates user.",
+				"security": [
+					{
+						"api_key": []
+					}
+				],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/SignedInRequestDTO"
+							}
+						}
+					}
+				}
+			}
+		}
+	},
+	"servers": [
+		{
+			"url": "/"
+		}
+	]
+}

@@ -3,6 +3,7 @@ import NextAuth from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import { session } from "@/lib/session";
 import { NextAuthOptions } from "next-auth";
+import { BackendService, getUserBackendService } from "@/lib/backend";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -23,15 +24,28 @@ const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ account, profile }) {
+    async signIn({ user, account, profile, email, credentials }) {
       return true;
     },
-    async redirect({ baseUrl, url }) {
-      return "/";
+    async redirect({ url, baseUrl }) {
+      return baseUrl;
     },
-    session,
-    async jwt({ token }) {
-      token.id = 1;
+    async session({ session, user, token }) {
+      return session;
+    },
+    async jwt({ token, user, account, profile }) {
+      const respone = await BackendService.oauth2SignIn({
+        requestBody: {
+          name: user.name!,
+          email: user.email!,
+          authProvider: "discord",
+          authUserId: account?.providerAccountId!,
+        },
+      });
+      token.backendJwt = respone.jwt;
+
+      const me = await getUserBackendService(respone.jwt).getMyUser();
+      console.log({ me });
       return token;
     },
   },

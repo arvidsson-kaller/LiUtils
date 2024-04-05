@@ -1,11 +1,15 @@
 import { User, getServerSession } from "next-auth";
 
-export const session = async ({ session, token }: any) => {
-  session.user.id = token.id;
-  return session;
+export const session = async (data: any) => {
+  data.session.user.backendJwt = data.token.backendJwt;
+  return data.session;
 };
 
-export const getUserSession = async (): Promise<User> => {
+export interface AuthedUser extends User {
+  backendJwt: string;
+}
+
+export const getUserSession = async (): Promise<AuthedUser> => {
   const authUserSession = await getServerSession({
     callbacks: {
       session,
