@@ -2,6 +2,7 @@ import * as express from 'express';
 import EnvVars from '@src/constants/EnvVars';
 import { UserId } from './models/User';
 import JwtService from './services/JwtService';
+import { InvalidContextError } from './other/classes';
 
 export interface AuthenticatedRequest extends express.Request {
   user: AuthUser
@@ -25,12 +26,12 @@ export async function expressAuthentication(
       if (user !== null) {
         if(scopes?.includes('admin')){
           // TODO fix admin roles
-          return Promise.reject(new Error('You are not admin'));
+          return Promise.reject(new InvalidContextError('You are not admin'));
         }
         return Promise.resolve(user);
       }
     }
-    return Promise.reject(new Error(`Invalid use of ${securityName}`));
+    return Promise.reject(new InvalidContextError(`Invalid use of ${securityName}`));
   }
   if (securityName === 'api_key') {
     if (request.headers && request.headers['api-key']) {
@@ -43,7 +44,7 @@ export async function expressAuthentication(
         });
       }
     }
-    return Promise.reject(new Error(`Invalid use of ${securityName}`));
+    return Promise.reject(new InvalidContextError(`Invalid use of ${securityName}`));
   }
-  return Promise.reject(new Error('Invalid security name'));
+  return Promise.reject(new InvalidContextError('Invalid security name'));
 }

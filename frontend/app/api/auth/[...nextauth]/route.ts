@@ -1,9 +1,8 @@
 import NextAuth from "next-auth";
 // import AzureADProvider from "next-auth/providers/azure-ad";
 import DiscordProvider from "next-auth/providers/discord";
-import { session } from "@/lib/session";
 import { NextAuthOptions } from "next-auth";
-import { BackendService, getUserBackendService } from "@/lib/backend";
+import { BackendService } from "@/lib/backend";
 
 const authOptions: NextAuthOptions = {
   session: {
@@ -43,9 +42,6 @@ const authOptions: NextAuthOptions = {
         },
       });
       token.backendJwt = respone.jwt;
-
-      const me = await getUserBackendService(respone.jwt).getMyUser();
-      console.log({ me });
       return token;
     },
   },
