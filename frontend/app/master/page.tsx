@@ -3,21 +3,34 @@ import { Program, Semester, StartYear } from "@/common/dist/studieinfo";
 import { getStudieInfo } from "@/lib/studieinfo";
 import {
   Autocomplete,
+  Box,
+  Button,
+  Card,
+  CardContent,
   Container,
   List,
   ListSubheader,
+  Popper,
   TextField,
 } from "@mui/material";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridRowSelectionModel,
+} from "@mui/x-data-grid";
+import InfoIcon from "@mui/icons-material/Info";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import Link from "next/link";
 import React from "react";
+import { CourseSelectionSummary } from "@/components/master/CourseSelectionSummary";
 
 const columns: GridColDef[] = [
-  { field: "courseCode", headerName: "Course", width: 100 },
+  { field: "courseCode", headerName: "Course", flex: 1 },
   {
     field: "courseName",
     headerName: "Name",
-    width: 300,
+    flex: 5,
     renderCell: (params: GridRenderCellParams<any, Date>) => (
       <Link
         target="_blank"
@@ -28,10 +41,43 @@ const columns: GridColDef[] = [
       </Link>
     ),
   },
-  { field: "credits", headerName: "Credits", width: 130 },
-  { field: "level", headerName: "Level", width: 90 },
-  { field: "timetableModule", headerName: "Block", width: 90 },
-  { field: "ECV", headerName: "ECV", width: 90 },
+  { field: "credits", headerName: "Credits", flex: 1 },
+  { field: "level", headerName: "Level", flex: 1 },
+  {
+    field: "timetableModule",
+    headerName: "Block",
+    flex: 1,
+    description: "Timetable Module/Block",
+  },
+  {
+    field: "ECV",
+    headerName: "ECV",
+    flex: 1,
+    description: "Elective/Compulsory/Voluntary",
+  },
+  {
+    field: "exam",
+    headerName: "Exam",
+    flex: 1,
+    renderCell: (params: GridRenderCellParams<any, Date>) => (
+      <Link
+        style={{ display: "flex", alignItems: "center", height: "100%" }}
+        target="_blank"
+        referrerPolicy="no-referrer"
+        href={`https://ysektionen.se/student/tentastatistik/${params.row.courseCode}`}
+      >
+        <AssessmentIcon />
+      </Link>
+    ),
+  },
+  {
+    field: "info",
+    headerName: "Info",
+    flex: 1,
+    renderCell: (params: GridRenderCellParams<any, Date>) => (
+      <InfoPopper info={params.row.info} />
+    ),
+  },
 ];
 
 export default function Master() {
@@ -45,6 +91,8 @@ export default function Master() {
   const allSemesters = selectedStartYear?.semesters || [];
   const allSpecializations = selectedSemester?.specializations || [];
 
+  const [rowSelectionModel, setRowSelectionModel] =
+    React.useState<GridRowSelectionModel>([]);
   return (
     <Container
       sx={{
@@ -87,7 +135,21 @@ export default function Master() {
         onChange={(_, option) => setSelectedSemester(option!)}
         getOptionLabel={(opt) => opt.name}
       />
-
+      <Card sx={{ width: "100%", position: "sticky", top: 0, zIndex: 10 }}>
+        <CardContent sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <CourseSelectionSummary
+            courseCodes={rowSelectionModel as string[]}
+            semester={selectedSemester!}
+          />
+        </CardContent>
+      </Card>
+      <Button
+        variant="contained"
+        color="error"
+        onClick={() => setRowSelectionModel([])}
+      >
+        Clear Selections
+      </Button>
       <List
         sx={{
           width: "100%",
@@ -109,11 +171,32 @@ export default function Master() {
                     <ListSubheader>{`${period.name}`}</ListSubheader>
                     <DataGrid
                       getRowId={(row) => row.courseCode}
-                      rows={
-                        allSpecializations[specIndex].periods[perIndex].courses
-                      }
+                      rows={allSpecializations[specIndex].periods[
+                        perIndex
+                      ].courses.map((course) => {
+                        return { ...course, period: period };
+                      })}
                       columns={columns}
                       checkboxSelection
+                      hideFooterPagination
+                      disableRowSelectionOnClick
+                      onCellClick={(params) => {
+                        if (params.field === "__check__") {
+                          if (params.formattedValue === "yes") {
+                            // Remove the course
+                            setRowSelectionModel(
+                              rowSelectionModel.filter((id) => id !== params.id)
+                            );
+                          } else {
+                            // Add the course
+                            setRowSelectionModel([
+                              ...rowSelectionModel,
+                              params.id,
+                            ]);
+                          }
+                        }
+                      }}
+                      rowSelectionModel={rowSelectionModel}
                     />
                   </ul>
                 </li>
@@ -125,3 +208,21 @@ export default function Master() {
     </Container>
   );
 }
+
+const InfoPopper = ({ info }: { info: string }) => {
+  const [open, setOpen] = React.useState<boolean>(false);
+  const infoRef = React.useRef(null);
+
+  return info ? (
+    <>
+      <Button ref={infoRef} onClick={() => setOpen(!open)}>
+        <InfoIcon />
+      </Button>
+      <Popper open={open} anchorEl={infoRef.current} placement="right">
+        <Box sx={{ border: 1, p: 1, bgcolor: "background.paper" }}>{info}</Box>
+      </Popper>
+    </>
+  ) : (
+    <></>
+  );
+};
