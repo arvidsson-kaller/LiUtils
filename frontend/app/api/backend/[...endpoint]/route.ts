@@ -5,21 +5,52 @@ const proxy = async (
   request: NextRequest,
   { params }: { params: { endpoint: string[] } },
 ) => {
-  const user = await getUserSession();
   if (!process.env.BACKEND_URL) {
     return new NextResponse("Incorrectly configured backend options", {
       status: 500,
     });
   }
-  const backendRequest = new NextRequest(
-    `${process.env.BACKEND_URL!}/${params.endpoint.join("/")}`,
-    request,
-  );
-  if (user?.backendJwt) {
-    // If user is logged in, add authentication in request.
-    backendRequest.headers.append("authorization", `Bearer ${user.backendJwt}`);
+
+  const url = `${process.env.BACKEND_URL!}/${params.endpoint.join("/")}`;
+  const backendRequest: RequestInit = {
+    headers: {},
+    method: request.method,
+  };
+
+  // Try to append json body
+  try {
+    const body = await request.json();
+    backendRequest.body = JSON.stringify(body);
+    backendRequest.headers = {
+      "Content-Type": "application/json",
+      ...backendRequest.headers,
+    };
+  } catch (error) {}
+
+  // Try to append user backend auth
+  try {
+    const user = await getUserSession();
+    const userBackendJwt = user?.backendJwt;
+    backendRequest.headers = {
+      authorization: `Bearer ${userBackendJwt}`,
+      ...backendRequest.headers,
+    };
+  } catch (error) {}
+
+  // send request to backend
+  const resp = await fetch(url, backendRequest);
+  const status = resp.status;
+  try {
+    // Try to extract json
+    const jsonResp = await resp.json();
+    return Response.json(jsonResp, {
+      status,
+    });
+  } catch (error) {
+    return new NextResponse(null, {
+      status,
+    });
   }
-  return await fetch(backendRequest);
 };
 
 export const GET = proxy;

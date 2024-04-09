@@ -33,19 +33,15 @@ const authOptions: NextAuthOptions = {
       return session;
     },
     async jwt({ token, user, account, profile }) {
-      try {
-        const respone = await BackendService.oauth2SignIn({
-          requestBody: {
-            name: user.name!,
-            email: user.email!,
-            authProvider: account?.provider!,
-            authUserId: account?.providerAccountId!,
-          },
-        });
-        token.backendJwt = respone.jwt;
-      } catch (error) {
-        console.error("Backend failed");
-      }
+      const respone = await BackendService.oauth2SignIn({
+        requestBody: {
+          name: user.name!,
+          email: user.email!,
+          authProvider: account?.provider!,
+          authUserId: account?.providerAccountId!,
+        },
+      });
+      token.backendJwt = respone.jwt;
       return token;
     },
   },
