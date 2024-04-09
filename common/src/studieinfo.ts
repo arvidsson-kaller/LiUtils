@@ -130,7 +130,7 @@ export const getAllMasterData = async () => {
                 const dataPoints = [...tr.querySelectorAll("td")].map(
                   (td) => td?.textContent?.trim() || "",
                 );
-  
+
                 if (
                   [...tr.nextElementSibling?.classList]?.includes("details-row")
                 ) {
