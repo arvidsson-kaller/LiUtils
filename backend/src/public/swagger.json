@@ -250,6 +250,22 @@
 					}
 				}
 			}
+		},
+		"/studieinfo": {
+			"patch": {
+				"operationId": "PopulateData",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [
+					{
+						"api_key": []
+					}
+				],
+				"parameters": []
+			}
 		}
 	},
 	"servers": [
