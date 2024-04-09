@@ -20,6 +20,7 @@ export default function NavBar() {
       </Link>
       <NavBarLink link="/rooms" label="Rooms" />
       <NavBarLink link="/master" label="Master Planning" />
+      <NavBarLink link="/users" label="Users" />
     </Box>
   );
 }
