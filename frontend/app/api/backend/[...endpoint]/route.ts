@@ -43,7 +43,6 @@ const proxy = async (
   try {
     // Try to extract json
     const jsonResp = await resp.json();
-    console.log({ jsonResp });
     return Response.json(jsonResp, {
       status,
     });
