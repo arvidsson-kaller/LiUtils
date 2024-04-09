@@ -54,7 +54,7 @@ export const CourseSelectionSummary = ({
               .map(
                 (course) =>
                   credits[course.courseCode].value /
-                  periodSpans[course.courseCode]
+                  periodSpans[course.courseCode],
               )
               .reduce((a, b) => a + b, 0)}
           </p>
@@ -65,7 +65,7 @@ export const CourseSelectionSummary = ({
         <p>
           {Object.values(credits).reduce(
             (a, b) => a + (b.isAdvanced ? b.value : 0),
-            0
+            0,
           )}
         </p>
       </Box>
@@ -73,7 +73,12 @@ export const CourseSelectionSummary = ({
       {Object.entries(periods).map(([period, courses]) => (
         <Box key={period}>
           <h5>{period}</h5>
-          <p>{courses.map((course) => course.timetableModule).sort().join(", ")}</p>
+          <p>
+            {courses
+              .map((course) => course.timetableModule)
+              .sort()
+              .join(", ")}
+          </p>
         </Box>
       ))}
     </>

@@ -21,7 +21,7 @@ import {
 } from "@mui/x-data-grid";
 import InfoIcon from "@mui/icons-material/Info";
 import AssessmentIcon from "@mui/icons-material/Assessment";
-import HistoryEduIcon from '@mui/icons-material/HistoryEdu';
+import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import Link from "next/link";
 import React from "react";
 import { CourseSelectionSummary } from "@/components/master/CourseSelectionSummary";
@@ -201,7 +201,9 @@ export default function Master() {
                           if (params.formattedValue === "yes") {
                             // Remove the course
                             setRowSelectionModel(
-                              rowSelectionModel.filter((id) => id !== params.id)
+                              rowSelectionModel.filter(
+                                (id) => id !== params.id,
+                              ),
                             );
                           } else {
                             // Add the course
