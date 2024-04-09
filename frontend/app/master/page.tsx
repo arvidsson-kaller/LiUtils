@@ -101,7 +101,6 @@ export default function Master() {
   const [selectedProgram, setSelectedProgram] = React.useState<Program>();
   const [selectedStartYear, setSelectedStartYear] = React.useState<StartYear>();
   const [selectedSemester, setSelectedSemester] = React.useState<Semester>();
-  //   const [selectedSpecialization, setSelectedSpecialization] = React.useState<Specialization>();
   const allPrograms = studieInfo.programs;
   const allStartYears = selectedProgram?.startYears || [];
   const allSemesters = selectedStartYear?.semesters || [];

@@ -1,6 +1,6 @@
 import { Course, Name, Semester } from "@/common/dist/studieinfo";
 import { getNumericCourseCredit } from "@/lib/utils";
-import { Box, Card, CardContent } from "@mui/material";
+import { Box } from "@mui/material";
 
 export const CourseSelectionSummary = ({
   courseCodes,

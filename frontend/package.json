@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "prettier": "npx prettier ./ --write --end-of-line auto",
-    "openapi-ts": "openapi-ts"
+    "openapi-ts": "openapi-ts",
+    "update-common": "rm -rf ./common && mkdir -p ./common && cp -r ../common/dist ./common && cp -r ../common/*.json ./common"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
