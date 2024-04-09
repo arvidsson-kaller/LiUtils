@@ -12,7 +12,7 @@ async function getAll(): Promise<MasterProgram[]> {
 }
 
 async function create(
-  program: MasterProgramInitializer
+  program: MasterProgramInitializer,
 ): Promise<MasterProgram> {
   try {
     const sql = 'INSERT INTO "MasterProgram" ("name") VALUES ($1) RETURNING *';
@@ -27,7 +27,7 @@ async function create(
 }
 
 async function findById(
-  masterProgramId: MasterProgramId
+  masterProgramId: MasterProgramId,
 ): Promise<MasterProgram> {
   const res = await db.query('SELECT * from "MasterProgram" where id = ($1)', [
     masterProgramId,
@@ -42,16 +42,16 @@ export interface StartYear {
   id: StartYearId;
 
   name: string;
-  
+
   createdAt: Date;
 }
 
 async function getStartYearsById(
-  masterProgramId: MasterProgramId
+  masterProgramId: MasterProgramId,
 ): Promise<StartYear[]> {
   const res = await db.query(
     'SELECT * from "StartYear" where masterProgramId = ($1)',
-    [masterProgramId]
+    [masterProgramId],
   );
   if (res.rows.length > 0) {
     return res.rows as StartYear[];
