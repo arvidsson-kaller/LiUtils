@@ -14,32 +14,28 @@ const proxy = async (
   const url = `${process.env.BACKEND_URL!}/${params.endpoint.join("/")}`;
   const backendRequest: RequestInit = {
     headers: {},
-    method: request.method
-  }
+    method: request.method,
+  };
 
   // Try to append json body
   try {
     const body = await request.json();
     backendRequest.body = JSON.stringify(body);
     backendRequest.headers = {
-      'Content-Type': 'application/json',
-      ...backendRequest.headers
+      "Content-Type": "application/json",
+      ...backendRequest.headers,
     };
-  } catch (error) {
-
-  }
+  } catch (error) {}
 
   // Try to append user backend auth
   try {
     const user = await getUserSession();
     const userBackendJwt = user?.backendJwt;
     backendRequest.headers = {
-      "authorization": `Bearer ${userBackendJwt}`,
-      ...backendRequest.headers
+      authorization: `Bearer ${userBackendJwt}`,
+      ...backendRequest.headers,
     };
-  } catch (error) {
-
-  }
+  } catch (error) {}
 
   // send request to backend
   const resp = await fetch(url, backendRequest);
@@ -53,11 +49,10 @@ const proxy = async (
     });
   } catch (error) {
     return new NextResponse(null, {
-      status
+      status,
     });
   }
 };
-
 
 export const GET = proxy;
 export const POST = proxy;
