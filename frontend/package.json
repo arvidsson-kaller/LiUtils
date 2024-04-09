@@ -8,13 +8,17 @@
     "start": "next start",
     "lint": "next lint",
     "prettier": "npx prettier ./ --write --end-of-line auto",
-    "openapi-ts": "openapi-ts"
+    "openapi-ts": "openapi-ts",
+    "update-common": "rm -rf ./common && mkdir -p ./common && cp -r ../common/dist ./common && cp -r ../common/*.json ./common"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.0",
     "@hey-api/openapi-ts": "^0.34.5",
+    "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.12",
+    "@mui/x-data-grid": "^7.1.0",
+    "common": "file:./common",
     "next": "14.1.2",
     "next-auth": "^4.24.7",
     "react": "^18",
