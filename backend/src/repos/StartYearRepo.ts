@@ -4,13 +4,17 @@ import StartYear, {
   StartYearInitializer,
 } from "@src/models/StartYear";
 import logger from "jet-logger";
+import { Pool, PoolClient } from "pg";
 
-async function create(year: StartYearInitializer): Promise<StartYear> {
+async function create(
+  year: StartYearInitializer,
+  pool: Pool | PoolClient = db,
+): Promise<StartYear> {
   try {
     const sql =
       'INSERT INTO "StartYear" ("name", "data", "masterProgramId") VALUES ($1, $2, $3) RETURNING *';
     const data: any[] = [year.name, year.data, year.masterProgramId];
-    const result = await db.query(sql, data);
+    const result = await pool.query(sql, data);
     const createdStartYear: StartYear = result.rows[0] as StartYear;
     return createdStartYear;
   } catch (error) {
@@ -19,8 +23,11 @@ async function create(year: StartYearInitializer): Promise<StartYear> {
   }
 }
 
-async function findById(startYearId: StartYearId): Promise<StartYear> {
-  const res = await db.query('SELECT * from "StartYear" where id = ($1)', [
+async function findById(
+  startYearId: StartYearId,
+  pool: Pool | PoolClient = db,
+): Promise<StartYear> {
+  const res = await pool.query('SELECT * from "StartYear" where id = ($1)', [
     startYearId,
   ]);
   if (res.rows.length == 1) {
