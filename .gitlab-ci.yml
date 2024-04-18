@@ -46,7 +46,7 @@ common-build:
   image: node:20.11-alpine3.18
   artifacts:
     paths:
-      - dist/
+      - common/dist/
   script:
     - cd common
     - npm ci
