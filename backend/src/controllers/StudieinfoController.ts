@@ -40,7 +40,9 @@ export class StudieinfoController extends Controller {
     };
   }
   @Get("/courses/{startYearId}")
-  public async getCourses(@Path() startYearId: number): Promise<CoursesResponseDTO> {
+  public async getCourses(
+    @Path() startYearId: number,
+  ): Promise<CoursesResponseDTO> {
     const startYear = await StartYearRepo.findById(startYearId as StartYearId);
     return {
       data: startYear,
