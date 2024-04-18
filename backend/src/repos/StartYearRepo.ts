@@ -13,6 +13,7 @@ async function create(
   try {
     const sql =
       'INSERT INTO "StartYear" ("name", "data", "masterProgramId") VALUES ($1, $2, $3) RETURNING *';
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any[] = [year.name, year.data, year.masterProgramId];
     const result = await pool.query(sql, data);
     const createdStartYear: StartYear = result.rows[0] as StartYear;

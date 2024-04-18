@@ -46,10 +46,9 @@ async function deleteById(
   masterProgramId: MasterProgramId,
   pool: Pool | PoolClient = db,
 ): Promise<void> {
-  await pool.query(
-    'DELETE from "MasterProgram" where id = ($1)',
-    [masterProgramId],
-  );
+  await pool.query('DELETE from "MasterProgram" where id = ($1)', [
+    masterProgramId,
+  ]);
 }
 
 export interface StartYear {

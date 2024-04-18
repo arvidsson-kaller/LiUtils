@@ -11,7 +11,7 @@ export const populateStudieinfoData = async () => {
         {
           name: program.name,
         },
-        client
+        client,
       );
       for (const startYear of program.startYears) {
         await StartYearRepo.create(
@@ -20,7 +20,7 @@ export const populateStudieinfoData = async () => {
             data: JSON.stringify(startYear),
             masterProgramId: createdMasterProgram.id,
           },
-          client
+          client,
         );
       }
     }
