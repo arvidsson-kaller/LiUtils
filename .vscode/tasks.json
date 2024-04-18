@@ -1,0 +1,76 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "npm",
+            "script": "prettier",
+            "path": "frontend",
+            "problemMatcher": [],
+            "label": "prettier - frontend",
+        },
+        {
+            "type": "npm",
+            "script": "prettier",
+            "path": "backend",
+            "problemMatcher": [],
+            "label": "prettier - backend",
+        },
+        {
+            "type": "npm",
+            "script": "prettier",
+            "path": "common",
+            "problemMatcher": [],
+            "label": "prettier - common",
+        },
+        {
+            "type": "npm",
+            "script": "prettier",
+            "path": "common",
+            "problemMatcher": [],
+            "label": "prettier - common",
+        },
+        {
+            "label": "prettier",
+            "problemMatcher": [],
+            "dependsOn": [
+                "prettier - frontend",
+                "prettier - backend",
+                "prettier - common",
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "types",
+            "path": "database",
+            "problemMatcher": [],
+            "label": "kanel",
+        },
+        {
+            "type": "npm",
+            "script": "db-types",
+            "path": "backend",
+            "problemMatcher": [],
+            "label": "update db types",
+            "dependsOn": [
+                "prettier - frontend",
+                "prettier - backend",
+                "copy db types - backend",
+            ]
+        },
+        {
+            "type": "npm",
+            "script": "dev",
+            "path": "backend",
+            "problemMatcher": [],
+            "label": "dev - backend",
+        },
+        {
+            "type": "npm",
+            "script": "dev",
+            "path": "frontend",
+            "problemMatcher": [],
+            "label": "dev - frontend",
+        }
+    ],
+    "inputs": []
+}

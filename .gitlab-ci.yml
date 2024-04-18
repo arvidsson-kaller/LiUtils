@@ -11,10 +11,6 @@ frontend-linter:
     - npm run openapi-ts
     - npm run lint
     - npx prettier ./ --check --end-of-line auto
-  only:
-    changes:
-      - frontend/**/*.*
-      - .gitlab-ci.yml
 
 backend-linter:
   stage: lint
@@ -25,10 +21,6 @@ backend-linter:
     - npm run db-types
     - npm run lint
     - npx prettier ./ --check --end-of-line auto
-  only:
-    changes:
-      - backend/**/*.*
-      - .gitlab-ci.yml
 
 backup-backend-linter:
   stage: lint
@@ -37,10 +29,6 @@ backup-backend-linter:
     - cd backup-backend
     - npm ci
     - npx prettier ./ --check --end-of-line auto
-  only:
-    changes:
-      - backup-backend/**/*.*
-      - .gitlab-ci.yml
 
 common-linter:
   stage: lint
@@ -49,10 +37,6 @@ common-linter:
     - cd common
     - npm ci
     - npx prettier ./ --check --end-of-line auto
-  only:
-    changes:
-      - common/**/*.*
-      - .gitlab-ci.yml
 
 common-build:
   stage: test
@@ -61,7 +45,3 @@ common-build:
     - cd common
     - npm ci
     - npm run test
-  only:
-    changes:
-      - common/**/*.*
-      - .gitlab-ci.yml
