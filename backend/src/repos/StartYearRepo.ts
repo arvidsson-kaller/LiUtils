@@ -3,6 +3,7 @@ import StartYear, {
   StartYearId,
   StartYearInitializer,
 } from "@src/models/StartYear";
+import { StartYear as StartYearData } from "common/dist/studieinfo";
 import logger from "jet-logger";
 import { Pool, PoolClient } from "pg";
 
@@ -27,12 +28,13 @@ async function create(
 async function findById(
   startYearId: StartYearId,
   pool: Pool | PoolClient = db,
-): Promise<StartYear> {
-  const res = await pool.query('SELECT * from "StartYear" where id = ($1)', [
+): Promise<StartYearData> {
+  const res = await pool.query('SELECT data from "StartYear" where id = ($1)', [
     startYearId,
   ]);
   if (res.rows.length == 1) {
-    return res.rows[0] as StartYear;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    return res.rows[0].data as StartYearData;
   }
   throw new Error("Not found");
 }

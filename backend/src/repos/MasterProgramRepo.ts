@@ -51,7 +51,7 @@ async function deleteById(
   ]);
 }
 
-export interface StartYear {
+export interface ReducedStartYear {
   id: StartYearId;
 
   name: string;
@@ -62,13 +62,13 @@ export interface StartYear {
 async function getStartYearsById(
   masterProgramId: MasterProgramId,
   pool: Pool | PoolClient = db,
-): Promise<StartYear[]> {
+): Promise<ReducedStartYear[]> {
   const res = await pool.query(
-    'SELECT * from "StartYear" where masterProgramId = ($1)',
+    'SELECT "id", "name", "createdAt" from "StartYear" where "masterProgramId" = ($1)',
     [masterProgramId],
   );
   if (res.rows.length > 0) {
-    return res.rows as StartYear[];
+    return res.rows as ReducedStartYear[];
   }
   throw new Error("Not found");
 }
