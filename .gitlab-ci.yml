@@ -50,5 +50,6 @@ common-build:
   script:
     - cd common
     - npm ci
+    - npm install -g typescript
     - npm run build
     - npm run test
