@@ -3,31 +3,29 @@ import { MasterPlan } from "common/dist/masterPlan";
 
 @Route("plan")
 export class MasterPlanController extends Controller {
-    @Get()
-    public getMasterPlan(): MasterPlanResponseDTO {
-        return {
-            plan: {
-                note: "",
-                programName: "",
-                semesters: [],
-                specializion: "",
-                startYear: ""
-            }
-        };
-    }
+  @Get()
+  public getMasterPlan(): MasterPlanResponseDTO {
+    return {
+      plan: {
+        note: "",
+        programName: "",
+        semesters: [],
+        specializion: "",
+        startYear: "",
+      },
+    };
+  }
 
-    @Post()
-    public createMasterPlan(
-        @Body() request: CreateMasterPlanRequestDTO, // eslint-disable-line
-    ) {
-
-    }
+  @Post()
+  public createMasterPlan(
+    @Body() request: CreateMasterPlanRequestDTO, // eslint-disable-line
+  ) {}
 }
 
 interface MasterPlanResponseDTO {
-    plan: MasterPlan;
+  plan: MasterPlan;
 }
 
 interface CreateMasterPlanRequestDTO {
-    plan: MasterPlan
+  plan: MasterPlan;
 }
