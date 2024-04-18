@@ -40,7 +40,7 @@ export class StudieinfoController extends Controller {
     };
   }
   @Get("/courses/{startYearId}")
-  public async getCourses(@Path() startYearId: number): Promise<CoursesDTO> {
+  public async getCourses(@Path() startYearId: number): Promise<CoursesResponseDTO> {
     const startYear = await StartYearRepo.findById(startYearId as StartYearId);
     return {
       data: startYear,
@@ -48,7 +48,7 @@ export class StudieinfoController extends Controller {
   }
 }
 
-interface CoursesDTO {
+interface CoursesResponseDTO {
   data: StartYear;
 }
 
