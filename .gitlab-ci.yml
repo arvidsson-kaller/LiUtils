@@ -15,6 +15,8 @@ frontend-linter:
 backend-linter:
   stage: lint
   image: node:20.11-alpine3.18
+  dependencies:
+    - common-build
   script:
     - cd backend
     - npm ci
@@ -42,7 +44,11 @@ common-linter:
 common-build:
   stage: test
   image: node:20.11-alpine3.18
+  artifacts:
+    paths:
+      - "dist"
   script:
     - cd common
     - npm ci
+    - npm run build
     - npm run test
