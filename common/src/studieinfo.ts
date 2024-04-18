@@ -27,7 +27,7 @@ export interface Specialization {
 }
 
 export interface Period {
-  name: Name;
+  name: PeriodName;
   courses: Course[];
 }
 
@@ -54,7 +54,7 @@ export enum Level {
   G2X = "G2X",
 }
 
-export enum Name {
+export enum PeriodName {
   Period0 = "Period 0",
   Period1 = "Period 1",
   Period2 = "Period 2",
