@@ -19,6 +19,7 @@ backend-linter:
     - cd backend
     - npm ci
     - npm run db-types
+    - npm run update-common
     - npm run lint
     - npx prettier ./ --check --end-of-line auto
 
