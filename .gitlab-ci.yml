@@ -1,6 +1,6 @@
-stages: 
+stages:
+  - common
   - lint
-  - test
 
 frontend-linter:
   stage: lint
@@ -15,10 +15,13 @@ frontend-linter:
 backend-linter:
   stage: lint
   image: node:20.11-alpine3.18
+  dependencies:
+    - common-build
   script:
     - cd backend
     - npm ci
     - npm run db-types
+    - npm run update-common
     - npm run lint
     - npx prettier ./ --check --end-of-line auto
 
@@ -39,9 +42,14 @@ common-linter:
     - npx prettier ./ --check --end-of-line auto
 
 common-build:
-  stage: test
+  stage: common
   image: node:20.11-alpine3.18
+  artifacts:
+    paths:
+      - common/dist/
   script:
     - cd common
     - npm ci
+    - npm install -g typescript
+    - npm run build
     - npm run test

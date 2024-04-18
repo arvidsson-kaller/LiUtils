@@ -126,6 +126,223 @@
 				],
 				"type": "object",
 				"additionalProperties": false
+			},
+			"MasterProgramDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"ProgramsResponseDTO": {
+				"properties": {
+					"programs": {
+						"items": {
+							"$ref": "#/components/schemas/MasterProgramDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"programs"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StartYearDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"name": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"id",
+					"name"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StartYearResponseDTO": {
+				"properties": {
+					"programName": {
+						"type": "string"
+					},
+					"startYears": {
+						"items": {
+							"$ref": "#/components/schemas/StartYearDTO"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"programName",
+					"startYears"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Name": {
+				"enum": [
+					"Period 0",
+					"Period 1",
+					"Period 2"
+				],
+				"type": "string"
+			},
+			"Level": {
+				"enum": [
+					"A1X",
+					"G1X",
+					"G2X"
+				],
+				"type": "string"
+			},
+			"Ecv": {
+				"enum": [
+					"C",
+					"C/E",
+					"E",
+					"V"
+				],
+				"type": "string"
+			},
+			"Course": {
+				"properties": {
+					"courseCode": {
+						"type": "string"
+					},
+					"courseName": {
+						"type": "string"
+					},
+					"credits": {
+						"type": "string"
+					},
+					"level": {
+						"$ref": "#/components/schemas/Level"
+					},
+					"timetableModule": {
+						"type": "string"
+					},
+					"ECV": {
+						"$ref": "#/components/schemas/Ecv"
+					},
+					"info": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"courseCode",
+					"courseName",
+					"credits",
+					"level",
+					"timetableModule",
+					"ECV",
+					"info"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Period": {
+				"properties": {
+					"name": {
+						"$ref": "#/components/schemas/Name"
+					},
+					"courses": {
+						"items": {
+							"$ref": "#/components/schemas/Course"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"courses"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Specialization": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"periods": {
+						"items": {
+							"$ref": "#/components/schemas/Period"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"periods"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"Semester": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"specializations": {
+						"items": {
+							"$ref": "#/components/schemas/Specialization"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"specializations"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"StartYear": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"semesters": {
+						"items": {
+							"$ref": "#/components/schemas/Semester"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"semesters"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CoursesDTO": {
+				"properties": {
+					"data": {
+						"$ref": "#/components/schemas/StartYear"
+					}
+				},
+				"required": [
+					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
 			}
 		},
 		"securitySchemes": {
@@ -249,6 +466,99 @@
 						}
 					}
 				}
+			}
+		},
+		"/studieinfo": {
+			"patch": {
+				"operationId": "PopulateData",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [
+					{
+						"api_key": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/studieinfo/programs": {
+			"get": {
+				"operationId": "GetAllPrograms",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProgramsResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			}
+		},
+		"/studieinfo/startyear/{programId}": {
+			"get": {
+				"operationId": "GetStartYears",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StartYearResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "programId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/studieinfo/courses/{startYearId}": {
+			"get": {
+				"operationId": "GetCourses",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CoursesDTO"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "startYearId",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		}
 	},

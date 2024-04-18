@@ -9,5 +9,6 @@ module.exports = {
     customTypeMap: {
         "pg_catalog.tsvector": "string",
         "pg_catalog.bpchar": "string",
+        "pg_catalog.jsonb": "any",
     },
 };

@@ -6,3 +6,6 @@ dist/
 src/routes.ts
 env/*.env
 src/models
+
+# common
+/common
