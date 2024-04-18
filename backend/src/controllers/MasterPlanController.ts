@@ -13,12 +13,12 @@ export class MasterPlanController extends Controller {
                 specializion: "",
                 startYear: ""
             }
-        }
+        };
     }
 
     @Post()
     public createMasterPlan(
-        @Body() request: CreateMasterPlanRequestDTO,
+        @Body() request: CreateMasterPlanRequestDTO, // eslint-disable-line
     ) {
 
     }
