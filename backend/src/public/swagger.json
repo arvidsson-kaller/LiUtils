@@ -195,7 +195,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"Name": {
+			"PeriodName": {
 				"enum": [
 					"Period 0",
 					"Period 1",
@@ -259,7 +259,7 @@
 			"Period": {
 				"properties": {
 					"name": {
-						"$ref": "#/components/schemas/Name"
+						"$ref": "#/components/schemas/PeriodName"
 					},
 					"courses": {
 						"items": {
@@ -332,7 +332,7 @@
 				"type": "object",
 				"additionalProperties": false
 			},
-			"CoursesDTO": {
+			"CoursesResponseDTO": {
 				"properties": {
 					"data": {
 						"$ref": "#/components/schemas/StartYear"
@@ -340,6 +340,99 @@
 				},
 				"required": [
 					"data"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PeriodPlan": {
+				"properties": {
+					"name": {
+						"$ref": "#/components/schemas/PeriodName"
+					},
+					"courses": {
+						"items": {
+							"$ref": "#/components/schemas/Course"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"courses"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"SemesterPlan": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"periods": {
+						"items": {
+							"$ref": "#/components/schemas/PeriodPlan"
+						},
+						"type": "array"
+					}
+				},
+				"required": [
+					"name",
+					"periods"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MasterPlan": {
+				"properties": {
+					"programName": {
+						"type": "string"
+					},
+					"startYear": {
+						"type": "string"
+					},
+					"semesters": {
+						"items": {
+							"$ref": "#/components/schemas/SemesterPlan"
+						},
+						"type": "array"
+					},
+					"specializion": {
+						"type": "string"
+					},
+					"note": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"programName",
+					"startYear",
+					"semesters",
+					"specializion",
+					"note"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"MasterPlanResponseDTO": {
+				"properties": {
+					"plan": {
+						"$ref": "#/components/schemas/MasterPlan"
+					}
+				},
+				"required": [
+					"plan"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateMasterPlanRequestDTO": {
+				"properties": {
+					"plan": {
+						"$ref": "#/components/schemas/MasterPlan"
+					}
+				},
+				"required": [
+					"plan"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -541,7 +634,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/CoursesDTO"
+									"$ref": "#/components/schemas/CoursesResponseDTO"
 								}
 							}
 						}
@@ -559,6 +652,45 @@
 						}
 					}
 				]
+			}
+		},
+		"/plan": {
+			"get": {
+				"operationId": "GetMasterPlan",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MasterPlanResponseDTO"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": []
+			},
+			"post": {
+				"operationId": "CreateMasterPlan",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateMasterPlanRequestDTO"
+							}
+						}
+					}
+				}
 			}
 		}
 	},
