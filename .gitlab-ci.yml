@@ -1,6 +1,6 @@
-stages: 
+stages:
+  - common
   - lint
-  - test
 
 frontend-linter:
   stage: lint
@@ -42,7 +42,7 @@ common-linter:
     - npx prettier ./ --check --end-of-line auto
 
 common-build:
-  stage: test
+  stage: common
   image: node:20.11-alpine3.18
   artifacts:
     paths:
