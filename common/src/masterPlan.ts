@@ -15,7 +15,7 @@ export interface SemesterPlan {
 
 export interface PeriodPlan {
   name: PeriodName;
-  courses: Course[];
+  courses: PlannedCourse[];
 }
 
 export interface PlannedCourse extends Course {
