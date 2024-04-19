@@ -34,7 +34,7 @@ export default function MasterPlan() {
   const [allStartYears, setAllStartYears] =
     React.useState<StartYearResponseDTO | null>(null);
   const [allCourses, setAllCourses] = React.useState<CoursesResponseDTO | null>(
-    null
+    null,
   );
 
   const [selectedProgram, setSelectedProgram] =
@@ -119,9 +119,7 @@ function Semesters({
         {addedSemesters.map((semester, i) => (
           <StyledListItem key={`list-semester-${i}`}>
             <Accordion sx={{ width: "100%" }}>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-              >
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 {semester.name}
               </AccordionSummary>
               <AccordionDetails>
@@ -173,8 +171,8 @@ function Semesters({
                   setAddedSemesters(
                     [...addedSemesters, semester].sort(
                       (a, b) =>
-                        allSemesters.indexOf(a) - allSemesters.indexOf(b)
-                    )
+                        allSemesters.indexOf(a) - allSemesters.indexOf(b),
+                    ),
                   )
                 }
                 key={`semester-add-${i}`}
@@ -215,7 +213,7 @@ function ProgramAndStartYearSelection({
           disablePortal
           id="program-selection"
           options={allPrograms.programs.sort((a, b) =>
-            a.name.localeCompare(b.name)
+            a.name.localeCompare(b.name),
           )}
           sx={{ width: "100%" }}
           renderInput={(params) => <TextField {...params} label="Program" />}
@@ -231,7 +229,7 @@ function ProgramAndStartYearSelection({
             disablePortal
             id="program-selection"
             options={allStartYears.startYears.sort((a, b) =>
-              b.name.localeCompare(a.name)
+              b.name.localeCompare(a.name),
             )}
             sx={{ width: "100%" }}
             renderInput={(params) => (
