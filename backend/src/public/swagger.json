@@ -344,6 +344,74 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"PlannedCourseSpecialization": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"ECV": {
+						"$ref": "#/components/schemas/Ecv"
+					}
+				},
+				"required": [
+					"name",
+					"ECV"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"PlannedCourse": {
+				"properties": {
+					"courseCode": {
+						"type": "string"
+					},
+					"courseName": {
+						"type": "string"
+					},
+					"credits": {
+						"type": "string"
+					},
+					"level": {
+						"$ref": "#/components/schemas/Level"
+					},
+					"timetableModule": {
+						"type": "string"
+					},
+					"ECV": {
+						"$ref": "#/components/schemas/Ecv"
+					},
+					"info": {
+						"type": "string"
+					},
+					"semester": {
+						"type": "string",
+						"nullable": true
+					},
+					"specializations": {
+						"items": {
+							"$ref": "#/components/schemas/PlannedCourseSpecialization"
+						},
+						"type": "array"
+					},
+					"note": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"courseCode",
+					"courseName",
+					"credits",
+					"level",
+					"timetableModule",
+					"ECV",
+					"info",
+					"semester",
+					"specializations",
+					"note"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"PeriodPlan": {
 				"properties": {
 					"name": {
@@ -351,7 +419,7 @@
 					},
 					"courses": {
 						"items": {
-							"$ref": "#/components/schemas/Course"
+							"$ref": "#/components/schemas/PlannedCourse"
 						},
 						"type": "array"
 					}
