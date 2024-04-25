@@ -2,10 +2,13 @@
 import { ProxyBackendService } from "@/lib/backend";
 import {
   CoursesResponseDTO,
+  MasterPlan,
   MasterProgramDTO,
+  PeriodName,
+  PlannedCourseSpecialization,
   ProgramsResponseDTO,
   Semester,
-  Specialization,
+  SemesterPlan,
   StartYearDTO,
   StartYearResponseDTO,
 } from "@/lib/backend-client";
@@ -22,111 +25,17 @@ import {
   ListItem,
   ListSubheader,
   Modal,
-  Popper,
-  SxProps,
   TextField,
-  Theme,
   Typography,
   styled,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
-import InfoIcon from "@mui/icons-material/Info";
+
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
-import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
-import Link from "next/link";
+import { CourseSelectionGrid } from "@/components/master/CourseSelectionGrid";
 
-const columns: GridColDef[] = [
-  { field: "courseCode", headerName: "Course", flex: 1 },
-  {
-    field: "courseName",
-    headerName: "Name",
-    flex: 5,
-    renderCell: (params: GridRenderCellParams<any, Date>) => (
-      <Link
-        target="_blank"
-        referrerPolicy="no-referrer"
-        href={`https://studieinfo.liu.se/kurs/${params.row.courseCode}`}
-      >
-        {params.row.courseName}
-      </Link>
-    ),
-  },
-  { field: "credits", headerName: "Credits", flex: 1 },
-  { field: "level", headerName: "Level", flex: 1 },
-  {
-    field: "timetableModule",
-    headerName: "Block",
-    flex: 1,
-    description: "Timetable Module/Block",
-  },
-  {
-    field: "ECV",
-    headerName: "ECV",
-    flex: 1,
-    description: "Elective/Compulsory/Voluntary",
-  },
-  {
-    field: "exam",
-    headerName: "Exam",
-    flex: 1,
-    renderCell: (params: GridRenderCellParams<any, Date>) => (
-      <Link
-        style={{ display: "flex", alignItems: "center", height: "100%" }}
-        target="_blank"
-        referrerPolicy="no-referrer"
-        href={`https://ysektionen.se/student/tentastatistik/${params.row.courseCode}`}
-      >
-        <AssessmentIcon />
-      </Link>
-    ),
-  },
-  {
-    field: "evaliuate",
-    headerName: "Evaliuate",
-    flex: 1,
-    renderCell: (params: GridRenderCellParams<any, Date>) => (
-      <Link
-        style={{ display: "flex", alignItems: "center", height: "100%" }}
-        target="_blank"
-        referrerPolicy="no-referrer"
-        href={`https://admin.evaliuate.liu.se/search/#${params.row.courseCode}`} // The course code has no effect on the link, it is just there to indicate which link was pressed
-      >
-        <HistoryEduIcon />
-      </Link>
-    ),
-  },
-  {
-    field: "info",
-    headerName: "Info",
-    flex: 1,
-    renderCell: (params: GridRenderCellParams<any, Date>) => (
-      <InfoPopper info={params.row.info} />
-    ),
-  },
-];
-
-const InfoPopper = ({ info }: { info: string }) => {
-  const [open, setOpen] = React.useState<boolean>(false);
-  const infoRef = React.useRef(null);
-
-  return info ? (
-    <>
-      <Button ref={infoRef} onClick={() => setOpen(!open)}>
-        <InfoIcon />
-      </Button>
-      <Popper open={open} anchorEl={infoRef.current} placement="right">
-        <Box sx={{ border: 1, p: 1, zIndex: 1000, bgcolor: "background.paper" }}>{info}</Box>
-      </Popper>
-    </>
-  ) : (
-    <></>
-  );
-};
-
-export default function MasterPlan() {
+export default function MasterPlanPage() {
   const [allPrograms, setAllPrograms] =
     React.useState<ProgramsResponseDTO | null>(null);
   const [allStartYears, setAllStartYears] =
@@ -141,6 +50,14 @@ export default function MasterPlan() {
     React.useState<StartYearDTO | null>(null);
   const [addedSemesters, setAddedSemesters] = React.useState<Semester[]>([]);
 
+  const [currentPlan, setCurrentPlan] = React.useState<MasterPlan>({
+    programName: "",
+    startYear: "",
+    semesters: [],
+    specializion: "",
+    note: "",
+  });
+
   React.useEffect(() => {
     ProxyBackendService.getAllPrograms().then(setAllPrograms);
   }, []);
@@ -149,6 +66,9 @@ export default function MasterPlan() {
     if (selectedProgram?.id) {
       setAllStartYears(null);
       setAddedSemesters([]);
+      setCurrentPlan((oldPlan) => {
+        return { ...oldPlan, programName: selectedProgram.name };
+      });
       ProxyBackendService.getStartYears({
         programId: selectedProgram?.id,
       }).then(setAllStartYears);
@@ -159,11 +79,37 @@ export default function MasterPlan() {
     if (selectedStartYear?.id) {
       setAllCourses(null);
       setAddedSemesters([]);
+      setCurrentPlan((oldPlan) => {
+        return { ...oldPlan, startYear: selectedStartYear.name };
+      });
       ProxyBackendService.getCourses({
         startYearId: selectedStartYear?.id,
       }).then(setAllCourses);
     }
   }, [selectedStartYear]);
+
+  const addOrUpdateSemesterPlan = React.useCallback(
+    (semesterPlan: SemesterPlan) => {
+      if (!currentPlan) {
+        console.error("Current plan is uninitialized");
+        return;
+      }
+      const currentPlanCopy = structuredClone(currentPlan);
+      if (!currentPlanCopy?.semesters) {
+        currentPlanCopy.semesters = [];
+      }
+      const existingIndex = currentPlanCopy.semesters.findIndex(
+        (semester) => semester.name === semesterPlan.name,
+      );
+      if (existingIndex !== -1) {
+        currentPlanCopy.semesters[existingIndex] = semesterPlan;
+      } else {
+        currentPlanCopy.semesters.push(semesterPlan);
+      }
+      setCurrentPlan(currentPlanCopy);
+    },
+    [currentPlan],
+  );
   return (
     <Container
       sx={{
@@ -189,6 +135,8 @@ export default function MasterPlan() {
             allSemesters={allCourses?.data?.semesters}
             addedSemesters={addedSemesters}
             setAddedSemesters={setAddedSemesters}
+            addOrUpdateSemesterPlan={addOrUpdateSemesterPlan}
+            currentPlan={currentPlan}
           />
         ) : (
           <CircularProgress />
@@ -201,40 +149,68 @@ const StyledListItem = styled(ListItem)({
   width: "100%",
 });
 
-function ModalBox(props: { children: React.ReactNode; sx?: SxProps<Theme> }) {
-  return (
-    <Box
-      sx={{
-        position: "absolute",
-        top: "50%",
-        left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: "40vw",
-        bgcolor: "background.paper",
-        boxShadow: 24,
-        p: 4,
-        display: "flex",
-        flexDirection: "column",
-        gap: 1,
-        ...props.sx,
-      }}
-    >
-      {props.children}
-    </Box>
-  );
-}
+const ModalBox = styled(Box)({
+  position: "absolute",
+  top: "10vh",
+  left: "10vw",
+  backfaceVisibility: "hidden",
+  width: "80vw",
+  backgroundColor: "white",
+  padding: "1.5em",
+  borderRadius: "3px",
+  display: "flex",
+  flexDirection: "column",
+  gap: 1,
+});
 
 function Courses({
-  allSpecializations,
+  currentSemester,
+  allSemesters,
+  addOrUpdateSemesterPlan,
+  currentPlan,
 }: {
-  allSpecializations: Specialization[];
+  currentSemester: Semester;
+  allSemesters: Semester[];
+  addOrUpdateSemesterPlan: (semesterPlan: SemesterPlan) => void;
+  currentPlan: MasterPlan;
 }) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const handleOpen = () => setIsModalOpen(true);
   const handleClose = () => setIsModalOpen(false);
+
+  const [semesterPlan, setSemesterPlan] = React.useState<SemesterPlan>();
+
+  React.useEffect(() => {
+    const semPlan: SemesterPlan = { name: currentSemester.name, periods: [] };
+    const periods = new Set<PeriodName>();
+    for (const specialization of currentSemester.specializations) {
+      for (const period of specialization.periods) {
+        periods.add(period.name);
+      }
+    }
+    for (const uniquePeriod of Array.from(periods)) {
+      semPlan.periods.push({ name: uniquePeriod, courses: [] });
+    }
+    setSemesterPlan(semPlan);
+  }, [currentSemester]);
+
+  const updateSemesterPlan = (semesterPlan: SemesterPlan) => {
+    setSemesterPlan(semesterPlan);
+    addOrUpdateSemesterPlan(semesterPlan);
+  };
+
   return (
     <Box>
       <h4>Selected Courses</h4>
+      <pre>
+        {JSON.stringify(
+          currentPlan.semesters.find(
+            (semester) => semester.name === currentSemester.name,
+          )?.periods,
+          null,
+          4,
+        )}
+      </pre>
       <Button variant="contained" color="success" onClick={handleOpen}>
         <AddIcon />
         Add Course
@@ -250,38 +226,102 @@ function Courses({
             Select course to add
           </Typography>
           <List
+            dense
             sx={{
               width: "100%",
               bgcolor: "background.paper",
               position: "relative",
               maxHeight: "100%",
-              "& ul": { padding: 0 },
             }}
             subheader={<li />}
           >
-            {allSpecializations.map((specialization, specIndex) => (
-              <li key={`specialization-${specialization.name}-${specIndex}`}>
+            {allSemesters.map((semester, semIndex) => (
+              <li key={`semester-${semester.name}-${semIndex}`}>
                 <ul>
-                  <ListSubheader disableSticky>{`${specialization.name}`}</ListSubheader>
-                  {allSpecializations[specIndex].periods.map(
-                    (period, perIndex) => (
-                      <li key={`period-${specialization.name}-${perIndex}`}>
-                        <ul>
-                          <ListSubheader disableSticky>{`${period.name}`}</ListSubheader>
-                          <DataGrid
-                            getRowId={(row) => row.courseCode}
-                            rows={allSpecializations[specIndex].periods[
-                              perIndex
-                            ].courses.map((course) => {
-                              return { ...course, period: period };
-                            })}
-                            columns={columns}
-                            hideFooterPagination
-                          />
-                        </ul>
-                      </li>
-                    ),
-                  )}
+                  <Accordion
+                    sx={{ width: "100%" }}
+                    defaultExpanded={currentSemester.name === semester.name}
+                    slotProps={{ transition: { unmountOnExit: true } }}
+                  >
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      {semester.name}
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      {semester.specializations.map(
+                        (specialization, specIndex) => (
+                          <li
+                            key={`specialization-${specialization.name}-${specIndex}`}
+                          >
+                            <ul>
+                              <ListSubheader
+                                disableSticky
+                              >{`${specialization.name}`}</ListSubheader>
+                              {specialization.periods.map(
+                                (period, perIndex) => (
+                                  <li
+                                    key={`period-${specialization.name}-${perIndex}`}
+                                  >
+                                    <ul>
+                                      <ListSubheader
+                                        disableSticky
+                                      >{`${period.name}`}</ListSubheader>
+                                      <CourseSelectionGrid
+                                        courses={period.courses}
+                                        onCourseAdd={(course) => {
+                                          if (!semesterPlan) {
+                                            return;
+                                          }
+                                          const semesterPlanCopy =
+                                            structuredClone(semesterPlan);
+                                          const plannedSpecializations: PlannedCourseSpecialization[] =
+                                            [];
+                                          for (const spec of semester.specializations) {
+                                            for (const per of spec.periods) {
+                                              let wasCourseFound = false;
+                                              for (const cor of per.courses) {
+                                                if (
+                                                  cor.courseCode ===
+                                                  course.courseCode
+                                                ) {
+                                                  plannedSpecializations.push({
+                                                    name: spec.name,
+                                                    ECV: cor.ECV,
+                                                  });
+                                                  wasCourseFound = true;
+                                                  break;
+                                                }
+                                              }
+                                              if (wasCourseFound) {
+                                                break;
+                                              }
+                                            }
+                                          }
+                                          semesterPlanCopy.periods
+                                            .find((p) => p.name === period.name)
+                                            ?.courses.push({
+                                              ...course,
+                                              semester:
+                                                currentSemester.name ===
+                                                semester.name
+                                                  ? null
+                                                  : semester.name,
+                                              note: "",
+                                              specializations:
+                                                plannedSpecializations,
+                                            });
+                                          updateSemesterPlan(semesterPlanCopy);
+                                        }}
+                                      />
+                                    </ul>
+                                  </li>
+                                ),
+                              )}
+                            </ul>
+                          </li>
+                        ),
+                      )}
+                    </AccordionDetails>
+                  </Accordion>
                 </ul>
               </li>
             ))}
@@ -296,10 +336,14 @@ function Semesters({
   allSemesters,
   addedSemesters,
   setAddedSemesters,
+  addOrUpdateSemesterPlan,
+  currentPlan,
 }: {
   allSemesters: Semester[] | undefined;
   addedSemesters: Semester[];
   setAddedSemesters: React.Dispatch<React.SetStateAction<Semester[]>>;
+  addOrUpdateSemesterPlan: (semesterPlan: SemesterPlan) => void;
+  currentPlan: MasterPlan;
 }) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const handleOpen = () => setIsModalOpen(true);
@@ -316,14 +360,13 @@ function Semesters({
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 {semester.name}
               </AccordionSummary>
-              <AccordionDetails
-                sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                }}
-              >
-                <Courses allSpecializations={semester.specializations} />
+              <AccordionDetails>
+                <Courses
+                  currentSemester={semester}
+                  allSemesters={allSemesters}
+                  addOrUpdateSemesterPlan={addOrUpdateSemesterPlan}
+                  currentPlan={currentPlan}
+                />
               </AccordionDetails>
             </Accordion>
           </StyledListItem>
@@ -338,6 +381,7 @@ function Semesters({
         )}
       </List>
       <Modal
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
         open={isModalOpen}
         onClose={handleClose}
         aria-labelledby="modal-modal-title"
