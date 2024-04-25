@@ -9,7 +9,7 @@ export const ecvLabel = (ecv: Ecv) => {
     case "E":
       return "elective";
     case "V":
-      return "voluntarily";
+      return "voluntary";
   }
 };
 
