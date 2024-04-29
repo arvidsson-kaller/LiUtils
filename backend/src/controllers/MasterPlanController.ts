@@ -9,6 +9,7 @@ import {
   Put,
   Path,
   Query,
+  Delete,
 } from "tsoa";
 import { MasterPlan } from "common/dist/masterPlan";
 import MasterPlanRepo, {
@@ -32,11 +33,20 @@ export class MasterPlanController extends Controller {
   }
 
   @Get("{id}")
-  public async getMasterPlan(
+  public async getMasterPlanById(
     @Path() id: number,
   ): Promise<MasterPlanResponseDTO> {
     const plan = await MasterPlanRepo.findById(id as MasterPlanId);
     return mapPlanToDTO(plan);
+  }
+
+  @Security("jwt")
+  @Delete("{id}")
+  public async deleteMasterPlanById(
+    @Path() id: number,
+    @Request() request: AuthenticatedRequest,
+  ) {
+    await MasterPlanRepo.deleteById(id as MasterPlanId, request.user.id);
   }
 
   @Security("jwt")
@@ -49,7 +59,7 @@ export class MasterPlanController extends Controller {
   }
 
   @Get("user/{id}")
-  public async getMasterPlansForUser(
+  public async getMasterPlansByUserId(
     @Path() id: number,
   ): Promise<MasterPlanResponseDTO[]> {
     const plans = await MasterPlanRepo.getAllByUserId(id as UserId);

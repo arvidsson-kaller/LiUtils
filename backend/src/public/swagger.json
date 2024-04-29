@@ -824,45 +824,16 @@
 				}
 			}
 		},
-		"/masterplan/user/me": {
+		"/masterplan/{id}": {
 			"get": {
-				"operationId": "GetMyMasterPlans",
+				"operationId": "GetMasterPlanById",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/MasterPlanResponseDTO"
-									},
-									"type": "array"
-								}
-							}
-						}
-					}
-				},
-				"security": [
-					{
-						"jwt": []
-					}
-				],
-				"parameters": []
-			}
-		},
-		"/masterplan/user/{id}": {
-			"get": {
-				"operationId": "GetMasterPlansForUser",
-				"responses": {
-					"200": {
-						"description": "Ok",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/MasterPlanResponseDTO"
-									},
-									"type": "array"
+									"$ref": "#/components/schemas/MasterPlanResponseDTO"
 								}
 							}
 						}
@@ -880,9 +851,31 @@
 						}
 					}
 				]
-			}
-		},
-		"/masterplan/{id}": {
+			},
+			"delete": {
+				"operationId": "DeleteMasterPlanById",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			},
 			"put": {
 				"operationId": "UpdateMasterPlan",
 				"responses": {
@@ -916,6 +909,64 @@
 						}
 					}
 				}
+			}
+		},
+		"/masterplan/user/me": {
+			"get": {
+				"operationId": "GetMyMasterPlans",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MasterPlanResponseDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/masterplan/user/{id}": {
+			"get": {
+				"operationId": "GetMasterPlansByUserId",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MasterPlanResponseDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
 			}
 		}
 	},

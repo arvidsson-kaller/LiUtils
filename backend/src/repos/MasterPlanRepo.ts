@@ -5,7 +5,7 @@ import DbMasterPlan, {
   MasterPlanId,
 } from "@src/models/MasterPlan";
 import DbUser, { UserId } from "@src/models/User";
-import { QueryArrayResult } from "pg";
+import { PoolClient, Pool, QueryArrayResult } from "pg";
 
 export interface DbMasterPlanWithUser extends DbMasterPlan {
   user: DbUser;
@@ -23,6 +23,7 @@ async function getAll(
   program: string | undefined,
   year: string | undefined,
   specializion: string | undefined,
+  pool: Pool | PoolClient = db,
 ): Promise<DbMasterPlanWithUser[]> {
   let query =
     'SELECT m.*, u.* from "MasterPlan" m, "User" u WHERE m."userId" = u.id';
@@ -41,7 +42,7 @@ async function getAll(
     query += " AND m.data->>'specializion'=($" + values.length + ")";
   }
 
-  const res = await db.query({
+  const res = await pool.query({
     text: query,
     values: values,
     rowMode: "array",
@@ -49,8 +50,11 @@ async function getAll(
   return mapResult(res);
 }
 
-async function getAllByUserId(userId: UserId): Promise<DbMasterPlanWithUser[]> {
-  const res = await db.query({
+async function getAllByUserId(
+  userId: UserId,
+  pool: Pool | PoolClient = db,
+): Promise<DbMasterPlanWithUser[]> {
+  const res = await pool.query({
     text: 'SELECT m.*, u.* from "MasterPlan" m, "User" u WHERE m."userId" = u.id AND m."userId"=($1)',
     values: [userId],
     rowMode: "array",
@@ -58,12 +62,15 @@ async function getAllByUserId(userId: UserId): Promise<DbMasterPlanWithUser[]> {
   return mapResult(res);
 }
 
-async function findById(id: MasterPlanId): Promise<DbMasterPlanWithUser> {
+async function findById(
+  id: MasterPlanId,
+  pool: Pool | PoolClient = db,
+): Promise<DbMasterPlanWithUser> {
   const query =
     'SELECT m.*, u.* from "MasterPlan" m, "User" u WHERE m."userId" = u.id AND m.id=($1)';
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const values: any[] = [id];
-  const res = await db.query({
+  const res = await pool.query({
     text: query,
     values: values,
     rowMode: "array",
@@ -75,10 +82,13 @@ async function findById(id: MasterPlanId): Promise<DbMasterPlanWithUser> {
   throw new Error("Not found");
 }
 
-async function update(plan: DbMasterPlan): Promise<DbMasterPlan> {
+async function update(
+  plan: DbMasterPlan,
+  pool: Pool | PoolClient = db,
+): Promise<DbMasterPlan> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const data: any[] = [plan.title, plan.data, plan.id, plan.userId];
-  const res = await db.query(
+  const res = await pool.query(
     'UPDATE "MasterPlan" SET title=($1), data=($2) WHERE id=($3) AND "userId"=($4)  RETURNING *',
     data,
   );
@@ -88,13 +98,25 @@ async function update(plan: DbMasterPlan): Promise<DbMasterPlan> {
   throw new Error("Not found");
 }
 
-async function create(plan: DbMasterPlanInitializer): Promise<DbMasterPlan> {
+async function deleteById(
+  id: MasterPlanId,
+  userId: UserId,
+  pool: Pool | PoolClient = db,
+): Promise<void> {
+  const values: any[] = [id, userId];
+  await pool.query('DELETE from "MasterPlan" where id = ($1) AND "userId"=($2)', values);
+}
+
+async function create(
+  plan: DbMasterPlanInitializer,
+  pool: Pool | PoolClient = db,
+): Promise<DbMasterPlan> {
   try {
     const sql =
       'INSERT INTO "MasterPlan" (title, data, "userId") VALUES ($1, $2, $3) RETURNING *';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any[] = [plan.title, plan.data, plan.userId];
-    const result = await db.query(sql, data);
+    const result = await pool.query(sql, data);
     const createdPlan = result.rows[0] as DbMasterPlan;
     return createdPlan;
   } catch (error) {
@@ -109,4 +131,5 @@ export default {
   create,
   update,
   getAllByUserId,
+  deleteById,
 } as const;
