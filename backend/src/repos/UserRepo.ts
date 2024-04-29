@@ -1,14 +1,14 @@
 import db from "./Database";
-import User, { UserId, UserInitializer } from "@src/models/User";
+import DbUser, { UserId, DbUserInitializer } from "@src/models/User";
 import { InvalidContextError } from "@src/other/classes";
 import logger from "jet-logger";
 
-async function getAll(): Promise<User[]> {
+async function getAll(): Promise<DbUser[]> {
   const res = await db.query('SELECT * from "User"');
-  return res.rows as User[];
+  return res.rows as DbUser[];
 }
 
-async function create(user: UserInitializer): Promise<User> {
+async function create(user: DbUserInitializer): Promise<DbUser> {
   if (user.authProvider == null && user.authUserId != null) {
     throw new InvalidContextError(
       "Can not set authUserId without authProvider",
@@ -29,7 +29,7 @@ async function create(user: UserInitializer): Promise<User> {
       user.authUserId as string,
     ];
     const result = await db.query(sql, data);
-    const createdUser: User = result.rows[0] as User;
+    const createdUser: DbUser = result.rows[0] as DbUser;
     return createdUser;
   } catch (error) {
     logger.err(error);
@@ -37,10 +37,10 @@ async function create(user: UserInitializer): Promise<User> {
   }
 }
 
-async function findById(userId: UserId): Promise<User> {
+async function findById(userId: UserId): Promise<DbUser> {
   const res = await db.query('SELECT * from "User" where id = ($1)', [userId]);
   if (res.rows.length == 1) {
-    return res.rows[0] as User;
+    return res.rows[0] as DbUser;
   }
   throw new Error("Not found");
 }
@@ -48,13 +48,13 @@ async function findById(userId: UserId): Promise<User> {
 async function findByOAuth(
   authProvider: string,
   authUserId: string,
-): Promise<User | null> {
+): Promise<DbUser | null> {
   const res = await db.query(
     'SELECT * from "User" where "authProvider" = ($1) AND "authUserId" = ($2)',
     [authProvider, authUserId],
   );
   if (res.rows.length == 1) {
-    return res.rows[0] as User;
+    return res.rows[0] as DbUser;
   }
   return null;
 }

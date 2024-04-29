@@ -3,6 +3,7 @@ import EnvVars from "@src/constants/EnvVars";
 import { UserId } from "./models/User";
 import JwtService from "./services/JwtService";
 import { InvalidContextError } from "./other/classes";
+import { NodeEnvs } from "./constants/misc";
 
 export interface AuthenticatedRequest extends express.Request {
   user: AuthUser;
@@ -19,6 +20,16 @@ export async function expressAuthentication(
   scopes?: string[],
 ): Promise<AuthUser> {
   if (securityName === "jwt") {
+    // If server is in dev mode, ONLY userId is a valid jwt
+    if (EnvVars.NodeEnv === NodeEnvs.Dev.valueOf()) {
+      const auth = Number(
+        request.headers["authorization"]?.split("Bearer ")[1],
+      );
+      return Promise.resolve({
+        id: auth as UserId,
+        authProvider: "none",
+      });
+    }
     if (request.headers && request.headers["authorization"]) {
       const auth = request.headers["authorization"];
       const token = auth.split("Bearer ")[1];

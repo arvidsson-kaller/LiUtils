@@ -1,6 +1,6 @@
 import { Controller, Get, Patch, Path, Route, Security } from "tsoa";
 import { populateStudieinfoData } from "@src/services/StudieinfoService";
-import MasterProgram, { MasterProgramId } from "@src/models/MasterProgram";
+import DbMasterProgram, { MasterProgramId } from "@src/models/MasterProgram";
 import MasterProgramRepo, {
   ReducedStartYear,
 } from "@src/repos/MasterProgramRepo";
@@ -79,7 +79,7 @@ interface MasterProgramDTO {
 }
 
 export const mapMasterProgramToDTO = (
-  program: MasterProgram,
+  program: DbMasterProgram,
 ): MasterProgramDTO => {
   return {
     id: program.id,

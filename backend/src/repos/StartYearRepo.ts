@@ -1,23 +1,23 @@
 import db from "./Database";
-import StartYear, {
+import DbStartYear, {
   StartYearId,
-  StartYearInitializer,
+  DbStartYearInitializer,
 } from "@src/models/StartYear";
 import { StartYear as StartYearData } from "common/dist/studieinfo";
 import logger from "jet-logger";
 import { Pool, PoolClient } from "pg";
 
 async function create(
-  year: StartYearInitializer,
+  year: DbStartYearInitializer,
   pool: Pool | PoolClient = db,
-): Promise<StartYear> {
+): Promise<DbStartYear> {
   try {
     const sql =
       'INSERT INTO "StartYear" ("name", "data", "masterProgramId") VALUES ($1, $2, $3) RETURNING *';
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const data: any[] = [year.name, year.data, year.masterProgramId];
     const result = await pool.query(sql, data);
-    const createdStartYear: StartYear = result.rows[0] as StartYear;
+    const createdStartYear: DbStartYear = result.rows[0] as DbStartYear;
     return createdStartYear;
   } catch (error) {
     logger.err(error);

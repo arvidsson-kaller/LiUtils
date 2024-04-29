@@ -5,7 +5,7 @@
 export type PgmigrationsId = number & { __brand: 'PgmigrationsId' };
 
 /** Represents the table public.pgmigrations */
-export default interface Pgmigrations {
+export default interface DbPgmigrations {
   id: PgmigrationsId;
 
   name: string;
@@ -14,7 +14,7 @@ export default interface Pgmigrations {
 }
 
 /** Represents the initializer for the table public.pgmigrations */
-export interface PgmigrationsInitializer {
+export interface DbPgmigrationsInitializer {
   /** Default value: nextval('pgmigrations_id_seq'::regclass) */
   id?: PgmigrationsId;
 
@@ -24,7 +24,7 @@ export interface PgmigrationsInitializer {
 }
 
 /** Represents the mutator for the table public.pgmigrations */
-export interface PgmigrationsMutator {
+export interface DbPgmigrationsMutator {
   id?: PgmigrationsId;
 
   name?: string;

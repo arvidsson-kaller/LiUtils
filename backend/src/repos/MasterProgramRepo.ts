@@ -1,26 +1,29 @@
 import db from "./Database";
-import MasterProgram, {
+import DbMasterProgram, {
   MasterProgramId,
-  MasterProgramInitializer,
+  DbMasterProgramInitializer,
 } from "@src/models/MasterProgram";
 import { StartYearId } from "@src/models/StartYear";
 import logger from "jet-logger";
 import { Pool, PoolClient } from "pg";
 
-async function getAll(pool: Pool | PoolClient = db): Promise<MasterProgram[]> {
+async function getAll(
+  pool: Pool | PoolClient = db,
+): Promise<DbMasterProgram[]> {
   const res = await pool.query('SELECT * from "MasterProgram"');
-  return res.rows as MasterProgram[];
+  return res.rows as DbMasterProgram[];
 }
 
 async function create(
-  program: MasterProgramInitializer,
+  program: DbMasterProgramInitializer,
   pool: Pool | PoolClient = db,
-): Promise<MasterProgram> {
+): Promise<DbMasterProgram> {
   try {
     const sql = 'INSERT INTO "MasterProgram" ("name") VALUES ($1) RETURNING *';
     const data: string[] = [program.name];
     const result = await pool.query(sql, data);
-    const createdMasterProgram: MasterProgram = result.rows[0] as MasterProgram;
+    const createdMasterProgram: DbMasterProgram = result
+      .rows[0] as DbMasterProgram;
     return createdMasterProgram;
   } catch (error) {
     logger.err(error);
@@ -31,13 +34,13 @@ async function create(
 async function findById(
   masterProgramId: MasterProgramId,
   pool: Pool | PoolClient = db,
-): Promise<MasterProgram> {
+): Promise<DbMasterProgram> {
   const res = await pool.query(
     'SELECT * from "MasterProgram" where id = ($1)',
     [masterProgramId],
   );
   if (res.rows.length == 1) {
-    return res.rows[0] as MasterProgram;
+    return res.rows[0] as DbMasterProgram;
   }
   throw new Error("Not found");
 }

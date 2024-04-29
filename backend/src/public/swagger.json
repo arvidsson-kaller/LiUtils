@@ -483,23 +483,58 @@
 			},
 			"MasterPlanResponseDTO": {
 				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					},
+					"title": {
+						"type": "string"
+					},
 					"plan": {
 						"$ref": "#/components/schemas/MasterPlan"
+					},
+					"user": {
+						"$ref": "#/components/schemas/UserDTO"
 					}
 				},
 				"required": [
-					"plan"
+					"id",
+					"title",
+					"plan",
+					"user"
 				],
 				"type": "object",
 				"additionalProperties": false
 			},
 			"CreateMasterPlanRequestDTO": {
 				"properties": {
+					"title": {
+						"type": "string",
+						"minLength": 8
+					},
 					"plan": {
 						"$ref": "#/components/schemas/MasterPlan"
 					}
 				},
 				"required": [
+					"title",
+					"plan"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateMasterPlanRequestDTO": {
+				"properties": {
+					"title": {
+						"type": "string",
+						"minLength": 8
+					},
+					"plan": {
+						"$ref": "#/components/schemas/MasterPlan"
+					}
+				},
+				"required": [
+					"title",
 					"plan"
 				],
 				"type": "object",
@@ -539,11 +574,7 @@
 						}
 					}
 				},
-				"security": [
-					{
-						"jwt": []
-					}
-				],
+				"security": [],
 				"parameters": []
 			},
 			"post": {
@@ -724,14 +755,17 @@
 		},
 		"/plan": {
 			"get": {
-				"operationId": "GetMasterPlan",
+				"operationId": "GetAllMasterPlans",
 				"responses": {
 					"200": {
 						"description": "Ok",
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/MasterPlanResponseDTO"
+									"items": {
+										"$ref": "#/components/schemas/MasterPlanResponseDTO"
+									},
+									"type": "array"
 								}
 							}
 						}
@@ -747,7 +781,11 @@
 						"description": "No content"
 					}
 				},
-				"security": [],
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [],
 				"requestBody": {
 					"required": true,
@@ -755,6 +793,68 @@
 						"application/json": {
 							"schema": {
 								"$ref": "#/components/schemas/CreateMasterPlanRequestDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/plan/user": {
+			"get": {
+				"operationId": "GetAllMasterPlanForUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MasterPlanResponseDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": []
+			}
+		},
+		"/plan/{id}": {
+			"put": {
+				"operationId": "UpdateMasterPlan",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateMasterPlanRequestDTO"
 							}
 						}
 					}

@@ -7,20 +7,20 @@ import { type MasterProgramId } from './MasterProgram';
 export type StartYearId = number & { __brand: 'StartYearId' };
 
 /** Represents the table public.StartYear */
-export default interface StartYear {
+export default interface DbStartYear {
   id: StartYearId;
 
   masterProgramId: MasterProgramId;
 
   name: string;
 
-  data: string;
+  data: any;
 
   createdAt: Date;
 }
 
 /** Represents the initializer for the table public.StartYear */
-export interface StartYearInitializer {
+export interface DbStartYearInitializer {
   /** Default value: nextval('"StartYear_id_seq"'::regclass) */
   id?: StartYearId;
 
@@ -28,21 +28,21 @@ export interface StartYearInitializer {
 
   name: string;
 
-  data: string;
+  data: any;
 
   /** Default value: CURRENT_TIMESTAMP */
   createdAt?: Date;
 }
 
 /** Represents the mutator for the table public.StartYear */
-export interface StartYearMutator {
+export interface DbStartYearMutator {
   id?: StartYearId;
 
   masterProgramId?: MasterProgramId;
 
   name?: string;
 
-  data?: string;
+  data?: any;
 
   createdAt?: Date;
 }
