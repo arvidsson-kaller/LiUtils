@@ -1,6 +1,7 @@
 "use client";
 import { ProxyBackendService } from "@/lib/backend";
 import {
+  Course,
   CoursesResponseDTO,
   MasterPlan,
   MasterProgramDTO,
@@ -34,6 +35,7 @@ import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
 import { CourseSelectionGrid } from "@/components/master/CourseSelectionGrid";
+import { SemesterPlanOverview } from "@/components/master/SemesterPlanOverview";
 
 export default function MasterPlanPage() {
   const [allPrograms, setAllPrograms] =
@@ -175,10 +177,27 @@ function Courses({
   currentPlan: MasterPlan;
 }) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
-  const handleOpen = () => setIsModalOpen(true);
-  const handleClose = () => setIsModalOpen(false);
+  const [blockFilter, setBlockFilter] = React.useState<string | undefined>();
+  const [periodFilter, setPeriodFilter] = React.useState<string | undefined>();
+  const handleOpen = (
+    blockFilter: string | undefined = undefined,
+    periodFilter: string | undefined = undefined,
+  ) => {
+    setBlockFilter(blockFilter);
+    setPeriodFilter(periodFilter);
+    setIsModalOpen(true);
+  };
+  const handleClose = () => {
+    setBlockFilter(undefined);
+    setPeriodFilter(undefined);
+    setIsModalOpen(false);
+  };
 
   const [semesterPlan, setSemesterPlan] = React.useState<SemesterPlan>();
+
+  const plannedSemester = currentPlan.semesters.find(
+    (semester) => semester.name === currentSemester.name,
+  );
 
   React.useEffect(() => {
     const semPlan: SemesterPlan = { name: currentSemester.name, periods: [] };
@@ -198,20 +217,24 @@ function Courses({
     setSemesterPlan(semesterPlan);
     addOrUpdateSemesterPlan(semesterPlan);
   };
+  const getFilteredCourses = (courses: Course[]) => {
+    return courses.filter((course) =>
+      blockFilter ? course.timetableModule === blockFilter : true,
+    );
+  };
 
   return (
     <Box>
       <h4>Selected Courses</h4>
-      <pre>
-        {JSON.stringify(
-          currentPlan.semesters.find(
-            (semester) => semester.name === currentSemester.name,
-          )?.periods,
-          null,
-          4,
-        )}
-      </pre>
-      <Button variant="contained" color="success" onClick={handleOpen}>
+      {plannedSemester && (
+        <SemesterPlanOverview
+          plan={plannedSemester}
+          selectedSpecialization=""
+          onAddCourse={(block, period) => handleOpen(block, period)}
+          onClickCourse={(course) => console.log(course)}
+        />
+      )}
+      <Button variant="contained" color="success" onClick={() => handleOpen()}>
         <AddIcon />
         Add Course
       </Button>
@@ -256,8 +279,13 @@ function Courses({
                               <ListSubheader
                                 disableSticky
                               >{`${specialization.name}`}</ListSubheader>
-                              {specialization.periods.map(
-                                (period, perIndex) => (
+                              {specialization.periods
+                                .filter((period) =>
+                                  periodFilter
+                                    ? period.name === periodFilter
+                                    : true,
+                                )
+                                .map((period, perIndex) => (
                                   <li
                                     key={`period-${specialization.name}-${perIndex}`}
                                   >
@@ -266,7 +294,9 @@ function Courses({
                                         disableSticky
                                       >{`${period.name}`}</ListSubheader>
                                       <CourseSelectionGrid
-                                        courses={period.courses}
+                                        courses={getFilteredCourses(
+                                          period.courses,
+                                        )}
                                         onCourseAdd={(course) => {
                                           if (!semesterPlan) {
                                             return;
@@ -314,8 +344,7 @@ function Courses({
                                       />
                                     </ul>
                                   </li>
-                                ),
-                              )}
+                                ))}
                             </ul>
                           </li>
                         ),
