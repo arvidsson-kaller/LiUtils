@@ -78,8 +78,8 @@ export class MasterPlanController extends Controller {
       userId: request.user.id,
     });
     return {
-      id: plan.id
-    }
+      id: plan.id,
+    };
   }
 
   @Security("jwt")
@@ -125,7 +125,7 @@ interface CreateMasterPlanRequestDTO {
 }
 
 interface MasterPlanCreatedResponseDTO {
-  id: number
+  id: number;
 }
 
 interface UpdateMasterPlanRequestDTO {
