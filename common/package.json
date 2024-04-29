@@ -9,7 +9,7 @@
   ],
   "scripts": {
     "test": "npx ts-node src/test.ts",
-    "build": "tsc",
+    "build": "npx tsc",
     "prettier": "npx prettier ./ --write --end-of-line auto"
   },
   "author": "",
@@ -17,7 +17,8 @@
   "dependencies": {
     "assert": "^2.1.0",
     "jsdom": "^24.0.0",
-    "node-fetch": "^2.7.0"
+    "node-fetch": "^2.7.0",
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@types/node": "^20.12.2"

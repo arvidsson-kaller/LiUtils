@@ -5,14 +5,14 @@
 export type MasterProgramId = number & { __brand: 'MasterProgramId' };
 
 /** Represents the table public.MasterProgram */
-export default interface MasterProgram {
+export default interface DbMasterProgram {
   id: MasterProgramId;
 
   name: string;
 }
 
 /** Represents the initializer for the table public.MasterProgram */
-export interface MasterProgramInitializer {
+export interface DbMasterProgramInitializer {
   /** Default value: nextval('"MasterProgram_id_seq"'::regclass) */
   id?: MasterProgramId;
 
@@ -20,7 +20,7 @@ export interface MasterProgramInitializer {
 }
 
 /** Represents the mutator for the table public.MasterProgram */
-export interface MasterProgramMutator {
+export interface DbMasterProgramMutator {
   id?: MasterProgramId;
 
   name?: string;

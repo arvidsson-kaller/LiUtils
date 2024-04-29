@@ -1,12 +1,11 @@
 import { Body, Controller, Get, Post, Route, Security, Request } from "tsoa";
-import User, { UserInitializer } from "@src/models/User";
+import DbUser, { DbUserInitializer } from "@src/models/User";
 import { AuthenticatedRequest } from "@src/authentication";
 import JwtService from "@src/services/JwtService";
 import UserRepo from "@src/repos/UserRepo";
 
 @Route("users")
 export class UserController extends Controller {
-  @Security("jwt")
   @Get()
   public async getUsers(): Promise<UsersResponseDTO> {
     const users = await UserRepo.getAll();
@@ -58,7 +57,7 @@ export class UserController extends Controller {
   @Security("api_key")
   @Post()
   public async createUser(@Body() request: CreateUserRequestDTO) {
-    const user: UserInitializer = {
+    const user: DbUserInitializer = {
       name: request.name,
       email: request.email,
       authProvider: request.authProvider,
@@ -68,14 +67,14 @@ export class UserController extends Controller {
   }
 }
 
-interface UserDTO {
+export interface UserDTO {
   id: number;
   name: string;
   email: string;
   createdAt: Date;
 }
 
-export const mapUserToDTO = (user: User): UserDTO => {
+export const mapUserToDTO = (user: DbUser): UserDTO => {
   return {
     id: user.id,
     name: user.name,

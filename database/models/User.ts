@@ -5,7 +5,7 @@
 export type UserId = number & { __brand: 'UserId' };
 
 /** Represents the table public.User */
-export default interface User {
+export default interface DbUser {
   id: UserId;
 
   name: string;
@@ -20,7 +20,7 @@ export default interface User {
 }
 
 /** Represents the initializer for the table public.User */
-export interface UserInitializer {
+export interface DbUserInitializer {
   /** Default value: nextval('"User_id_seq"'::regclass) */
   id?: UserId;
 
@@ -37,7 +37,7 @@ export interface UserInitializer {
 }
 
 /** Represents the mutator for the table public.User */
-export interface UserMutator {
+export interface DbUserMutator {
   id?: UserId;
 
   name?: string;

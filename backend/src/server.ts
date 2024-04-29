@@ -41,8 +41,15 @@ if (EnvVars.NodeEnv === NodeEnvs.Production.valueOf()) {
   app.use(helmet());
 }
 
+// Set static directory
+const staticDir = path.join(__dirname, "public");
+app.use(express.static(staticDir));
+
+// Register swagger routes
+RegisterRoutes(app); // eslint-disable-line
+
 app.use(
-  "/docs",
+  "/",
   swaggerUi.serve,
   swaggerUi.setup(undefined, {
     swaggerOptions: {
@@ -50,13 +57,6 @@ app.use(
     },
   }),
 );
-
-// Set static directory
-const staticDir = path.join(__dirname, "public");
-app.use(express.static(staticDir));
-
-// Register swagger routes
-RegisterRoutes(app); // eslint-disable-line
 
 // Add error handler
 app.use(
