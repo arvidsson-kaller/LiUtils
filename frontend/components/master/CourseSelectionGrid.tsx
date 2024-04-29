@@ -5,7 +5,7 @@ import Link from "next/link";
 import { DataGrid, GridColDef, GridRenderCellParams } from "@mui/x-data-grid";
 import { Box, Button, Popper } from "@mui/material";
 import React from "react";
-import { Course } from "@/lib/backend-client";
+import { Course, PlannedCourse } from "@/lib/backend-client";
 
 const InfoPopper = ({ info }: { info: string }) => {
   const [open, setOpen] = React.useState<boolean>(false);
@@ -36,25 +36,41 @@ const InfoPopper = ({ info }: { info: string }) => {
 
 export const CourseSelectionGrid = ({
   courses,
+  addedCourses,
   onCourseAdd,
+  onCourseRemove,
 }: {
   courses: Course[];
+  addedCourses: PlannedCourse[] | undefined;
   onCourseAdd: (course: Course) => void;
+  onCourseRemove: (course: Course) => void;
 }) => {
   const columns: GridColDef[] = [
     {
       field: "add",
       headerName: "Add",
       flex: 1,
-      renderCell: (params: GridRenderCellParams<any, Date>) => (
-        <Button
-          variant="contained"
-          color="success"
-          onClick={() => onCourseAdd(params.row)}
-        >
-          Add
-        </Button>
-      ),
+      renderCell: (params: GridRenderCellParams<any, Date>) =>
+        addedCourses &&
+        addedCourses.find(
+          (course) => course.courseCode === params.row.courseCode,
+        ) ? (
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => onCourseRemove(params.row)}
+          >
+            Del
+          </Button>
+        ) : (
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => onCourseAdd(params.row)}
+          >
+            Add
+          </Button>
+        ),
     },
     { field: "courseCode", headerName: "Course", flex: 1 },
     {

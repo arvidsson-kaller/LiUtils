@@ -223,10 +223,6 @@ function Courses({
 
   const [semesterPlan, setSemesterPlan] = React.useState<SemesterPlan>();
 
-  const plannedSemester = currentPlan.semesters.find(
-    (semester) => semester.name === currentSemester.name,
-  );
-
   React.useEffect(() => {
     const semPlan: SemesterPlan = { name: currentSemester.name, periods: [] };
     const periods = new Set<PeriodName>();
@@ -296,6 +292,19 @@ function Courses({
     updateSemesterPlan(semesterPlanCopy);
   };
 
+  const removeCourse = (course: Course) => {
+    if (!semesterPlan) {
+      return;
+    }
+    const semesterPlanCopy = structuredClone(semesterPlan);
+    for (const periodPlan of semesterPlanCopy.periods) {
+      periodPlan.courses = periodPlan.courses.filter(
+        (plannedCourse) => plannedCourse.courseCode !== course.courseCode,
+      );
+    }
+    updateSemesterPlan(semesterPlanCopy);
+  };
+
   const getFilteredCourses = (courses: Course[]) => {
     return courses.filter((course) =>
       blockFilter ? course.timetableModule === blockFilter : true,
@@ -305,9 +314,9 @@ function Courses({
   return (
     <Box>
       <h4>Selected Courses</h4>
-      {plannedSemester && (
+      {semesterPlan && (
         <SemesterPlanOverview
-          plan={plannedSemester}
+          plan={semesterPlan}
           selectedSpecialization={currentPlan.specializion}
           onAddCourse={(block, period) => handleOpen(block, period)}
           onClickCourse={(course) => console.log(course)}
@@ -376,9 +385,15 @@ function Courses({
                                         courses={getFilteredCourses(
                                           period.courses,
                                         )}
+                                        addedCourses={
+                                          semesterPlan?.periods.find(
+                                            (p) => p.name === period.name,
+                                          )?.courses
+                                        }
                                         onCourseAdd={(course) =>
                                           addCourse(course, semester)
                                         }
+                                        onCourseRemove={removeCourse}
                                       />
                                     </ul>
                                   </li>
