@@ -19,9 +19,31 @@ function mapResult(res: QueryArrayResult): DbMasterPlanWithUser[] {
   return rows as DbMasterPlanWithUser[];
 }
 
-async function getAll(): Promise<DbMasterPlanWithUser[]> {
+async function getAll(
+  program: string | undefined,
+  year: string | undefined,
+  specializion: string | undefined,
+): Promise<DbMasterPlanWithUser[]> {
+  let query =
+    'SELECT m.*, u.* from "MasterPlan" m, "User" u WHERE m."userId" = u.id';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values: any[] = [];
+  if (program) {
+    values.push(program);
+    query += " AND m.data->>'programName'=($" + values.length + ")";
+  }
+  if (year) {
+    values.push(year);
+    query += " AND m.data->>'startyear'=($" + values.length + ")";
+  }
+  if (specializion) {
+    values.push(specializion);
+    query += " AND m.data->>'specializion'=($" + values.length + ")";
+  }
+
   const res = await db.query({
-    text: 'SELECT m.*, u.* from "MasterPlan" m, "User" u where m."userId" = u.id',
+    text: query,
+    values: values,
     rowMode: "array",
   });
   return mapResult(res);
@@ -36,12 +58,19 @@ async function getAllByUserId(userId: UserId): Promise<DbMasterPlanWithUser[]> {
   return mapResult(res);
 }
 
-async function findById(id: MasterPlanId): Promise<DbMasterPlan> {
-  const res = await db.query('SELECT * FROM "MasterPlan" WHERE id = ($1)', [
-    id,
-  ]);
-  if (res.rows.length == 1) {
-    return res.rows[0] as DbMasterPlan;
+async function findById(id: MasterPlanId): Promise<DbMasterPlanWithUser> {
+  const query =
+    'SELECT m.*, u.* from "MasterPlan" m, "User" u WHERE m."userId" = u.id AND m.id=($1)';
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const values: any[] = [id];
+  const res = await db.query({
+    text: query,
+    values: values,
+    rowMode: "array",
+  });
+  const rows = mapResult(res);
+  if (rows.length === 1) {
+    return rows[0];
   }
   throw new Error("Not found");
 }

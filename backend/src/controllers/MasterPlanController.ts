@@ -8,6 +8,7 @@ import {
   Security,
   Put,
   Path,
+  Query,
 } from "tsoa";
 import { MasterPlan } from "common/dist/masterPlan";
 import MasterPlanRepo, {
@@ -16,21 +17,42 @@ import MasterPlanRepo, {
 import { UserDTO, mapUserToDTO } from "./UserController";
 import { AuthenticatedRequest } from "@src/authentication";
 import { MasterPlanId } from "@src/models/MasterPlan";
+import { UserId } from "@src/models/User";
 
-@Route("plan")
+@Route("masterplan")
 export class MasterPlanController extends Controller {
   @Get()
-  public async getAllMasterPlans(): Promise<MasterPlanResponseDTO[]> {
-    const plans = await MasterPlanRepo.getAll();
+  public async getAllMasterPlans(
+    @Query() program?: string,
+    @Query() year?: string,
+    @Query() specializion?: string,
+  ): Promise<MasterPlanResponseDTO[]> {
+    const plans = await MasterPlanRepo.getAll(program, year, specializion);
     return plans.map(mapPlanToDTO);
   }
 
+  @Get("{id}")
+  public async getMasterPlan(
+    @Path() id: number,
+  ): Promise<MasterPlanResponseDTO> {
+    const plan = await MasterPlanRepo.findById(id as MasterPlanId);
+    return mapPlanToDTO(plan);
+  }
+
   @Security("jwt")
-  @Get("/user")
-  public async getAllMasterPlanForUser(
+  @Get("user/me")
+  public async getMyMasterPlans(
     @Request() request: AuthenticatedRequest,
   ): Promise<MasterPlanResponseDTO[]> {
     const plans = await MasterPlanRepo.getAllByUserId(request.user.id);
+    return plans.map(mapPlanToDTO);
+  }
+
+  @Get("user/{id}")
+  public async getMasterPlansForUser(
+    @Path() id: number,
+  ): Promise<MasterPlanResponseDTO[]> {
+    const plans = await MasterPlanRepo.getAllByUserId(id as UserId);
     return plans.map(mapPlanToDTO);
   }
 

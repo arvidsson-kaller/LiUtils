@@ -753,7 +753,7 @@
 				]
 			}
 		},
-		"/plan": {
+		"/masterplan": {
 			"get": {
 				"operationId": "GetAllMasterPlans",
 				"responses": {
@@ -772,7 +772,32 @@
 					}
 				},
 				"security": [],
-				"parameters": []
+				"parameters": [
+					{
+						"in": "query",
+						"name": "program",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "year",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"in": "query",
+						"name": "specializion",
+						"required": false,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
 			},
 			"post": {
 				"operationId": "CreateMasterPlan",
@@ -799,9 +824,9 @@
 				}
 			}
 		},
-		"/plan/user": {
+		"/masterplan/user/me": {
 			"get": {
-				"operationId": "GetAllMasterPlanForUser",
+				"operationId": "GetMyMasterPlans",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -825,7 +850,39 @@
 				"parameters": []
 			}
 		},
-		"/plan/{id}": {
+		"/masterplan/user/{id}": {
+			"get": {
+				"operationId": "GetMasterPlansForUser",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/MasterPlanResponseDTO"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/masterplan/{id}": {
 			"put": {
 				"operationId": "UpdateMasterPlan",
 				"responses": {
