@@ -68,15 +68,18 @@ export class MasterPlanController extends Controller {
 
   @Security("jwt")
   @Post()
-  public createMasterPlan(
+  public async createMasterPlan(
     @Request() request: AuthenticatedRequest,
     @Body() body: CreateMasterPlanRequestDTO,
-  ) {
-    MasterPlanRepo.create({
+  ): Promise<MasterPlanCreatedResponseDTO> {
+    const plan = await MasterPlanRepo.create({
       title: body.title,
       data: body.plan,
       userId: request.user.id,
     });
+    return {
+      id: plan.id,
+    };
   }
 
   @Security("jwt")
@@ -119,6 +122,10 @@ interface CreateMasterPlanRequestDTO {
    */
   title: string;
   plan: MasterPlan;
+}
+
+interface MasterPlanCreatedResponseDTO {
+  id: number;
 }
 
 interface UpdateMasterPlanRequestDTO {
