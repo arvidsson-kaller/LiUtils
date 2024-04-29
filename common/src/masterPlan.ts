@@ -4,7 +4,7 @@ export interface MasterPlan {
   programName: string;
   startYear: string;
   semesters: SemesterPlan[];
-  specializion: string;
+  specialization: string;
   note: string;
 }
 

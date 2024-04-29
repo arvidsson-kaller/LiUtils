@@ -59,7 +59,7 @@ export default function MasterPlanPage() {
     programName: "",
     startYear: "",
     semesters: [],
-    specializion: "",
+    specialization: "",
     note: "",
   });
 
@@ -107,7 +107,7 @@ export default function MasterPlanPage() {
   React.useEffect(() => {
     if (selectedSpecialization) {
       setCurrentPlan((oldPlan) => {
-        return { ...oldPlan, specializion: selectedSpecialization };
+        return { ...oldPlan, specialization: selectedSpecialization };
       });
     }
   }, [selectedSpecialization]);
@@ -326,7 +326,7 @@ function Courses({
       {semesterPlan && (
         <SemesterPlanOverview
           plan={semesterPlan}
-          selectedSpecialization={currentPlan.specializion}
+          selectedSpecialization={currentPlan.specialization}
           onAddCourse={(block, period) => handleOpen(block, period)}
           onClickCourse={(course) => console.log(course)}
         />

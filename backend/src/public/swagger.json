@@ -791,7 +791,7 @@
 					},
 					{
 						"in": "query",
-						"name": "specializion",
+						"name": "specialization",
 						"required": false,
 						"schema": {
 							"type": "string"

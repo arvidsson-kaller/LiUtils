@@ -22,7 +22,7 @@ function mapResult(res: QueryArrayResult): DbMasterPlanWithUser[] {
 async function getAll(
   program: string | undefined,
   year: string | undefined,
-  specializion: string | undefined,
+  specialization: string | undefined,
   pool: Pool | PoolClient = db,
 ): Promise<DbMasterPlanWithUser[]> {
   let query =
@@ -37,9 +37,9 @@ async function getAll(
     values.push(year);
     query += " AND m.data->>'startyear'=($" + values.length + ")";
   }
-  if (specializion) {
-    values.push(specializion);
-    query += " AND m.data->>'specializion'=($" + values.length + ")";
+  if (specialization) {
+    values.push(specialization);
+    query += " AND m.data->>'specialization'=($" + values.length + ")";
   }
 
   const res = await pool.query({

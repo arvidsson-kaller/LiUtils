@@ -26,9 +26,9 @@ export class MasterPlanController extends Controller {
   public async getAllMasterPlans(
     @Query() program?: string,
     @Query() year?: string,
-    @Query() specializion?: string,
+    @Query() specialization?: string,
   ): Promise<MasterPlanResponseDTO[]> {
-    const plans = await MasterPlanRepo.getAll(program, year, specializion);
+    const plans = await MasterPlanRepo.getAll(program, year, specialization);
     return plans.map(mapPlanToDTO);
   }
 
