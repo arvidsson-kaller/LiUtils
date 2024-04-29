@@ -21,6 +21,8 @@ import {
   Autocomplete,
   Box,
   Button,
+  Card,
+  CardContent,
   CircularProgress,
   Container,
   List,
@@ -37,6 +39,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import React from "react";
 import { CourseSelectionGrid } from "@/components/master/CourseSelectionGrid";
 import { SemesterPlanOverview } from "@/components/master/SemesterPlanOverview";
+import { CourseSelectionSummary } from "@/components/master/CourseSelectionSummary";
 
 export default function MasterPlanPage() {
   const [allPrograms, setAllPrograms] =
@@ -316,7 +319,7 @@ function Courses({
 
   const getFilteredCourses = (courses: Course[]) => {
     return courses.filter((course) =>
-      blockFilter ? course.timetableModule === blockFilter : true,
+      blockFilter ? course.timetableModule.includes(blockFilter) : true,
     );
   };
 
@@ -324,12 +327,22 @@ function Courses({
     <Box>
       <h4>Selected Courses</h4>
       {semesterPlan && (
-        <SemesterPlanOverview
-          plan={semesterPlan}
-          selectedSpecialization={currentPlan.specialization}
-          onAddCourse={(block, period) => handleOpen(block, period)}
-          onClickCourse={(course) => console.log(course)}
-        />
+        <>
+          <Card sx={{ width: "100%" }}>
+            <CardContent sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+              <CourseSelectionSummary
+                semesterPlan={semesterPlan}
+                selectedSpecialization={currentPlan.specialization}
+              />
+            </CardContent>
+          </Card>
+          <SemesterPlanOverview
+            plan={semesterPlan}
+            selectedSpecialization={currentPlan.specialization}
+            onAddCourse={(block, period) => handleOpen(block, period)}
+            onClickCourse={(course) => console.log(course)}
+          />
+        </>
       )}
       <Button variant="contained" color="success" onClick={() => handleOpen()}>
         <AddIcon />
@@ -448,6 +461,14 @@ function Semesters({
   return (
     <>
       <h3>Semesters</h3>
+      <Card sx={{ width: "100%" }}>
+        <CardContent sx={{ display: "flex", gap: 2, alignItems: "center" }}>
+          <CourseSelectionSummary
+            semesterPlans={currentPlan.semesters}
+            selectedSpecialization={currentPlan.specialization}
+          />
+        </CardContent>
+      </Card>
       <List sx={{ width: "100%" }}>
         {addedSemesters.map((semester, i) => (
           <StyledListItem key={`list-semester-${i}`}>
