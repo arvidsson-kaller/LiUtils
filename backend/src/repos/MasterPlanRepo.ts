@@ -103,8 +103,12 @@ async function deleteById(
   userId: UserId,
   pool: Pool | PoolClient = db,
 ): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const values: any[] = [id, userId];
-  await pool.query('DELETE from "MasterPlan" where id = ($1) AND "userId"=($2)', values);
+  await pool.query(
+    'DELETE from "MasterPlan" where id = ($1) AND "userId"=($2)',
+    values,
+  );
 }
 
 async function create(
