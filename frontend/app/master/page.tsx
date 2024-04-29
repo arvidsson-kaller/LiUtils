@@ -8,6 +8,7 @@ import {
   Card,
   CardContent,
   Container,
+  Fab,
   List,
   ListSubheader,
   Popper,
@@ -22,6 +23,7 @@ import {
 import InfoIcon from "@mui/icons-material/Info";
 import AssessmentIcon from "@mui/icons-material/Assessment";
 import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
+import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import React from "react";
 import { CourseSelectionSummary } from "@/components/master/CourseSelectionSummary";
@@ -118,6 +120,16 @@ export default function Master() {
         gap: 2,
       }}
     >
+      <Link href="master/plan">
+        <Fab
+          sx={{ position: "fixed", top: 80, right: 24 }}
+          variant="extended"
+          color="success"
+        >
+          <AddIcon />
+          Make Plan
+        </Fab>
+      </Link>
       <h1>Master Planning</h1>
       <Autocomplete
         disablePortal
