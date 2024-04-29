@@ -464,7 +464,7 @@
 						},
 						"type": "array"
 					},
-					"specializion": {
+					"specialization": {
 						"type": "string"
 					},
 					"note": {
@@ -475,7 +475,7 @@
 					"programName",
 					"startYear",
 					"semesters",
-					"specializion",
+					"specialization",
 					"note"
 				],
 				"type": "object",
