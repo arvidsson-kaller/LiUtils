@@ -506,6 +506,19 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"MasterPlanCreatedResponseDTO": {
+				"properties": {
+					"id": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"id"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"CreateMasterPlanRequestDTO": {
 				"properties": {
 					"title": {
@@ -802,8 +815,15 @@
 			"post": {
 				"operationId": "CreateMasterPlan",
 				"responses": {
-					"204": {
-						"description": "No content"
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/MasterPlanCreatedResponseDTO"
+								}
+							}
+						}
 					}
 				},
 				"security": [
