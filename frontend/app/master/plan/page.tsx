@@ -51,6 +51,8 @@ export default function MasterPlanPage() {
     React.useState<MasterProgramDTO | null>(null);
   const [selectedStartYear, setSelectedStartYear] =
     React.useState<StartYearDTO | null>(null);
+  const [selectedSpecialization, setSelectedSpecialization] =
+    React.useState<string>("");
   const [addedSemesters, setAddedSemesters] = React.useState<Semester[]>([]);
 
   const [currentPlan, setCurrentPlan] = React.useState<MasterPlan>({
@@ -68,9 +70,16 @@ export default function MasterPlanPage() {
   React.useEffect(() => {
     if (selectedProgram?.id) {
       setAllStartYears(null);
+      setAllCourses(null);
+      setSelectedStartYear(null);
       setAddedSemesters([]);
       setCurrentPlan((oldPlan) => {
-        return { ...oldPlan, programName: selectedProgram.name };
+        return {
+          ...oldPlan,
+          programName: selectedProgram.name,
+          startYear: "",
+          semesters: [],
+        };
       });
       ProxyBackendService.getStartYears({
         programId: selectedProgram?.id,
@@ -83,13 +92,25 @@ export default function MasterPlanPage() {
       setAllCourses(null);
       setAddedSemesters([]);
       setCurrentPlan((oldPlan) => {
-        return { ...oldPlan, startYear: selectedStartYear.name };
+        return {
+          ...oldPlan,
+          startYear: selectedStartYear.name,
+          semesters: [],
+        };
       });
       ProxyBackendService.getCourses({
         startYearId: selectedStartYear?.id,
       }).then(setAllCourses);
     }
   }, [selectedStartYear]);
+
+  React.useEffect(() => {
+    if (selectedSpecialization) {
+      setCurrentPlan((oldPlan) => {
+        return { ...oldPlan, specializion: selectedSpecialization };
+      });
+    }
+  }, [selectedSpecialization]);
 
   const addOrUpdateSemesterPlan = React.useCallback(
     (semesterPlan: SemesterPlan) => {
@@ -134,13 +155,19 @@ export default function MasterPlanPage() {
       />
       {selectedStartYear &&
         (allCourses ? (
-          <Semesters
-            allSemesters={allCourses?.data?.semesters}
-            addedSemesters={addedSemesters}
-            setAddedSemesters={setAddedSemesters}
-            addOrUpdateSemesterPlan={addOrUpdateSemesterPlan}
-            currentPlan={currentPlan}
-          />
+          <>
+            <SpecializationSelection
+              allCourses={allCourses}
+              setSelectedSpecialization={setSelectedSpecialization}
+            />
+            <Semesters
+              allSemesters={allCourses?.data?.semesters}
+              addedSemesters={addedSemesters}
+              setAddedSemesters={setAddedSemesters}
+              addOrUpdateSemesterPlan={addOrUpdateSemesterPlan}
+              currentPlan={currentPlan}
+            />
+          </>
         ) : (
           <CircularProgress />
         ))}
@@ -248,7 +275,9 @@ function Courses({
       const existingPeriodPlan = semesterPlanCopy.periods.find(
         (p) => p.name === coursePeriod.name,
       );
-      const courseInPeriod = coursePeriod.courses.find(c => c.courseCode === course.courseCode)!;
+      const courseInPeriod = coursePeriod.courses.find(
+        (c) => c.courseCode === course.courseCode,
+      )!;
       // Only add the course if it is not already added
       if (
         !existingPeriodPlan?.courses.find(
@@ -279,7 +308,7 @@ function Courses({
       {plannedSemester && (
         <SemesterPlanOverview
           plan={plannedSemester}
-          selectedSpecialization=""
+          selectedSpecialization={currentPlan.specializion}
           onAddCourse={(block, period) => handleOpen(block, period)}
           onClickCourse={(course) => console.log(course)}
         />
@@ -459,7 +488,7 @@ function ProgramAndStartYearSelection({
   allPrograms,
   setSelectedProgram,
   selectedProgram,
-  allStartYears: allStartYears,
+  allStartYears,
   setSelectedStartYear,
 }: {
   allPrograms: ProgramsResponseDTO | null;
@@ -507,6 +536,40 @@ function ProgramAndStartYearSelection({
         ) : (
           <CircularProgress />
         ))}
+    </>
+  );
+}
+
+function SpecializationSelection({
+  allCourses,
+  setSelectedSpecialization,
+}: {
+  allCourses: CoursesResponseDTO;
+  setSelectedSpecialization: React.Dispatch<React.SetStateAction<string>>;
+}) {
+  const allSpecializations = Array.from(
+    new Set(
+      allCourses.data.semesters
+        .map((semester) =>
+          semester.specializations.map((specialization) => specialization.name),
+        )
+        .flat(),
+    ),
+  ).sort((a, b) => a.localeCompare(b));
+  return (
+    <>
+      {allCourses && (
+        <Autocomplete
+          disablePortal
+          id="specialization-selection"
+          options={allSpecializations}
+          sx={{ width: "100%" }}
+          renderInput={(params) => (
+            <TextField {...params} label="Specialization" />
+          )}
+          onChange={(_, option) => setSelectedSpecialization(option!)}
+        />
+      )}
     </>
   );
 }
