@@ -47,20 +47,21 @@ export const CourseSelectionSummary = ({
         <h5>Total</h5>
         <p>{Object.values(credits).reduce((a, b) => a + b.value, 0)}</p>
       </Box>
-      {semesterPlan && semesterPlan.periods.map((period) => (
-        <Box key={`summary-${period.name}`}>
-          <h5>{period.name}</h5>
-          <p>
-            {period.courses
-              .map(
-                (course) =>
-                  credits[course.courseCode].value /
-                  periodSpans[course.courseCode],
-              )
-              .reduce((a, b) => a + b, 0)}
-          </p>
-        </Box>
-      ))}
+      {semesterPlan &&
+        semesterPlan.periods.map((period) => (
+          <Box key={`summary-${period.name}`}>
+            <h5>{period.name}</h5>
+            <p>
+              {period.courses
+                .map(
+                  (course) =>
+                    credits[course.courseCode].value /
+                    periodSpans[course.courseCode],
+                )
+                .reduce((a, b) => a + b, 0)}
+            </p>
+          </Box>
+        ))}
       <Box>
         <h5>Advanced</h5>
         <p>

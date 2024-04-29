@@ -9,6 +9,8 @@ export const deepURIDecode = (URI: string) => {
   return URICopy;
 };
 
-export const getNumericCourseCredit = (course: Course | PlannedCourse): number => {
+export const getNumericCourseCredit = (
+  course: Course | PlannedCourse,
+): number => {
   return Number(course.credits.replaceAll(/[^0-9]/g, ""));
 };
