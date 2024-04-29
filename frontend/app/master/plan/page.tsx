@@ -5,6 +5,7 @@ import {
   CoursesResponseDTO,
   MasterPlan,
   MasterProgramDTO,
+  Period,
   PeriodName,
   PlannedCourseSpecialization,
   ProgramsResponseDTO,
@@ -217,6 +218,55 @@ function Courses({
     setSemesterPlan(semesterPlan);
     addOrUpdateSemesterPlan(semesterPlan);
   };
+
+  const addCourse = (course: Course, semester: Semester) => {
+    if (!semesterPlan) {
+      return;
+    }
+    const semesterPlanCopy = structuredClone(semesterPlan);
+    // Create list of all specializations that have the course
+    const plannedSpecializations: PlannedCourseSpecialization[] = [];
+    const coursePeriods: Period[] = [];
+    for (const spec of semester.specializations) {
+      for (const per of spec.periods) {
+        for (const cor of per.courses) {
+          if (cor.courseCode === course.courseCode) {
+            if (!plannedSpecializations.find((s) => s.name === spec.name)) {
+              plannedSpecializations.push({
+                name: spec.name,
+                ECV: cor.ECV,
+              });
+            }
+            if (!coursePeriods.find((p) => p.name === per.name)) {
+              coursePeriods.push(per);
+            }
+          }
+        }
+      }
+    }
+    for (const coursePeriod of coursePeriods) {
+      const existingPeriodPlan = semesterPlanCopy.periods.find(
+        (p) => p.name === coursePeriod.name,
+      );
+      const courseInPeriod = coursePeriod.courses.find(c => c.courseCode === course.courseCode)!;
+      // Only add the course if it is not already added
+      if (
+        !existingPeriodPlan?.courses.find(
+          (c) => c.courseName === course.courseName,
+        )
+      ) {
+        existingPeriodPlan?.courses.push({
+          ...courseInPeriod,
+          semester:
+            currentSemester.name === semester.name ? null : semester.name,
+          note: "",
+          specializations: plannedSpecializations,
+        });
+      }
+    }
+    updateSemesterPlan(semesterPlanCopy);
+  };
+
   const getFilteredCourses = (courses: Course[]) => {
     return courses.filter((course) =>
       blockFilter ? course.timetableModule === blockFilter : true,
@@ -297,50 +347,9 @@ function Courses({
                                         courses={getFilteredCourses(
                                           period.courses,
                                         )}
-                                        onCourseAdd={(course) => {
-                                          if (!semesterPlan) {
-                                            return;
-                                          }
-                                          const semesterPlanCopy =
-                                            structuredClone(semesterPlan);
-                                          const plannedSpecializations: PlannedCourseSpecialization[] =
-                                            [];
-                                          for (const spec of semester.specializations) {
-                                            for (const per of spec.periods) {
-                                              let wasCourseFound = false;
-                                              for (const cor of per.courses) {
-                                                if (
-                                                  cor.courseCode ===
-                                                  course.courseCode
-                                                ) {
-                                                  plannedSpecializations.push({
-                                                    name: spec.name,
-                                                    ECV: cor.ECV,
-                                                  });
-                                                  wasCourseFound = true;
-                                                  break;
-                                                }
-                                              }
-                                              if (wasCourseFound) {
-                                                break;
-                                              }
-                                            }
-                                          }
-                                          semesterPlanCopy.periods
-                                            .find((p) => p.name === period.name)
-                                            ?.courses.push({
-                                              ...course,
-                                              semester:
-                                                currentSemester.name ===
-                                                semester.name
-                                                  ? null
-                                                  : semester.name,
-                                              note: "",
-                                              specializations:
-                                                plannedSpecializations,
-                                            });
-                                          updateSemesterPlan(semesterPlanCopy);
-                                        }}
+                                        onCourseAdd={(course) =>
+                                          addCourse(course, semester)
+                                        }
                                       />
                                     </ul>
                                   </li>
