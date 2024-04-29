@@ -242,7 +242,11 @@ function Courses({
     addOrUpdateSemesterPlan(semesterPlan);
   };
 
-  const addCourse = (course: Course, semester: Semester) => {
+  const addCourse = (
+    course: Course,
+    semester: Semester,
+    allSemesters: Semester[],
+  ) => {
     if (!semesterPlan) {
       return;
     }
@@ -250,18 +254,20 @@ function Courses({
     // Create list of all specializations that have the course
     const plannedSpecializations: PlannedCourseSpecialization[] = [];
     const coursePeriods: Period[] = [];
-    for (const spec of semester.specializations) {
-      for (const per of spec.periods) {
-        for (const cor of per.courses) {
-          if (cor.courseCode === course.courseCode) {
-            if (!plannedSpecializations.find((s) => s.name === spec.name)) {
-              plannedSpecializations.push({
-                name: spec.name,
-                ECV: cor.ECV,
-              });
-            }
-            if (!coursePeriods.find((p) => p.name === per.name)) {
-              coursePeriods.push(per);
+    for (const sem of allSemesters) {
+      for (const spec of sem.specializations) {
+        for (const per of spec.periods) {
+          for (const cor of per.courses) {
+            if (cor.courseCode === course.courseCode) {
+              if (!plannedSpecializations.find((s) => s.name === spec.name)) {
+                plannedSpecializations.push({
+                  name: spec.name,
+                  ECV: cor.ECV,
+                });
+              }
+              if (!coursePeriods.find((p) => p.name === per.name)) {
+                coursePeriods.push(per);
+              }
             }
           }
         }
@@ -273,7 +279,10 @@ function Courses({
       );
       const courseInPeriod = coursePeriod.courses.find(
         (c) => c.courseCode === course.courseCode,
-      )!;
+      );
+      if (!courseInPeriod) {
+        continue;
+      }
       // Only add the course if it is not already added
       if (
         !existingPeriodPlan?.courses.find(
@@ -391,7 +400,11 @@ function Courses({
                                           )?.courses
                                         }
                                         onCourseAdd={(course) =>
-                                          addCourse(course, semester)
+                                          addCourse(
+                                            course,
+                                            semester,
+                                            allSemesters,
+                                          )
                                         }
                                         onCourseRemove={removeCourse}
                                       />
