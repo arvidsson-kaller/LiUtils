@@ -198,7 +198,9 @@ function CourseContent({
           target="_blank"
           referrerPolicy="no-referrer"
         >
-          <span style={{textDecoration: "underline"}} color={"inherit"}>{course.courseCode}</span>
+          <span style={{ textDecoration: "underline" }} color={"inherit"}>
+            {course.courseCode}
+          </span>
         </NextLink>
         : {course.courseName}
       </Typography>

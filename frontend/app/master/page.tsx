@@ -162,8 +162,9 @@ export default function Master() {
         getOptionLabel={(opt) => opt.name}
       />
       <Card sx={{ width: "100%", position: "sticky", top: 0, zIndex: 10 }}>
-        <CardContent sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-        </CardContent>
+        <CardContent
+          sx={{ display: "flex", gap: 2, alignItems: "center" }}
+        ></CardContent>
       </Card>
       <Button
         variant="contained"
