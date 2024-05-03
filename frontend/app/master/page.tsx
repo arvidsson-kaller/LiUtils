@@ -26,7 +26,6 @@ import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import React from "react";
-import { CourseSelectionSummary } from "@/components/master/CourseSelectionSummary";
 
 const columns: GridColDef[] = [
   { field: "courseCode", headerName: "Course", flex: 1 },
@@ -164,10 +163,6 @@ export default function Master() {
       />
       <Card sx={{ width: "100%", position: "sticky", top: 0, zIndex: 10 }}>
         <CardContent sx={{ display: "flex", gap: 2, alignItems: "center" }}>
-          <CourseSelectionSummary
-            courseCodes={rowSelectionModel as string[]}
-            semester={selectedSemester!}
-          />
         </CardContent>
       </Card>
       <Button

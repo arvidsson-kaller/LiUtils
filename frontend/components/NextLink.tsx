@@ -1,23 +1,9 @@
-import React from "react";
 import Link from "next/link";
+import { styled } from "@mui/material";
 
-const NextLink = ({
-  href,
-  children,
-  ...rest
-}: {
-  href: string;
-  children: any;
-}) => {
-  return (
-    <Link
-      href={href}
-      {...rest}
-      style={{ textDecoration: "none", color: "inherit" }}
-    >
-      {children}
-    </Link>
-  );
-};
+const NextLink = styled(Link)({
+  textDecoration: "100%",
+  color: "inherit"
+});
 
 export default NextLink;
