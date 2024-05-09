@@ -42,6 +42,7 @@ const authOptions: NextAuthOptions = {
         },
       });
       token.backendJwt = respone.jwt;
+      token.me = respone.user;
       return token;
     },
   },

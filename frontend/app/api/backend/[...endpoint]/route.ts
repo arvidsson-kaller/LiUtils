@@ -1,4 +1,4 @@
-import { getUserSession } from "@/lib/session";
+import { getUserAuthSession } from "@/lib/session";
 import { NextRequest, NextResponse } from "next/server";
 
 const proxy = async (
@@ -29,7 +29,7 @@ const proxy = async (
 
   // Try to append user backend auth
   try {
-    const user = await getUserSession();
+    const user = await getUserAuthSession();
     const userBackendJwt = user?.backendJwt;
     backendRequest.headers = {
       authorization: `Bearer ${userBackendJwt}`,

@@ -23,7 +23,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { CourseSelectionSummary } from "../CourseSelectionSummary";
-import { SemesterPlanOverview } from "../SemesterPlanOverview";
+import { SemesterPlanOverview } from "../overview/SemesterPlanOverview";
 import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { CourseSelectionGrid } from "./CourseSelectionGrid";
