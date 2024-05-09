@@ -64,10 +64,14 @@
 				"properties": {
 					"jwt": {
 						"type": "string"
+					},
+					"user": {
+						"$ref": "#/components/schemas/UserDTO"
 					}
 				},
 				"required": [
-					"jwt"
+					"jwt",
+					"user"
 				],
 				"type": "object",
 				"additionalProperties": false
