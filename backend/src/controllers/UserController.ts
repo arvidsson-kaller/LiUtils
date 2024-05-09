@@ -48,6 +48,7 @@ export class UserController extends Controller {
     const token = JwtService.encode(user);
     return {
       jwt: token,
+      user: mapUserToDTO(user),
     };
   }
 
@@ -120,6 +121,7 @@ interface SignedInRequestDTO {
 
 interface SignedInResponseDTO {
   jwt: string;
+  user: UserDTO;
 }
 
 interface MyUserResponseDTO {
