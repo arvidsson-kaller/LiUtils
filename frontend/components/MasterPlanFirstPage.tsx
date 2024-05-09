@@ -80,7 +80,7 @@ export default function MasterPlanFirstPage({
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          {user.name}'s master plans ({myMasterPlans.length})
+          {user.name}{`'`}s master plans ({myMasterPlans.length})
         </AccordionSummary>
         <AccordionDetails>
           {myMasterPlans.map((plan) => (
