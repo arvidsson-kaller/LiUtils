@@ -17,6 +17,7 @@
     "@hey-api/openapi-ts": "^0.34.5",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.12",
+    "@mui/x-charts": "^7.3.2",
     "@mui/x-data-grid": "^7.1.0",
     "common": "file:./common",
     "next": "14.1.2",
