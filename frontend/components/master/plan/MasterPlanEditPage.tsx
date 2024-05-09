@@ -60,27 +60,42 @@ export default function MasterPlanEditPage({
     },
   );
 
+  const loadPreExistingData = React.useCallback(
+    (loadedData: MasterPlanResponseDTO) => {
+      if (loadedData) {
+        setPlanTitle(loadedData.title);
+        setCurrentPlan(loadedData.plan);
+        setSelectedProgram(loadedData.plan.program);
+        ProxyBackendService.getStartYears({
+          programId: loadedData.plan.program.id,
+        }).then(setAllStartYears);
+        if (loadedData.plan.startYear.id !== -1) {
+          setSelectedStartYear(loadedData.plan.startYear);
+          ProxyBackendService.getCourses({
+            startYearId: loadedData.plan.startYear.id,
+          }).then(setAllCourses);
+        }
+        setSelectedSpecialization(loadedData.plan.specialization);
+      }
+    },
+    [],
+  );
+
   React.useEffect(() => {
     if (!loadedPlan) {
       const savedPlanString = localStorage.getItem("savedPlan");
       if (savedPlanString) {
-        const savedPlan = JSON.parse(savedPlanString);
-        setPlanTitle(savedPlan.title);
-        setCurrentPlan(savedPlan.plan);
-        setSelectedProgram(savedPlan.plan.program);
-        ProxyBackendService.getStartYears({
-          programId: savedPlan.plan.program.id,
-        }).then(setAllStartYears);
-        if (savedPlan.plan.startYear.id !== -1) {
-          setSelectedStartYear(savedPlan.plan.startYear);
-          ProxyBackendService.getCourses({
-            startYearId: savedPlan.plan.startYear.id,
-          }).then(setAllCourses);
-        }
-        setSelectedSpecialization(savedPlan.plan.specialization);
+        loadPreExistingData(JSON.parse(savedPlanString));
       }
+    } else {
+      // Always refetch the loaded data from the frontend to reflect new changes that are still cached as old values
+      ProxyBackendService.getMasterPlanById({ id: Number(id) }).then(
+        (loadedData) => {
+          loadPreExistingData(loadedData);
+        },
+      );
     }
-  }, [loadedPlan]);
+  }, [loadedPlan, id, loadPreExistingData]);
 
   React.useEffect(() => {
     if (currentPlan.program.id !== -1) {
@@ -158,6 +173,14 @@ export default function MasterPlanEditPage({
     },
     [],
   );
+  const updateNote = React.useCallback((note: string) => {
+    setCurrentPlan((oldPlan) => {
+      return {
+        ...oldPlan,
+        note: note,
+      };
+    });
+  }, []);
 
   const addOrUpdateSemesterPlan = React.useCallback(
     (semesterPlan: SemesterPlan) => {
@@ -232,6 +255,14 @@ export default function MasterPlanEditPage({
         ) : (
           <CircularProgress />
         ))}
+      <TextField
+        sx={{ width: "100%" }}
+        label="Note"
+        value={currentPlan.note}
+        onChange={(e) => updateNote(e.target.value)}
+        multiline
+        maxRows={4}
+      />
       <SaveButton id={id} planTitle={planTitle} currentPlan={currentPlan} />
       <DeleteButton id={id} />
     </Container>
