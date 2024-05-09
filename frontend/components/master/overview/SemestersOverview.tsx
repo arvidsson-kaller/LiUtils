@@ -33,7 +33,7 @@ export default function SemestersOverview({
   return (
     <List>
       {creditsPerSemester.map(([semester, credits]) => (
-        <ListItem disablePadding>
+        <ListItem disablePadding key={semester}>
           <ListItemButton
             onClick={(e) =>
               onSemesterClick &&
