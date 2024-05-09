@@ -59,8 +59,8 @@ export default function MasterPlanPage() {
   const [addedSemesters, setAddedSemesters] = React.useState<Semester[]>([]);
 
   const [currentPlan, setCurrentPlan] = React.useState<MasterPlan>({
-    programName: "",
-    startYear: "",
+    program: { name: "", id: -1 },
+    startYear: { name: "", id: -1 },
     semesters: [],
     specialization: "",
     note: "",
@@ -79,8 +79,8 @@ export default function MasterPlanPage() {
       setCurrentPlan((oldPlan) => {
         return {
           ...oldPlan,
-          programName: selectedProgram.name,
-          startYear: "",
+          program: selectedProgram,
+          startYear: { name: "", id: -1 },
           semesters: [],
         };
       });
@@ -97,7 +97,7 @@ export default function MasterPlanPage() {
       setCurrentPlan((oldPlan) => {
         return {
           ...oldPlan,
-          startYear: selectedStartYear.name,
+          startYear: selectedStartYear,
           semesters: [],
         };
       });

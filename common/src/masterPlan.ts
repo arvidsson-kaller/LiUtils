@@ -1,11 +1,21 @@
 import { Course, Ecv, PeriodName } from "./studieinfo";
 
 export interface MasterPlan {
-  programName: string;
-  startYear: string;
+  program: PlannedMasterProgram;
+  startYear: PlannedStartYear;
   semesters: SemesterPlan[];
   specialization: string;
   note: string;
+}
+
+export interface PlannedMasterProgram {
+  id: number;
+  name: string;
+}
+
+export interface PlannedStartYear {
+  id: number;
+  name: string;
 }
 
 export interface SemesterPlan {
