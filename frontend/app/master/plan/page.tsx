@@ -1,4 +1,4 @@
-import MasterPlanEditPage from "@/components/master/MasterPlanEditPage";
+import MasterPlanEditPage from "@/components/master/plan/MasterPlanEditPage";
 import { BackendService } from "@/lib/backend";
 
 export default async function MasterPlanPage({
