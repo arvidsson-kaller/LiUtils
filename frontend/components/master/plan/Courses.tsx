@@ -22,8 +22,8 @@ import {
   styled,
 } from "@mui/material";
 import React from "react";
-import { CourseSelectionSummary } from "./CourseSelectionSummary";
-import { SemesterPlanOverview } from "./SemesterPlanOverview";
+import { CourseSelectionSummary } from "../CourseSelectionSummary";
+import { SemesterPlanOverview } from "../SemesterPlanOverview";
 import AddIcon from "@mui/icons-material/Add";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { CourseSelectionGrid } from "./CourseSelectionGrid";

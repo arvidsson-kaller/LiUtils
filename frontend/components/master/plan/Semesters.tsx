@@ -12,7 +12,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import { CourseSelectionSummary } from "./CourseSelectionSummary";
+import { CourseSelectionSummary } from "../CourseSelectionSummary";
 import { Courses } from "./Courses";
 import { MasterPlan, Semester, SemesterPlan } from "@/lib/backend-client";
 import React from "react";
