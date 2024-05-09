@@ -12,6 +12,7 @@ export default function SemestersOverview({
 }) {
   const plan = masterplan.plan;
   const creditsPerSemester = React.useMemo(() => {
+    const plan = masterplan.plan;
     const creditsPerSemester: any = {};
     const uniqueCourses = new Set();
     plan.semesters.forEach((s) =>
@@ -28,7 +29,7 @@ export default function SemestersOverview({
       ),
     );
     return Object.entries(creditsPerSemester);
-  }, [plan]);
+  }, [masterplan]);
 
   return (
     <List>

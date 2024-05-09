@@ -1,10 +1,10 @@
-import { Box, Button, Container, Fab, Popper } from "@mui/material";
-import InfoIcon from "@mui/icons-material/Info";
+import { Container, Fab } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Link from "next/link";
 import React from "react";
 import { getUserSession, getUserSessionBackendService } from "@/lib/session";
 import MasterPlanFirstPage from "@/components/MasterPlanFirstPage";
+export const revalidate = 0;
 
 export default async function Master() {
   const user = await getUserSession();
@@ -39,21 +39,3 @@ export default async function Master() {
     </Container>
   );
 }
-
-const InfoPopper = ({ info }: { info: string }) => {
-  const [open, setOpen] = React.useState<boolean>(false);
-  const infoRef = React.useRef(null);
-
-  return info ? (
-    <>
-      <Button ref={infoRef} onClick={() => setOpen(!open)}>
-        <InfoIcon />
-      </Button>
-      <Popper open={open} anchorEl={infoRef.current} placement="right">
-        <Box sx={{ border: 1, p: 1, bgcolor: "background.paper" }}>{info}</Box>
-      </Popper>
-    </>
-  ) : (
-    <></>
-  );
-};

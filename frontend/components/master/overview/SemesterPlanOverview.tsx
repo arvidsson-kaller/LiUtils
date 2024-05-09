@@ -27,11 +27,13 @@ export const SemesterPlanOverview = ({
   selectedSpecialization,
   onAddCourse,
   onClickCourse,
+  readOnly = false,
 }: {
   plan: SemesterPlan;
   selectedSpecialization: string;
   onAddCourse?: onAddCourseCallback;
   onClickCourse?: onClickCourseCallback;
+  readOnly?: boolean;
 }) => {
   return (
     <List>
@@ -65,6 +67,7 @@ export const SemesterPlanOverview = ({
                     period={period.name}
                     onAddCourse={onAddCourse}
                     onClickCourse={onClickCourse}
+                    readOnly={readOnly}
                   />
                 ))}
             </Box>
@@ -89,6 +92,7 @@ function Block({
   period,
   onAddCourse,
   onClickCourse,
+  readOnly,
 }: {
   courses: PlannedCourse[];
   selectedSpecialization: string;
@@ -96,6 +100,7 @@ function Block({
   period: string;
   onAddCourse?: onAddCourseCallback;
   onClickCourse?: onClickCourseCallback;
+  readOnly: boolean;
 }) {
   const coursesInBlock = courses.filter((c) =>
     c.timetableModule.includes(block),
@@ -132,36 +137,38 @@ function Block({
           />
         </Card>
       ))}
-      <Box
-        //
-        sx={{
-          position: "relative",
-          flex: coursesInBlock.length === 0 ? "auto" : "none",
-          height: "2px",
-          p: 0,
-          m: 0,
-          pb: 1,
-          opacity: 0,
-          transition: "opacity 0.3s ease-in-out, height 0.3s ease-in-out",
-          "&:hover": {
-            opacity: 1,
-            height: 75 / 2,
-          },
-        }}
-      >
-        <Button
-          onClick={() => onAddCourse && onAddCourse(block, period)}
-          variant="contained"
+      {!readOnly && (
+        <Box
+          //
           sx={{
-            width: "100%",
-            height: "100%",
-            fontSize: "24px",
-            color: "white",
+            position: "relative",
+            flex: coursesInBlock.length === 0 ? "auto" : "none",
+            height: "2px",
+            p: 0,
+            m: 0,
+            pb: 1,
+            opacity: 0,
+            transition: "opacity 0.3s ease-in-out, height 0.3s ease-in-out",
+            "&:hover": {
+              opacity: 1,
+              height: 75 / 2,
+            },
           }}
         >
-          +
-        </Button>
-      </Box>
+          <Button
+            onClick={() => onAddCourse && onAddCourse(block, period)}
+            variant="contained"
+            sx={{
+              width: "100%",
+              height: "100%",
+              fontSize: "24px",
+              color: "white",
+            }}
+          >
+            +
+          </Button>
+        </Box>
+      )}
     </Box>
   );
 }

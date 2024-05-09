@@ -14,7 +14,7 @@ import {
   Typography,
   styled,
 } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import {
   MasterPlanResponseDTO,
@@ -26,13 +26,14 @@ import { specLabel } from "@/lib/master/helpers";
 import SpecializationOverview from "./master/overview/SpecializationOverview";
 import SemestersOverview from "./master/overview/SemestersOverview";
 import NextLink from "./NextLink";
+import { ProxyBackendService } from "@/lib/backend";
 
 const StyledAccordian = styled(Accordion)({
   width: "100%",
 });
 
 export default function MasterPlanFirstPage({
-  myMasterPlans,
+  myMasterPlans: previewMyMasterPlans,
   allMasterPlans,
   user,
 }: {
@@ -45,6 +46,15 @@ export default function MasterPlanFirstPage({
   );
   const [open, setOpen] = React.useState(false);
   const [popperPlan, setPopperPlan] = React.useState<SemesterPlan>();
+
+  const [myMasterPlans, setMyMasterPlans] =
+    React.useState<MasterPlanResponseDTO[]>(previewMyMasterPlans);
+
+  useEffect(() => {
+    ProxyBackendService.getMyMasterPlans().then((plans) =>
+      setMyMasterPlans(plans),
+    );
+  }, []);
 
   const handleClick = (event: React.MouseEvent<any>, plan: SemesterPlan) => {
     setAnchorEl(event.currentTarget);
@@ -68,6 +78,7 @@ export default function MasterPlanFirstPage({
                 <SemesterPlanOverview
                   plan={popperPlan}
                   selectedSpecialization=""
+                  readOnly={true}
                 />
               )}
             </Paper>
@@ -80,7 +91,8 @@ export default function MasterPlanFirstPage({
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          {user.name}{`'`}s master plans ({myMasterPlans.length})
+          {user.name}
+          {`'`}s master plans ({myMasterPlans.length})
         </AccordionSummary>
         <AccordionDetails>
           {myMasterPlans.map((plan) => (
@@ -95,11 +107,6 @@ export default function MasterPlanFirstPage({
                 <Button>
                   <NextLink href={"/master/plan?id=" + plan.id}>
                     View plan
-                  </NextLink>
-                </Button>
-                <Button>
-                  <NextLink href={"/master/plan?id=" + plan.id}>
-                    Duplicate
                   </NextLink>
                 </Button>
               </CardActions>
