@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Endpoint Documentation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        padding: 20px;
+      }
+
+      h1 {
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      h2 {
+        font-size: 20px;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+
+      p {
+        margin-bottom: 10px;
+      }
+
+      code {
+        font-family: Consolas, monospace;
+        background-color: #f4f4f4;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      table {
+        border-collapse: collapse;
+        margin-bottom: 20px;
+      }
+
+      th,
+      td {
+        padding: 8px;
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>LiUtils TimeEdit Proxy API Documentation</h1>
+
+    Proxy for accessing TimeEdit resources without scrambling.<br />
+    Used in <a href="https://liutils.se" target="_blank">https://liutils.se</a
+    ><br />
+    For more LiUtils API, see
+    <a href="https://be.liutils.se" target="_blank">https://be.liutils.se</a>
+    <br />
+    <br />
+    <table>
+      <thead>
+        <tr>
+          <th>File Extension</th>
+          <th>Redirect Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>.html</code></td>
+          <td>Redirects to the TimeEdit website</td>
+        </tr>
+        <tr>
+          <td><code>.ics</code></td>
+          <td>Redirects to an iCalendar file</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      <strong>Note:</strong> All endpoints return a redirect to the TimeEdit
+      URL.
+    </p>
+
+    <h2>/:courses</h2>
+    <p>This endpoint retrieves information about multiple courses.</p>
+    <p>Parameters:</p>
+    <ul>
+      <li>
+        <code>:courses</code> (string): A list of course codes separated by
+        <code>+</code>.
+      </li>
+    </ul>
+    <p>Example:</p>
+    <a href="/tddd38+tddd27" target="_blank"><code>/tddd38+tddd27</code></a>
+    <br />
+    <a href="/tddd38+tddd27.ics" target="_blank"
+      ><code>/tddd38+tddd27.ics</code></a
+    >
+
+    <p>
+      <strong>Note:</strong> All endpoints support <code>.ics</code> and
+      <code>.html</code>.
+    </p>
+
+    <h2>/room/:rooms</h2>
+    <p>This endpoint retrieves information about multiple rooms.</p>
+    <p>Parameters:</p>
+    <ul>
+      <li>
+        <code>:rooms</code> (string): A list of room names separated by
+        <code>+</code>.
+      </li>
+    </ul>
+    <p>Example:</p>
+    <a href="/room/su01+su02" target="_blank"><code>/room/su01+su02</code></a>
+    <br />
+    <a href="/room/su01+su02.ics" target="_blank"><code>/room/su01+su02.ics</code></a>
+  </body>
+</html>
