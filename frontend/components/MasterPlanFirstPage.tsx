@@ -168,9 +168,7 @@ export default function MasterPlanFirstPage({
           {filteredMasterPlans.map((plan) => (
             <Card variant="outlined" key={plan.id} sx={{ mt: 1 }}>
               <CardContent>
-                <MasterPlanPreview
-                  masterplan={plan}
-                ></MasterPlanPreview>
+                <MasterPlanPreview masterplan={plan}></MasterPlanPreview>
               </CardContent>
               <CardActions>
                 <Button>
@@ -212,9 +210,7 @@ function MasterPlanPreview({
       </Typography>
       <Box sx={{ display: "flex" }}>
         <Box sx={{ width: 250 }}>
-          <SemestersOverview
-            masterplan={masterplan}
-          />
+          <SemestersOverview masterplan={masterplan} />
         </Box>
         <Box
           sx={{
