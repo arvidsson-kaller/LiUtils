@@ -3,9 +3,9 @@ import { MasterPlan } from "@/lib/backend-client";
 import { Fab } from "@mui/material";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import React from "react";
-import SaveIcon from "@mui/icons-material/Save";
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 
-export function SaveButton({
+export function DuplicateButton({
   id,
   planTitle,
   currentPlan,
@@ -29,43 +29,28 @@ export function SaveButton({
     [searchParams],
   );
 
-  const [buttonText, setButtonText] = React.useState("Save");
+  const [buttonText, setButtonText] = React.useState("Duplicate");
   const [successState, setSuccessState] = React.useState<
     "success" | "error" | "info" | "warning" | undefined
   >("info");
 
   const waitAndReset = (time: number = 3000) => {
     setTimeout(() => {
-      setButtonText("Save");
+      setButtonText("Duplicate");
       setSuccessState("info");
     }, time);
   };
 
   return (
     <Fab
-      sx={{ position: "fixed", bottom: 140, right: 24 }}
+      sx={{ position: "fixed", bottom: 20, right: 24 }}
       variant="extended"
       color={successState}
       onClick={() => {
-        setButtonText("Saving...");
-        if (id && isOwnPlan) {
-          ProxyBackendService.updateMasterPlan({
-            id: Number(id),
-            requestBody: { title: planTitle, plan: currentPlan },
-          })
-            .then(() => {
-              setButtonText("Saved changes successfully");
-              setSuccessState("success");
-              waitAndReset();
-            })
-            .catch(() => {
-              setButtonText("Failed to save");
-              setSuccessState("error");
-              waitAndReset();
-            });
-        } else {
+        setButtonText("Duplicating...");
+        if (id) {
           ProxyBackendService.createMasterPlan({
-            requestBody: { title: !isOwnPlan ? "Copy of " + planTitle : planTitle, plan: currentPlan },
+            requestBody: { title: "Copy of " + planTitle, plan: currentPlan },
           })
             .then((response) => {
               router.push(
@@ -73,19 +58,19 @@ export function SaveButton({
                   "?" +
                   createQueryString("id", response.id.toString()),
               );
-              setButtonText("Saved to new plan successfully");
+              setButtonText("Duplicated plan successfully");
               setSuccessState("success");
               waitAndReset();
             })
             .catch(() => {
-              setButtonText("Failed to save");
+              setButtonText("Failed to duplicate");
               setSuccessState("error");
               waitAndReset();
             });
         }
       }}
     >
-      <SaveIcon />
+      <FileCopyIcon />
       {buttonText}
     </Fab>
   );

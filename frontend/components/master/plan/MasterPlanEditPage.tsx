@@ -10,8 +10,16 @@ import {
   SemesterPlan,
   StartYearDTO,
   StartYearResponseDTO,
+  UserDTO,
 } from "@/lib/backend-client";
-import { Box, CircularProgress, Container, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CircularProgress,
+  Container,
+  TextField,
+} from "@mui/material";
 
 import React from "react";
 import { SaveButton } from "./SaveButton";
@@ -19,15 +27,18 @@ import { DeleteButton } from "./DeleteButton";
 import { Semesters } from "./Semesters";
 import { ProgramAndStartYearSelection } from "./ProgramAndStartYearSelection";
 import { SpecializationSelection } from "./SpecializationSelection";
+import { DuplicateButton } from "./DuplicateButton";
 
 export default function MasterPlanEditPage({
   allPrograms,
+  user,
   id,
   loadedPlan,
   loadedStartYears,
   loadedAllCourses,
 }: {
   allPrograms: ProgramsResponseDTO;
+  user?: UserDTO | undefined;
   id?: string | null;
   loadedPlan?: MasterPlanResponseDTO | null;
   loadedStartYears?: StartYearResponseDTO | null;
@@ -38,6 +49,8 @@ export default function MasterPlanEditPage({
   const [allCourses, setAllCourses] = React.useState<CoursesResponseDTO | null>(
     loadedAllCourses || null,
   );
+
+  const isOwnPlan = user?.id === loadedPlan?.user?.id || !loadedPlan;
 
   const [planTitle, setPlanTitle] = React.useState<string>(
     loadedPlan?.title || "My Master Plan",
@@ -209,6 +222,24 @@ export default function MasterPlanEditPage({
     [currentPlan],
   );
 
+  const resetPlan = React.useCallback(() => {
+    setSelectedProgram(null);
+    setAllStartYears(null);
+    setAllCourses(null);
+    setSelectedStartYear(null);
+    setSelectedSpecialization("");
+    setAddedSemesters([]);
+    setCurrentPlan((oldPlan) => {
+      return {
+        ...oldPlan,
+        program: { name: "", id: -1 },
+        startYear: { name: "", id: -1 },
+        specialization: "",
+        semesters: [],
+      };
+    }); 
+  }, [])
+
   return (
     <Container
       sx={{
@@ -267,9 +298,38 @@ export default function MasterPlanEditPage({
         multiline
         maxRows={4}
       />
+      <Button variant="contained" color="error" onClick={() => resetPlan()}>Reset Plan</Button>
       <Box sx={{ height: 200 }}></Box>
-      <SaveButton id={id} planTitle={planTitle} currentPlan={currentPlan} />
-      <DeleteButton id={id} />
+      <SaveButton
+        id={id}
+        planTitle={planTitle}
+        currentPlan={currentPlan}
+        isOwnPlan={isOwnPlan}
+      />
+      <DeleteButton id={id} isOwnPlan={isOwnPlan} />
+      {!isOwnPlan ? (
+        <Card
+          sx={{
+            position: "fixed",
+            top: 70,
+            right: 24,
+            backgroundColor: "beige",
+            padding: 1,
+          }}
+        >
+          <p>
+            Viewing <b>{loadedPlan.user.name}</b>&apos;s plan.
+          </p>
+          <p>Save to make a copy.</p>
+        </Card>
+      ) : (
+        <DuplicateButton
+          id={id}
+          planTitle={planTitle}
+          currentPlan={currentPlan}
+          isOwnPlan={isOwnPlan}
+        />
+      )}
     </Container>
   );
 }
