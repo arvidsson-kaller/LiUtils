@@ -25,14 +25,6 @@ backend-linter:
     - npm run lint
     - npx prettier ./ --check --end-of-line auto
 
-backup-backend-linter:
-  stage: lint
-  image: node:20.11-alpine3.18
-  script:
-    - cd backup-backend
-    - npm ci
-    - npx prettier ./ --check --end-of-line auto
-
 common-linter:
   stage: lint
   image: node:20.11-alpine3.18

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "update-common": "xcopy /E /I ..\\common .\\common",
+    "update-common": "rm -rf ./common && mkdir -p ./common && cp -r ../common/dist ./common && cp -r ../common/*.json ./common",
     "prettier": "npx prettier ./ --write --end-of-line auto"
   },
   "keywords": [],
