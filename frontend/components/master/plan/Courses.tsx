@@ -32,6 +32,10 @@ import HistoryEduIcon from "@mui/icons-material/HistoryEdu";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { CourseSelectionGrid } from "./CourseSelectionGrid";
 import Link from "next/link";
+import {
+  addCourseToSemesterPlan,
+  removeCourseFromSemesterPlan,
+} from "@/lib/utils";
 
 const ModalBox = styled(Box)({
   position: "absolute",
@@ -119,53 +123,13 @@ export function Courses({
       return;
     }
     const semesterPlanCopy = structuredClone(semesterPlan);
-    // Create list of all specializations that have the course
-    const plannedSpecializations: PlannedCourseSpecialization[] = [];
-    const coursePeriods: Period[] = [];
-    for (const sem of allSemesters) {
-      for (const spec of sem.specializations) {
-        for (const per of spec.periods) {
-          for (const cor of per.courses) {
-            if (cor.courseCode === course.courseCode) {
-              if (!plannedSpecializations.find((s) => s.name === spec.name)) {
-                plannedSpecializations.push({
-                  name: spec.name,
-                  ECV: cor.ECV,
-                });
-              }
-              if (!coursePeriods.find((p) => p.name === per.name)) {
-                coursePeriods.push(per);
-              }
-            }
-          }
-        }
-      }
-    }
-    for (const coursePeriod of coursePeriods) {
-      const existingPeriodPlan = semesterPlanCopy.periods.find(
-        (p) => p.name === coursePeriod.name,
-      );
-      const courseInPeriod = coursePeriod.courses.find(
-        (c) => c.courseCode === course.courseCode,
-      );
-      if (!courseInPeriod) {
-        continue;
-      }
-      // Only add the course if it is not already added
-      if (
-        !existingPeriodPlan?.courses.find(
-          (c) => c.courseName === course.courseName,
-        )
-      ) {
-        existingPeriodPlan?.courses.push({
-          ...courseInPeriod,
-          semester:
-            currentSemester.name === semester.name ? null : semester.name,
-          note: "",
-          specializations: plannedSpecializations,
-        });
-      }
-    }
+    addCourseToSemesterPlan(
+      course,
+      semesterPlanCopy,
+      semester,
+      allSemesters,
+      currentSemester,
+    );
     updateSemesterPlan(semesterPlanCopy);
   };
 
@@ -174,11 +138,7 @@ export function Courses({
       return;
     }
     const semesterPlanCopy = structuredClone(semesterPlan);
-    for (const periodPlan of semesterPlanCopy.periods) {
-      periodPlan.courses = periodPlan.courses.filter(
-        (plannedCourse) => plannedCourse.courseCode !== course.courseCode,
-      );
-    }
+    removeCourseFromSemesterPlan(course, semesterPlanCopy);
     updateSemesterPlan(semesterPlanCopy);
   };
 
@@ -455,6 +415,10 @@ function CourseSelectionModal({
                                         )
                                       }
                                       onCourseRemove={removeCourse}
+                                      semesterPlan={semesterPlan}
+                                      allSemesters={allSemesters}
+                                      currentSemester={currentSemester}
+                                      semester={semester}
                                     />
                                   </ul>
                                 </li>
