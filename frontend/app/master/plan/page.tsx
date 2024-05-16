@@ -1,5 +1,6 @@
 import MasterPlanEditPage from "@/components/master/plan/MasterPlanEditPage";
 import { BackendService } from "@/lib/backend";
+import { getUserSession } from "@/lib/session";
 
 export default async function MasterPlanPage({
   searchParams,
@@ -7,6 +8,8 @@ export default async function MasterPlanPage({
   searchParams?: { [key: string]: string | undefined };
 }) {
   const allPrograms = await BackendService.getAllPrograms();
+  const user = await getUserSession();
+
   const id = searchParams?.id || null;
   let loadedPlan = null;
   let loadedStartYears = null;
@@ -25,6 +28,7 @@ export default async function MasterPlanPage({
   return (
     <MasterPlanEditPage
       allPrograms={allPrograms}
+      user={user}
       id={id}
       loadedPlan={loadedPlan}
       loadedStartYears={loadedStartYears}

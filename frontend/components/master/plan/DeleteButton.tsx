@@ -4,7 +4,13 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-export function DeleteButton({ id }: { id: string | null | undefined }) {
+export function DeleteButton({
+  id,
+  isOwnPlan,
+}: {
+  id: string | null | undefined;
+  isOwnPlan: boolean;
+}) {
   const router = useRouter();
 
   const confirmMessage = "Are you sure?";
@@ -20,13 +26,13 @@ export function DeleteButton({ id }: { id: string | null | undefined }) {
       setSuccessState("error");
     }, time);
   };
-  if (!id) {
+  if (!id || !isOwnPlan) {
     return <></>;
   }
 
   return (
     <Fab
-      sx={{ position: "fixed", bottom: 20, right: 24 }}
+      sx={{ position: "fixed", bottom: 80, right: 24 }}
       variant="extended"
       color={successState}
       onClick={() => {

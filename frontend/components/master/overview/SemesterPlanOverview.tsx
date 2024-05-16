@@ -354,7 +354,7 @@ function CourseContent({
             `This course is ${course.credits} credits of level ${course.level}. ${all && `It is ${ecvLabel(all.ECV)} for your program.`} ${course.info}`
           }
         >
-          <Typography
+          <Box
             sx={{
               fontSize: 12,
             }}
@@ -367,7 +367,7 @@ function CourseContent({
                 {course.credits} {course.level} {all && " " + all.ECV}
               </Grid>
             </Grid>
-          </Typography>
+          </Box>
         </Tooltip>
       </Box>
     </>
