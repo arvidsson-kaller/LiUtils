@@ -3,12 +3,21 @@ import { getNumericCourseCredit } from "@/lib/utils";
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import React from "react";
 
+export interface SemesterPlanWithSpec {
+  plan: SemesterPlan;
+  spec: string;
+}
+
 export default function SemestersOverview({
   masterplan,
-  onSemesterClick,
+  handleSemesterHover,
 }: {
   masterplan: MasterPlanResponseDTO;
-  onSemesterClick?: (event: React.MouseEvent<any>, plan: SemesterPlan) => void;
+  handleSemesterHover?: (
+    event: React.MouseEvent<any>,
+    plan: SemesterPlanWithSpec,
+    open: boolean,
+  ) => void;
 }) {
   const plan = masterplan.plan;
   const creditsPerSemester = React.useMemo(() => {
@@ -36,11 +45,26 @@ export default function SemestersOverview({
       {creditsPerSemester.map(([semester, credits]) => (
         <ListItem disablePadding key={semester}>
           <ListItemButton
-            onClick={(e) =>
-              onSemesterClick &&
-              onSemesterClick(
+            onMouseOver={(e) =>
+              handleSemesterHover &&
+              handleSemesterHover(
                 e,
-                plan.semesters.find((s) => s.name == semester)!,
+                {
+                  plan: plan.semesters.find((s) => s.name == semester)!,
+                  spec: plan.specialization,
+                },
+                true,
+              )
+            }
+            onMouseLeave={(e) =>
+              handleSemesterHover &&
+              handleSemesterHover(
+                e,
+                {
+                  plan: plan.semesters.find((s) => s.name == semester)!,
+                  spec: plan.specialization,
+                },
+                false,
               )
             }
           >

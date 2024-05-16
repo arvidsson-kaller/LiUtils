@@ -44,7 +44,7 @@ export const getUserSessionBackendService = async () => {
  * Can only be called from Server side, but contents can be passed to client side component safely
  * @returns
  */
-export const getUserSession = async (): Promise<UserDTO> => {
+export const getUserSession = async (): Promise<UserDTO | undefined> => {
   const authUserSession = await getServerSession({
     callbacks: {
       session,

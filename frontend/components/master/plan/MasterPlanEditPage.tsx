@@ -117,46 +117,50 @@ export default function MasterPlanEditPage({
   }, [allCourses, currentPlan, id]);
 
   const updateSelectedProgram = React.useCallback(
-    (program: MasterProgramDTO) => {
+    (program: MasterProgramDTO | null) => {
       setSelectedProgram(program);
       setAllStartYears(null);
       setAllCourses(null);
       setSelectedStartYear(null);
       setSelectedSpecialization("");
       setAddedSemesters([]);
-      setCurrentPlan((oldPlan) => {
-        return {
-          ...oldPlan,
-          program: program,
-          specialization: "",
-          startYear: { name: "", id: -1 },
-          semesters: [],
-        };
-      });
-      ProxyBackendService.getStartYears({
-        programId: program.id,
-      }).then(setAllStartYears);
+      if (program) {
+        setCurrentPlan((oldPlan) => {
+          return {
+            ...oldPlan,
+            program: program,
+            specialization: "",
+            startYear: { name: "", id: -1 },
+            semesters: [],
+          };
+        });
+        ProxyBackendService.getStartYears({
+          programId: program.id,
+        }).then(setAllStartYears);
+      }
     },
     [],
   );
 
   const updateSelectedStartYear = React.useCallback(
-    (startYear: StartYearDTO) => {
+    (startYear: StartYearDTO | null) => {
       setSelectedStartYear(startYear);
       setAllCourses(null);
       setSelectedSpecialization("");
       setAddedSemesters([]);
-      setCurrentPlan((oldPlan) => {
-        return {
-          ...oldPlan,
-          startYear: startYear,
-          specialization: "",
-          semesters: [],
-        };
-      });
-      ProxyBackendService.getCourses({
-        startYearId: startYear?.id,
-      }).then(setAllCourses);
+      if (startYear) {
+        setCurrentPlan((oldPlan) => {
+          return {
+            ...oldPlan,
+            startYear: startYear,
+            specialization: "",
+            semesters: [],
+          };
+        });
+        ProxyBackendService.getCourses({
+          startYearId: startYear?.id,
+        }).then(setAllCourses);
+      }
     },
     [],
   );

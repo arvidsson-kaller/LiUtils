@@ -18,15 +18,22 @@ import React, { useEffect } from "react";
 import { ExpandMore } from "@mui/icons-material";
 import {
   MasterPlanResponseDTO,
+  MasterProgramDTO,
+  ProgramsResponseDTO,
   SemesterPlan,
+  StartYearDTO,
+  StartYearResponseDTO,
   UserDTO,
 } from "@/lib/backend-client";
 import { SemesterPlanOverview } from "./master/overview/SemesterPlanOverview";
 import { specLabel } from "@/lib/master/helpers";
 import SpecializationOverview from "./master/overview/SpecializationOverview";
-import SemestersOverview from "./master/overview/SemestersOverview";
+import SemestersOverview, {
+  SemesterPlanWithSpec,
+} from "./master/overview/SemestersOverview";
 import NextLink from "./NextLink";
 import { ProxyBackendService } from "@/lib/backend";
+import { ProgramAndStartYearSelection } from "./master/plan/ProgramAndStartYearSelection";
 
 const StyledAccordian = styled(Accordion)({
   width: "100%",
@@ -36,31 +43,88 @@ export default function MasterPlanFirstPage({
   myMasterPlans: previewMyMasterPlans,
   allMasterPlans,
   user,
+  allPrograms,
 }: {
-  myMasterPlans: MasterPlanResponseDTO[];
+  myMasterPlans?: MasterPlanResponseDTO[];
   allMasterPlans: MasterPlanResponseDTO[];
-  user: UserDTO;
+  user?: UserDTO;
+  allPrograms: ProgramsResponseDTO;
 }) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
   );
   const [open, setOpen] = React.useState(false);
-  const [popperPlan, setPopperPlan] = React.useState<SemesterPlan>();
+  const [popperSemester, setPopperPlan] =
+    React.useState<SemesterPlanWithSpec>();
 
-  const [myMasterPlans, setMyMasterPlans] =
-    React.useState<MasterPlanResponseDTO[]>(previewMyMasterPlans);
+  const [myMasterPlans, setMyMasterPlans] = React.useState<
+    MasterPlanResponseDTO[] | undefined
+  >(previewMyMasterPlans);
 
   useEffect(() => {
-    ProxyBackendService.getMyMasterPlans().then((plans) =>
-      setMyMasterPlans(plans),
-    );
-  }, []);
+    if (user) {
+      ProxyBackendService.getMyMasterPlans().then((plans) =>
+        setMyMasterPlans(plans),
+      );
+    }
+  }, [user]);
 
-  const handleClick = (event: React.MouseEvent<any>, plan: SemesterPlan) => {
-    setAnchorEl(event.currentTarget);
-    setOpen((prev) => popperPlan?.name !== plan.name || !prev);
+  const handleSemesterHover = (
+    event: React.MouseEvent<any> | null,
+    plan: SemesterPlanWithSpec,
+    open: boolean,
+  ) => {
+    if (event) {
+      setAnchorEl(event.currentTarget);
+    }
+    setOpen((prev) => open);
     setPopperPlan(plan);
   };
+
+  const [allStartYears, setAllStartYears] =
+    React.useState<StartYearResponseDTO | null>(null);
+  const [selectedProgram, setSelectedProgram] =
+    React.useState<MasterProgramDTO | null>(null);
+  const [selectedStartYear, setSelectedStartYear] =
+    React.useState<StartYearDTO | null>(null);
+
+  const updateSelectedStartYear = React.useCallback(
+    (startYear: StartYearDTO | null) => {
+      setSelectedStartYear(startYear);
+    },
+    [],
+  );
+  const updateSelectedProgram = React.useCallback(
+    (program: MasterProgramDTO | null) => {
+      setSelectedProgram(program);
+      if (program) {
+        setSelectedStartYear(null);
+        ProxyBackendService.getStartYears({
+          programId: program.id,
+        }).then(setAllStartYears);
+      }
+    },
+    [],
+  );
+
+  const allNotEmptyMasterPlans = React.useMemo(() => {
+    return allMasterPlans.filter(
+      (p) =>
+        p.plan.semesters.flatMap((s) => s.periods.flatMap((p) => p.courses))
+          .length > 6,
+    );
+  }, [allMasterPlans]);
+
+  const filteredMasterPlans = React.useMemo(() => {
+    let plans = allNotEmptyMasterPlans;
+    if (selectedProgram) {
+      plans = plans.filter((p) => p.plan.program.id === selectedProgram.id);
+    }
+    if (selectedStartYear) {
+      plans = plans.filter((p) => p.plan.startYear.id === selectedStartYear.id);
+    }
+    return plans;
+  }, [selectedProgram, selectedStartYear, allNotEmptyMasterPlans]);
 
   return (
     <Box sx={{ width: "100%" }}>
@@ -70,14 +134,16 @@ export default function MasterPlanFirstPage({
         anchorEl={anchorEl}
         placement={"right"}
         transition
+        onMouseOver={() => handleSemesterHover(null, popperSemester!, true)}
+        onMouseLeave={() => handleSemesterHover(null, popperSemester!, false)}
       >
         {({ TransitionProps }) => (
           <Fade {...TransitionProps} timeout={350}>
             <Paper elevation={20}>
-              {popperPlan && (
+              {popperSemester && (
                 <SemesterPlanOverview
-                  plan={popperPlan}
-                  selectedSpecialization=""
+                  plan={popperSemester.plan}
+                  selectedSpecialization={popperSemester.spec}
                   readOnly={true}
                 />
               )}
@@ -85,50 +151,71 @@ export default function MasterPlanFirstPage({
           </Fade>
         )}
       </Popper>
-      <StyledAccordian defaultExpanded>
-        <AccordionSummary
-          expandIcon={<ExpandMore />}
-          aria-controls="panel1-content"
-          id="panel1-header"
-        >
-          {user.name}
-          {`'`}s master plans ({myMasterPlans.length})
-        </AccordionSummary>
-        <AccordionDetails>
-          {myMasterPlans.map((plan) => (
-            <Card variant="outlined" key={plan.id} sx={{ mt: 1 }}>
-              <CardContent>
-                <MasterPlanPreview
-                  masterplan={plan}
-                  onSemesterClick={handleClick}
-                ></MasterPlanPreview>
-              </CardContent>
-              <CardActions>
-                <Button>
-                  <NextLink href={"/master/plan?id=" + plan.id}>
-                    View plan
-                  </NextLink>
-                </Button>
-              </CardActions>
-            </Card>
-          ))}
-        </AccordionDetails>
-      </StyledAccordian>
+      {myMasterPlans && user && (
+        <StyledAccordian defaultExpanded>
+          <AccordionSummary
+            expandIcon={<ExpandMore />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            {user.name}
+            {`'`}s master plans ({myMasterPlans.length})
+          </AccordionSummary>
+          <AccordionDetails>
+            {myMasterPlans.map((plan) => (
+              <Card variant="outlined" key={plan.id} sx={{ mt: 1 }}>
+                <CardContent>
+                  <MasterPlanPreview
+                    masterplan={plan}
+                    handleSemesterHover={handleSemesterHover}
+                  ></MasterPlanPreview>
+                </CardContent>
+                <CardActions>
+                  <Button>
+                    <NextLink href={"/master/plan?id=" + plan.id}>
+                      View plan
+                    </NextLink>
+                  </Button>
+                </CardActions>
+              </Card>
+            ))}
+          </AccordionDetails>
+        </StyledAccordian>
+      )}
       <StyledAccordian>
         <AccordionSummary
           expandIcon={<ExpandMore />}
           aria-controls="panel1-content"
           id="panel1-header"
         >
-          All master plans ({allMasterPlans.length})
+          All master plans ({allNotEmptyMasterPlans.length})
         </AccordionSummary>
         <AccordionDetails>
-          {allMasterPlans.map((plan) => (
+          <Box
+            sx={{
+              display: "flex",
+              bgcolor: "background.paper",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
+            <ProgramAndStartYearSelection
+              allPrograms={allPrograms}
+              setSelectedProgram={updateSelectedProgram}
+              selectedProgram={selectedProgram}
+              allStartYears={allStartYears}
+              setSelectedStartYear={updateSelectedStartYear}
+              selectedStartYear={selectedStartYear}
+            />
+          </Box>
+
+          {filteredMasterPlans.map((plan) => (
             <Card variant="outlined" key={plan.id} sx={{ mt: 1 }}>
               <CardContent>
                 <MasterPlanPreview
                   masterplan={plan}
-                  onSemesterClick={handleClick}
+                  handleSemesterHover={handleSemesterHover}
                 ></MasterPlanPreview>
               </CardContent>
               <CardActions>
@@ -153,10 +240,14 @@ export default function MasterPlanFirstPage({
 
 function MasterPlanPreview({
   masterplan,
-  onSemesterClick,
+  handleSemesterHover,
 }: {
   masterplan: MasterPlanResponseDTO;
-  onSemesterClick?: (event: React.MouseEvent<any>, plan: SemesterPlan) => void;
+  handleSemesterHover?: (
+    event: React.MouseEvent<any>,
+    plan: SemesterPlanWithSpec,
+    open: boolean,
+  ) => void;
 }) {
   const plan = masterplan.plan;
 
@@ -175,7 +266,7 @@ function MasterPlanPreview({
         <Box sx={{ width: 250 }}>
           <SemestersOverview
             masterplan={masterplan}
-            onSemesterClick={onSemesterClick}
+            handleSemesterHover={handleSemesterHover}
           />
         </Box>
         <Box

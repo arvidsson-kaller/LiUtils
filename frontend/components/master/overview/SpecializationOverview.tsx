@@ -43,9 +43,7 @@ export default function SpecializationOverview({
         color: stringToColor(specLabel(spec)),
       }),
     );
-    return data
-      .filter((d) => d.value >= 3 * 6)
-      .sort((a, b) => b.value - a.value);
+    return data.sort((a, b) => b.value - a.value);
   }, [plan]);
 
   const radius = size / 2;

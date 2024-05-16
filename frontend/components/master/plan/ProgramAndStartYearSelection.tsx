@@ -15,10 +15,10 @@ export function ProgramAndStartYearSelection({
   selectedStartYear,
 }: {
   allPrograms: ProgramsResponseDTO | null;
-  setSelectedProgram: (program: MasterProgramDTO) => void;
+  setSelectedProgram: (program: MasterProgramDTO | null) => void;
   selectedProgram: MasterProgramDTO | null;
   allStartYears: StartYearResponseDTO | null;
-  setSelectedStartYear: (startYear: StartYearDTO) => void;
+  setSelectedStartYear: (startYear: StartYearDTO | null) => void;
   selectedStartYear: StartYearDTO | null;
 }) {
   return (
@@ -34,7 +34,7 @@ export function ProgramAndStartYearSelection({
           value={selectedProgram || null}
           isOptionEqualToValue={(opt, val) => opt.id === val.id}
           renderInput={(params) => <TextField {...params} label="Program" />}
-          onChange={(_, option) => setSelectedProgram(option!)}
+          onChange={(_, option) => setSelectedProgram(option)}
           getOptionLabel={(opt) => opt.name}
         />
       ) : (
@@ -55,7 +55,7 @@ export function ProgramAndStartYearSelection({
             renderInput={(params) => (
               <TextField {...params} label="Start Year" />
             )}
-            onChange={(_, option) => setSelectedStartYear(option!)}
+            onChange={(_, option) => setSelectedStartYear(option)}
             getOptionLabel={(opt) => opt.name}
           />
         ) : (
