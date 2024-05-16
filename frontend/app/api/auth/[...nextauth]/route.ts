@@ -26,8 +26,8 @@ const authOptions: NextAuthOptions = {
     async signIn({ user, account, profile, email, credentials }) {
       return true;
     },
-    async redirect({ url, baseUrl }) {
-      return baseUrl;
+    async redirect({ url }) {
+      return url;
     },
     async session({ session, user, token }) {
       return session;
