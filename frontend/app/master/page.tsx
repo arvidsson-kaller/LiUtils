@@ -4,13 +4,19 @@ import Link from "next/link";
 import React from "react";
 import { getUserSession, getUserSessionBackendService } from "@/lib/session";
 import MasterPlanFirstPage from "@/components/MasterPlanFirstPage";
+import { BackendService } from "@/lib/backend";
 export const revalidate = 0;
 
 export default async function Master() {
   const user = await getUserSession();
-  const backend = await getUserSessionBackendService();
-  const myMasterPlans = await backend.getMyMasterPlans();
-  const allMasterPlans = await backend.getAllMasterPlans();
+  let myMasterPlans = undefined;
+  if (user) {
+    const backend = await getUserSessionBackendService();
+    myMasterPlans = await backend.getMyMasterPlans();
+  }
+
+  const allMasterPlans = await BackendService.getAllMasterPlans();
+  const allPrograms = await BackendService.getAllPrograms();
 
   return (
     <Container
@@ -35,6 +41,7 @@ export default async function Master() {
         user={user}
         myMasterPlans={myMasterPlans}
         allMasterPlans={allMasterPlans}
+        allPrograms={allPrograms}
       />
     </Container>
   );

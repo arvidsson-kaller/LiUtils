@@ -1,9 +1,15 @@
-import { PlannedCourse, SemesterPlan } from "@/lib/backend-client";
+import {
+  Course,
+  PeriodPlan,
+  PlannedCourse,
+  SemesterPlan,
+} from "@/lib/backend-client";
 import {
   Box,
   Button,
   Card,
   Divider,
+  Grid,
   Link,
   List,
   ListItem,
@@ -13,6 +19,9 @@ import {
 } from "@mui/material";
 import NextLink from "../../NextLink";
 import { ecvLabel, specLabel, stringToColor } from "@/lib/master/helpers";
+import React from "react";
+import { keyframes } from "@mui/system";
+import { WarningAmber, WarningOutlined } from "@mui/icons-material";
 
 export interface onAddCourseCallback {
   (block: string, period: string): any;
@@ -28,15 +37,69 @@ export const SemesterPlanOverview = ({
   onAddCourse,
   onClickCourse,
   readOnly = false,
+  highlightCourse = "",
 }: {
   plan: SemesterPlan;
   selectedSpecialization: string;
   onAddCourse?: onAddCourseCallback;
   onClickCourse?: onClickCourseCallback;
   readOnly?: boolean;
+  highlightCourse?: string;
 }) => {
+  const periods: PeriodPlan[] =
+    plan.periods.length !== 0
+      ? plan.periods
+      : [
+          {
+            name: "Period 1",
+            courses: [],
+          },
+          {
+            name: "Period 2",
+            courses: [],
+          },
+        ];
+
   return (
-    <List>
+    <List
+      sx={{
+        py: 0,
+      }}
+    >
+      <ListItem
+        sx={{
+          width: "100%",
+          display: "flex",
+          m: 0,
+          py: 0,
+        }}
+      >
+        <Box
+          sx={{
+            m: 0,
+            display: "flex",
+            flex: "1",
+            justifyContent: "space-evenly",
+            marginLeft: "7ex",
+          }}
+        >
+          {periods
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .map((period) => (
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  px: 1,
+                  flex: 1,
+                }}
+                key={period.name}
+              >
+                {period.name}
+              </Box>
+            ))}
+        </Box>
+      </ListItem>
       <Divider component="li" />
       {["1", "2", "3", "4"].map((block) => (
         <Box key={"block" + block}>
@@ -51,12 +114,11 @@ export const SemesterPlanOverview = ({
               sx={{
                 display: "flex",
                 flex: "1",
-                // border: "1px solid black",
                 justifyContent: "space-evenly",
               }}
             >
               <Typography>Block {block}</Typography>
-              {plan.periods
+              {periods
                 .sort((a, b) => a.name.localeCompare(b.name))
                 .map((period) => (
                   <Block
@@ -68,6 +130,7 @@ export const SemesterPlanOverview = ({
                     onAddCourse={onAddCourse}
                     onClickCourse={onClickCourse}
                     readOnly={readOnly}
+                    highlightCourse={highlightCourse}
                   />
                 ))}
             </Box>
@@ -85,6 +148,15 @@ function getTextColorFromBackground(color: string): string {
   return brightness > 128 ? "black" : "white";
 }
 
+const borderAnimation = keyframes`
+  from {
+    background-position: 0 0, -34.64px 0, 100% -34.64px, 0 100%;
+  }
+  to {
+    background-position: 0 -34.64px, 0 0, 100% 0, -34.64px 100%;
+  }
+`;
+
 function Block({
   courses,
   selectedSpecialization,
@@ -93,6 +165,7 @@ function Block({
   onAddCourse,
   onClickCourse,
   readOnly,
+  highlightCourse,
 }: {
   courses: PlannedCourse[];
   selectedSpecialization: string;
@@ -101,9 +174,10 @@ function Block({
   onAddCourse?: onAddCourseCallback;
   onClickCourse?: onClickCourseCallback;
   readOnly: boolean;
+  highlightCourse: string;
 }) {
-  const coursesInBlock = courses.filter((c) =>
-    c.timetableModule.includes(block),
+  const coursesInBlock = courses.filter(
+    (c) => c.timetableModule.includes(block) || c.timetableModule.includes("-"),
   );
   return (
     <Box
@@ -116,26 +190,14 @@ function Block({
       }}
     >
       {coursesInBlock.map((course) => (
-        <Card
+        <CoursePreview
           key={course.courseCode}
-          sx={{
-            background: stringToColor(course.courseName),
-            color: getTextColorFromBackground(stringToColor(course.courseName)),
-            flex: "auto",
-            my: 0.5,
-            minHeight: 75 / 2,
-            p: 1,
-            display: "flex",
-            justifyContent: "space-between",
-            flexDirection: "column",
-          }}
-          onClick={() => onClickCourse && onClickCourse(course)}
-        >
-          <CourseContent
-            course={course}
-            selectedSpecialization={selectedSpecialization}
-          />
-        </Card>
+          course={course}
+          readOnly={readOnly}
+          highlightCourse={highlightCourse}
+          selectedSpecialization={selectedSpecialization}
+          onClickCourse={onClickCourse}
+        ></CoursePreview>
       ))}
       {!readOnly && (
         <Box
@@ -173,6 +235,62 @@ function Block({
   );
 }
 
+function CoursePreview({
+  course,
+  selectedSpecialization,
+  onClickCourse,
+  readOnly,
+  highlightCourse,
+}: {
+  course: PlannedCourse;
+  selectedSpecialization: string;
+  onClickCourse?: onClickCourseCallback;
+  readOnly: boolean;
+  highlightCourse: string;
+}) {
+  const color = stringToColor(course.courseName);
+  const textColor = getTextColorFromBackground(color);
+  const isHighlighted = course.courseCode === highlightCourse;
+
+  return (
+    <Card
+      sx={{
+        background: color,
+        color: textColor,
+        flex: "auto",
+        my: 0.5,
+        minHeight: 75 / 2,
+        p: 1,
+        pb: 0,
+        display: "flex",
+        justifyContent: "space-between",
+        flexDirection: "column",
+        cursor: readOnly ? "" : "pointer",
+        "&:hover": {
+          opacity: readOnly ? 1 : 0.7,
+        },
+        backgroundImage: isHighlighted
+          ? `repeating-linear-gradient(0, ${textColor}, ${textColor} 17px, transparent 17px, transparent 34px, ${textColor} 34px), repeating-linear-gradient(79deg, ${textColor}, ${textColor} 17px, transparent 17px, transparent 34px, ${textColor} 34px), repeating-linear-gradient(169deg, ${textColor}, ${textColor} 17px, transparent 17px, transparent 34px, ${textColor} 34px), repeating-linear-gradient(259deg, ${textColor}, ${textColor} 17px, transparent 17px, transparent 34px, ${textColor} 34px)`
+          : "",
+        backgroundSize: isHighlighted
+          ? "3px calc(100% + 34.64px), calc(100% + 34.64px) 3px, 3px calc(100% + 34.64px) , calc(100% + 34.64px) 3px"
+          : "",
+        backgroundPosition: isHighlighted ? "0 0, 0 0, 100% 0, 0 100%" : "",
+        backgroundRepeat: isHighlighted ? "no-repeat" : "",
+        animation: isHighlighted
+          ? `${borderAnimation} 0.7s infinite linear`
+          : "",
+      }}
+      onClick={() => onClickCourse && onClickCourse(course)}
+    >
+      <CourseContent
+        course={course}
+        selectedSpecialization={selectedSpecialization}
+      />
+    </Card>
+  );
+}
+
 function CourseContent({
   course,
   selectedSpecialization,
@@ -185,6 +303,11 @@ function CourseContent({
   );
 
   const all = course.specializations.find((sp) => sp.name === "Courses");
+
+  const fromOtherSemester = course.semester !== null;
+  const warningText = fromOtherSemester
+    ? `WARNING, the course ${course.courseCode} is from ${course.semester}. `
+    : "";
 
   return (
     <>
@@ -226,18 +349,24 @@ function CourseContent({
 
         <Tooltip
           arrow
-          title={`
-                            This course is ${course.credits} credits of level ${course.level}. 
-                            ${all && `It is ${ecvLabel(all.ECV)} for your program.`}
-                            ${course.info}
-                        `}
+          title={
+            warningText +
+            `This course is ${course.credits} credits of level ${course.level}. ${all && `It is ${ecvLabel(all.ECV)} for your program.`} ${course.info}`
+          }
         >
           <Typography
             sx={{
               fontSize: 12,
             }}
           >
-            {course.credits} {course.level} {all && " " + all.ECV}
+            <Grid container direction="row" alignItems="center">
+              <Grid item>
+                {fromOtherSemester && <WarningAmber></WarningAmber>}
+              </Grid>
+              <Grid item>
+                {course.credits} {course.level} {all && " " + all.ECV}
+              </Grid>
+            </Grid>
           </Typography>
         </Tooltip>
       </Box>

@@ -194,6 +194,7 @@ export function Courses({
         blockFilter={blockFilter}
         periodFilter={periodFilter}
         handleClose={handleClose}
+        spec={currentPlan.specialization}
       />
       <OpenCourseModal
         key={openCourse?.courseCode}
@@ -321,6 +322,7 @@ function CourseSelectionModal({
   blockFilter,
   periodFilter,
   handleClose,
+  spec,
 }: {
   isModalOpen: boolean;
   allSemesters: Semester[];
@@ -335,6 +337,7 @@ function CourseSelectionModal({
   blockFilter: string | undefined;
   periodFilter: string | undefined;
   handleClose: () => void;
+  spec: string;
 }) {
   const getFilteredCourses = (courses: Course[]) => {
     return courses.filter((course) =>
@@ -419,6 +422,7 @@ function CourseSelectionModal({
                                       allSemesters={allSemesters}
                                       currentSemester={currentSemester}
                                       semester={semester}
+                                      spec={spec}
                                     />
                                   </ul>
                                 </li>
