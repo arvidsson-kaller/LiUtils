@@ -43,6 +43,11 @@ const InfoPopper = ({ info }: { info: string }) => {
   );
 };
 
+export interface SemesterPlanWithHighlight {
+  plan: SemesterPlan,
+  highlight: string,
+}
+
 export const getColumns = (
   addedCourses: PlannedCourse[] | undefined,
   semesterPlan: SemesterPlan | undefined,
@@ -53,11 +58,11 @@ export const getColumns = (
   onCourseAdd: (course: Course) => void,
   setAnchorEl: (anchorEl: HTMLButtonElement | null) => void,
   setOpen: (open: boolean) => void,
-  setPopperPlan: (popperPlan: SemesterPlan | undefined) => void,
+  setPopperPlan: (popperPlan: SemesterPlanWithHighlight | undefined) => void,
 ) => {
   const showOverview = (
     anchorEl: HTMLButtonElement | null,
-    popperPlan: SemesterPlan,
+    popperPlan: SemesterPlanWithHighlight,
   ) => {
     setAnchorEl(anchorEl);
     setOpen(true);
@@ -137,9 +142,9 @@ export const getColumns = (
       flex: 1,
       renderCell: (params: GridRenderCellParams<any, Date>) =>
         addedCourses &&
-        addedCourses.find(
-          (course) => course.courseCode === params.row.courseCode,
-        ) ? (
+          addedCourses.find(
+            (course) => course.courseCode === params.row.courseCode,
+          ) ? (
           <Button
             variant="contained"
             color="error"
@@ -148,7 +153,7 @@ export const getColumns = (
               if (semesterPlan) {
                 const semesterPlanCopy = structuredClone(semesterPlan);
                 removeCourseFromSemesterPlan(params.row, semesterPlanCopy);
-                showOverview(e.currentTarget, semesterPlanCopy);
+                showOverview(e.currentTarget, { plan: semesterPlanCopy, highlight: "" });
               }
             }}
             onMouseLeave={() => setOpen(false)}
@@ -170,7 +175,7 @@ export const getColumns = (
                   allSemesters,
                   currentSemester,
                 );
-                showOverview(e.currentTarget, semesterPlanCopy);
+                showOverview(e.currentTarget, { plan: semesterPlanCopy, highlight: params.row.courseCode });
               }
             }}
             onMouseLeave={() => setOpen(false)}

@@ -8,18 +8,20 @@ import {
   SemesterPlan,
 } from "@/lib/backend-client";
 import { SemesterPlanOverview } from "../overview/SemesterPlanOverview";
-import { getColumns } from "./CourseSelectionGridColumns";
+import { SemesterPlanWithHighlight, getColumns } from "./CourseSelectionGridColumns";
 
 const OverViewPopper = ({
   popperPlan,
   anchorEl,
   open,
   setOpen,
+  spec,
 }: {
-  popperPlan: SemesterPlan | undefined;
+  popperPlan: SemesterPlanWithHighlight | undefined;
   anchorEl: HTMLButtonElement | null;
   open: boolean;
   setOpen: (open: boolean) => void;
+  spec: string,
 }) => {
   return (
     <Popper
@@ -36,8 +38,9 @@ const OverViewPopper = ({
           <Paper elevation={20}>
             {popperPlan && (
               <SemesterPlanOverview
-                plan={popperPlan}
-                selectedSpecialization=""
+                plan={popperPlan.plan}
+                selectedSpecialization={spec}
+                highlightCourse={popperPlan.highlight}
                 readOnly={true}
               />
             )}
@@ -57,6 +60,7 @@ export const CourseSelectionGrid = ({
   currentSemester,
   allSemesters,
   semester,
+  spec,
 }: {
   courses: Course[];
   addedCourses: PlannedCourse[] | undefined;
@@ -66,12 +70,13 @@ export const CourseSelectionGrid = ({
   currentSemester: Semester;
   allSemesters: Semester[];
   semester: Semester;
+  spec: string,
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
   );
   const [open, setOpen] = React.useState(false);
-  const [popperPlan, setPopperPlan] = React.useState<SemesterPlan>();
+  const [popperPlan, setPopperPlan] = React.useState<SemesterPlanWithHighlight>();
 
   const columns = getColumns(
     addedCourses,
@@ -100,6 +105,7 @@ export const CourseSelectionGrid = ({
         open={open}
         popperPlan={popperPlan}
         setOpen={setOpen}
+        spec={spec}
       />
     </>
   );
