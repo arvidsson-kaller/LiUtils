@@ -9,6 +9,7 @@ import {
   Button,
   Card,
   Divider,
+  Grid,
   Link,
   List,
   ListItem,
@@ -20,6 +21,7 @@ import NextLink from "../../NextLink";
 import { ecvLabel, specLabel, stringToColor } from "@/lib/master/helpers";
 import React from "react";
 import { keyframes } from "@mui/system";
+import { WarningAmber, WarningOutlined } from "@mui/icons-material";
 
 export interface onAddCourseCallback {
   (block: string, period: string): any;
@@ -259,6 +261,7 @@ function CoursePreview({
         my: 0.5,
         minHeight: 75 / 2,
         p: 1,
+        pb: 0,
         display: "flex",
         justifyContent: "space-between",
         flexDirection: "column",
@@ -301,6 +304,11 @@ function CourseContent({
 
   const all = course.specializations.find((sp) => sp.name === "Courses");
 
+  const fromOtherSemester = course.semester !== null;
+  const warningText = fromOtherSemester
+    ? `WARNING, the course ${course.courseCode} is from ${course.semester}. `
+    : "";
+
   return (
     <>
       <Typography>
@@ -341,18 +349,24 @@ function CourseContent({
 
         <Tooltip
           arrow
-          title={`
-                            This course is ${course.credits} credits of level ${course.level}. 
-                            ${all && `It is ${ecvLabel(all.ECV)} for your program.`}
-                            ${course.info}
-                        `}
+          title={
+            warningText +
+            `This course is ${course.credits} credits of level ${course.level}. ${all && `It is ${ecvLabel(all.ECV)} for your program.`} ${course.info}`
+          }
         >
           <Typography
             sx={{
               fontSize: 12,
             }}
           >
-            {course.credits} {course.level} {all && " " + all.ECV}
+            <Grid container direction="row" alignItems="center">
+              <Grid item>
+                {fromOtherSemester && <WarningAmber></WarningAmber>}
+              </Grid>
+              <Grid item>
+                {course.credits} {course.level} {all && " " + all.ECV}
+              </Grid>
+            </Grid>
           </Typography>
         </Tooltip>
       </Box>

@@ -44,8 +44,8 @@ const InfoPopper = ({ info }: { info: string }) => {
 };
 
 export interface SemesterPlanWithHighlight {
-  plan: SemesterPlan,
-  highlight: string,
+  plan: SemesterPlan;
+  highlight: string;
 }
 
 export const getColumns = (
@@ -142,9 +142,9 @@ export const getColumns = (
       flex: 1,
       renderCell: (params: GridRenderCellParams<any, Date>) =>
         addedCourses &&
-          addedCourses.find(
-            (course) => course.courseCode === params.row.courseCode,
-          ) ? (
+        addedCourses.find(
+          (course) => course.courseCode === params.row.courseCode,
+        ) ? (
           <Button
             variant="contained"
             color="error"
@@ -153,7 +153,10 @@ export const getColumns = (
               if (semesterPlan) {
                 const semesterPlanCopy = structuredClone(semesterPlan);
                 removeCourseFromSemesterPlan(params.row, semesterPlanCopy);
-                showOverview(e.currentTarget, { plan: semesterPlanCopy, highlight: "" });
+                showOverview(e.currentTarget, {
+                  plan: semesterPlanCopy,
+                  highlight: "",
+                });
               }
             }}
             onMouseLeave={() => setOpen(false)}
@@ -175,7 +178,10 @@ export const getColumns = (
                   allSemesters,
                   currentSemester,
                 );
-                showOverview(e.currentTarget, { plan: semesterPlanCopy, highlight: params.row.courseCode });
+                showOverview(e.currentTarget, {
+                  plan: semesterPlanCopy,
+                  highlight: params.row.courseCode,
+                });
               }
             }}
             onMouseLeave={() => setOpen(false)}

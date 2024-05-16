@@ -8,7 +8,10 @@ import {
   SemesterPlan,
 } from "@/lib/backend-client";
 import { SemesterPlanOverview } from "../overview/SemesterPlanOverview";
-import { SemesterPlanWithHighlight, getColumns } from "./CourseSelectionGridColumns";
+import {
+  SemesterPlanWithHighlight,
+  getColumns,
+} from "./CourseSelectionGridColumns";
 
 const OverViewPopper = ({
   popperPlan,
@@ -21,7 +24,7 @@ const OverViewPopper = ({
   anchorEl: HTMLButtonElement | null;
   open: boolean;
   setOpen: (open: boolean) => void;
-  spec: string,
+  spec: string;
 }) => {
   return (
     <Popper
@@ -70,13 +73,14 @@ export const CourseSelectionGrid = ({
   currentSemester: Semester;
   allSemesters: Semester[];
   semester: Semester;
-  spec: string,
+  spec: string;
 }) => {
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null,
   );
   const [open, setOpen] = React.useState(false);
-  const [popperPlan, setPopperPlan] = React.useState<SemesterPlanWithHighlight>();
+  const [popperPlan, setPopperPlan] =
+    React.useState<SemesterPlanWithHighlight>();
 
   const columns = getColumns(
     addedCourses,
