@@ -11,7 +11,7 @@ import {
   StartYearDTO,
   StartYearResponseDTO,
 } from "@/lib/backend-client";
-import { CircularProgress, Container, TextField } from "@mui/material";
+import { Box, CircularProgress, Container, TextField } from "@mui/material";
 
 import React from "react";
 import { SaveButton } from "./SaveButton";
@@ -263,6 +263,7 @@ export default function MasterPlanEditPage({
         multiline
         maxRows={4}
       />
+      <Box sx={{ height: 200 }}></Box>
       <SaveButton id={id} planTitle={planTitle} currentPlan={currentPlan} />
       <DeleteButton id={id} />
     </Container>
