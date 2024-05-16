@@ -50,13 +50,6 @@ export default function MasterPlanFirstPage({
   user?: UserDTO;
   allPrograms: ProgramsResponseDTO;
 }) {
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null,
-  );
-  const [open, setOpen] = React.useState(false);
-  const [popperSemester, setPopperPlan] =
-    React.useState<SemesterPlanWithSpec>();
-
   const [myMasterPlans, setMyMasterPlans] = React.useState<
     MasterPlanResponseDTO[] | undefined
   >(previewMyMasterPlans);
@@ -68,18 +61,6 @@ export default function MasterPlanFirstPage({
       );
     }
   }, [user]);
-
-  const handleSemesterHover = (
-    event: React.MouseEvent<any> | null,
-    plan: SemesterPlanWithSpec,
-    open: boolean,
-  ) => {
-    if (event) {
-      setAnchorEl(event.currentTarget);
-    }
-    setOpen((prev) => open);
-    setPopperPlan(plan);
-  };
 
   const [allStartYears, setAllStartYears] =
     React.useState<StartYearResponseDTO | null>(null);
@@ -128,29 +109,6 @@ export default function MasterPlanFirstPage({
 
   return (
     <Box sx={{ width: "100%" }}>
-      <Popper
-        sx={{ zIndex: 1200 }}
-        open={open}
-        anchorEl={anchorEl}
-        placement={"right"}
-        transition
-        onMouseOver={() => handleSemesterHover(null, popperSemester!, true)}
-        onMouseLeave={() => handleSemesterHover(null, popperSemester!, false)}
-      >
-        {({ TransitionProps }) => (
-          <Fade {...TransitionProps} timeout={350}>
-            <Paper elevation={20}>
-              {popperSemester && (
-                <SemesterPlanOverview
-                  plan={popperSemester.plan}
-                  selectedSpecialization={popperSemester.spec}
-                  readOnly={true}
-                />
-              )}
-            </Paper>
-          </Fade>
-        )}
-      </Popper>
       {myMasterPlans && user && (
         <StyledAccordian defaultExpanded>
           <AccordionSummary
@@ -165,10 +123,7 @@ export default function MasterPlanFirstPage({
             {myMasterPlans.map((plan) => (
               <Card variant="outlined" key={plan.id} sx={{ mt: 1 }}>
                 <CardContent>
-                  <MasterPlanPreview
-                    masterplan={plan}
-                    handleSemesterHover={handleSemesterHover}
-                  ></MasterPlanPreview>
+                  <MasterPlanPreview masterplan={plan}></MasterPlanPreview>
                 </CardContent>
                 <CardActions>
                   <Button>
@@ -215,7 +170,6 @@ export default function MasterPlanFirstPage({
               <CardContent>
                 <MasterPlanPreview
                   masterplan={plan}
-                  handleSemesterHover={handleSemesterHover}
                 ></MasterPlanPreview>
               </CardContent>
               <CardActions>
@@ -240,14 +194,8 @@ export default function MasterPlanFirstPage({
 
 function MasterPlanPreview({
   masterplan,
-  handleSemesterHover,
 }: {
   masterplan: MasterPlanResponseDTO;
-  handleSemesterHover?: (
-    event: React.MouseEvent<any>,
-    plan: SemesterPlanWithSpec,
-    open: boolean,
-  ) => void;
 }) {
   const plan = masterplan.plan;
 
@@ -266,7 +214,6 @@ function MasterPlanPreview({
         <Box sx={{ width: 250 }}>
           <SemestersOverview
             masterplan={masterplan}
-            handleSemesterHover={handleSemesterHover}
           />
         </Box>
         <Box

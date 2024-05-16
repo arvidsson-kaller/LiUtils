@@ -65,7 +65,10 @@ export function SaveButton({
             });
         } else {
           ProxyBackendService.createMasterPlan({
-            requestBody: { title: !isOwnPlan ? "Copy of " + planTitle : planTitle, plan: currentPlan },
+            requestBody: {
+              title: !isOwnPlan ? "Copy of " + planTitle : planTitle,
+              plan: currentPlan,
+            },
           })
             .then((response) => {
               router.push(

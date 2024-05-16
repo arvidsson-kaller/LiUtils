@@ -3,7 +3,7 @@ import { MasterPlan } from "@/lib/backend-client";
 import { Fab } from "@mui/material";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import React from "react";
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 
 export function DuplicateButton({
   id,

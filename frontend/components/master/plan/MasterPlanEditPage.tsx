@@ -237,8 +237,8 @@ export default function MasterPlanEditPage({
         specialization: "",
         semesters: [],
       };
-    }); 
-  }, [])
+    });
+  }, []);
 
   return (
     <Container
@@ -298,7 +298,9 @@ export default function MasterPlanEditPage({
         multiline
         maxRows={4}
       />
-      <Button variant="contained" color="error" onClick={() => resetPlan()}>Reset Plan</Button>
+      <Button variant="contained" color="error" onClick={() => resetPlan()}>
+        Reset Plan
+      </Button>
       <Box sx={{ height: 200 }}></Box>
       <SaveButton
         id={id}

@@ -6,7 +6,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 export function DeleteButton({
   id,
-  isOwnPlan
+  isOwnPlan,
 }: {
   id: string | null | undefined;
   isOwnPlan: boolean;

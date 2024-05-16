@@ -354,20 +354,20 @@ function CourseContent({
             `This course is ${course.credits} credits of level ${course.level}. ${all && `It is ${ecvLabel(all.ECV)} for your program.`} ${course.info}`
           }
         >
-          <Typography
-            sx={{
-              fontSize: 12,
-            }}
-          >
-            <Grid container direction="row" alignItems="center">
-              <Grid item>
-                {fromOtherSemester && <WarningAmber></WarningAmber>}
-              </Grid>
-              <Grid item>
-                {course.credits} {course.level} {all && " " + all.ECV}
-              </Grid>
+          <Grid container direction="row" alignItems="center">
+            <Grid item>
+              {fromOtherSemester && <WarningAmber></WarningAmber>}
             </Grid>
-          </Typography>
+            <Grid item>
+              <Typography
+                sx={{
+                  fontSize: 12,
+                }}
+              >
+                {course.credits} {course.level} {all && " " + all.ECV}
+              </Typography>
+            </Grid>
+          </Grid>
         </Tooltip>
       </Box>
     </>
