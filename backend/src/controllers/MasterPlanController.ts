@@ -19,6 +19,7 @@ import { UserDTO, mapUserToDTO } from "./UserController";
 import { AuthenticatedRequest } from "@src/authentication";
 import { MasterPlanId } from "@src/models/MasterPlan";
 import { UserId } from "@src/models/User";
+import UserRepo from "@src/repos/UserRepo";
 
 @Route("masterplan")
 export class MasterPlanController extends Controller {
@@ -108,6 +109,19 @@ export class MasterPlanController extends Controller {
     @Path() id: number,
   ) {
     await MasterPlanRepo.setChoosenPlan(request.user.id, id as MasterPlanId);
+  }
+
+  @Security("jwt")
+  @Get("user/me/favorite")
+  public async getMyChoosenMasterPlan(
+    @Request() request: AuthenticatedRequest,
+  ): Promise<MasterPlanResponseDTO | null> {
+    const user = await UserRepo.findById(request.user.id);
+    if(user.choosenMasterPlanId){
+      const plan = await MasterPlanRepo.findById(user.choosenMasterPlanId);
+      return mapPlanToDTO(plan);
+    }
+    return null;
   }
 }
 
