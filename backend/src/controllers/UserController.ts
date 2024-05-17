@@ -35,7 +35,7 @@ export class UserController extends Controller {
   public async oauth2SignIn(
     @Body() request: SignedInRequestDTO,
   ): Promise<SignedInResponseDTO> {
-    let user = await UserRepo.create({
+    const user = await UserRepo.create({
       name: request.name,
       email: request.email,
       authProvider: request.authProvider,
