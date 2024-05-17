@@ -122,8 +122,12 @@ export const CalendarComponent = ({
           paddingBottom: 5,
         }}
       >
-        <Link target="_blank" rel="no-referrer" href={teProxyURL}>TimeEdit HTML</Link>
-        <Link target="_blank" rel="no-referrer" href={`${teProxyURL}.ics`}>TimeEdit ICS</Link>
+        <Link target="_blank" rel="no-referrer" href={teProxyURL}>
+          TimeEdit HTML
+        </Link>
+        <Link target="_blank" rel="no-referrer" href={`${teProxyURL}.ics`}>
+          TimeEdit ICS
+        </Link>
       </Box>
     </>
   );

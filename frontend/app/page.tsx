@@ -51,7 +51,10 @@ export default async function Home() {
         {icsData && teProxyURL ? (
           <CalendarComponent icsData={icsData} teProxyURL={teProxyURL} />
         ) : (
-          <span>Failed to fetch calendar data. You need to be signed in and have a favorite plan saved.</span>
+          <span>
+            Failed to fetch calendar data. You need to be signed in and have a
+            favorite plan saved.
+          </span>
         )}
       </Box>
     </Container>
