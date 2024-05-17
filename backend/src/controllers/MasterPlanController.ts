@@ -117,7 +117,7 @@ export class MasterPlanController extends Controller {
     @Request() request: AuthenticatedRequest,
   ): Promise<MasterPlanResponseDTO | null> {
     const user = await UserRepo.findById(request.user.id);
-    if(user.choosenMasterPlanId){
+    if (user.choosenMasterPlanId) {
       const plan = await MasterPlanRepo.findById(user.choosenMasterPlanId);
       return mapPlanToDTO(plan);
     }
