@@ -7,6 +7,7 @@ import { EventContentArg } from "@fullcalendar/core/index.js";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import { Box, styled } from "@mui/material";
+import Link from "next/link";
 
 export type CalendarEvent = {
   type: string;
@@ -46,6 +47,7 @@ const renderEventContent = (eventInfo: EventContentArg) => {
         backgroundColor: color,
         outline: `3px solid ${color}`,
         boxShadow: `1px 1px 1px 2px ${getTextColorFromBackground(color)}`,
+        color: getTextColorFromBackground(color),
         outlineOffset: "-1px",
         borderRadius: "1px",
         padding: "1px 1px 0px",
@@ -73,39 +75,56 @@ ${eventInfo.event.extendedProps.location}
 };
 
 const StyledFullCalendarContainer = styled(Box)`
-  height: 100%;
+  height: 90%;
 
   .fc {
     min-width: 50vw;
-    height: calc(100% - 10px);
+    height: 100%;
   }
 `;
 
 export const CalendarComponent = ({
   icsData,
+  teProxyURL,
 }: {
   icsData: CalendarEventData;
+  teProxyURL: string;
 }) => {
   return (
-    <StyledFullCalendarContainer>
-      <FullCalendar
-        plugins={[timeGridPlugin]}
-        initialView="timeGridWeek"
-        weekends={false}
-        eventTimeFormat={{
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
+    <>
+      <StyledFullCalendarContainer>
+        <FullCalendar
+          plugins={[timeGridPlugin]}
+          initialView="timeGridWeek"
+          weekends={false}
+          eventTimeFormat={{
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          }}
+          slotLabelFormat={{
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          }}
+          slotMinTime="08:00"
+          events={parseICS(icsData)}
+          eventContent={renderEventContent}
+        />
+      </StyledFullCalendarContainer>
+      <Box
+        sx={{
+          minWidth: "50vw",
+          height: "5%",
+          backgroundColor: "white",
+          display: "flex",
+          flexDirection: "column",
+          paddingBottom: 5,
         }}
-        slotLabelFormat={{
-          hour: "2-digit",
-          minute: "2-digit",
-          hour12: false,
-        }}
-        slotMinTime="08:00"
-        events={parseICS(icsData)}
-        eventContent={renderEventContent}
-      />
-    </StyledFullCalendarContainer>
+      >
+        <Link target="_blank" rel="no-referrer" href={teProxyURL}>TimeEdit HTML</Link>
+        <Link target="_blank" rel="no-referrer" href={`${teProxyURL}.ics`}>TimeEdit ICS</Link>
+      </Box>
+    </>
   );
 };

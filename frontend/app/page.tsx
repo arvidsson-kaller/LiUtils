@@ -3,17 +3,40 @@ import {
   CalendarComponent,
   CalendarEventData,
 } from "@/components/master/CalendarComponent";
+import { getUserSession } from "@/lib/session";
+import { BackendService } from "@/lib/backend";
 const ical = require("ical");
 
 export default async function Home() {
   let icsData: CalendarEventData | null = null;
-  try {
-    const icsText = await (
-      await fetch("https://te.liutils.se/tddd27+tdde51+taop88.ics")
-    ).text();
-    icsData = ical.parseICS(icsText);
-  } catch (e) {
-    console.error(e);
+  let teProxyURL: string | null = null;
+  const user = await getUserSession();
+  if (user?.choosenMasterPlan) {
+    const chosenPlan = await BackendService.getMasterPlanById({
+      id: user.choosenMasterPlan,
+    });
+    const currentYear = new Date().getFullYear().toString();
+    const activeSemesters = chosenPlan.plan.semesters.filter((semester) =>
+      semester.name.includes(currentYear),
+    );
+    const activeCourses = Array.from(
+      new Set(
+        activeSemesters.flatMap((semester) =>
+          semester.periods.flatMap((period) =>
+            period.courses.map((course) => course.courseCode),
+          ),
+        ),
+      ),
+    );
+    teProxyURL = `https://te.liutils.se/${activeCourses.join("+")}`
+    try {
+      const icsText = await (
+        await fetch(`${teProxyURL}.ics`)
+      ).text();
+      icsData = ical.parseICS(icsText);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   return (
@@ -27,8 +50,8 @@ export default async function Home() {
         }}
       >
         <h1>LiUtils</h1>
-        {icsData ? (
-          <CalendarComponent icsData={icsData} />
+        {icsData && teProxyURL ? (
+          <CalendarComponent icsData={icsData} teProxyURL={teProxyURL} />
         ) : (
           <span>Failed to fetch calendar data</span>
         )}
