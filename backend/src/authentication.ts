@@ -21,25 +21,33 @@ export async function expressAuthentication(
 ): Promise<AuthUser> {
   if (securityName === "jwt") {
     // If server is in dev mode, ONLY userId is a valid jwt
-    if (EnvVars.NodeEnv === NodeEnvs.Dev.valueOf()) {
-      const auth = Number(
-        request.headers["authorization"]?.split("Bearer ")[1],
-      );
-      return Promise.resolve({
-        id: auth as UserId,
-        authProvider: "none",
-      });
-    }
     if (request.headers && request.headers["authorization"]) {
       const auth = request.headers["authorization"];
       const token = auth.split("Bearer ")[1];
-      const user = JwtService.decode(token);
-      if (user !== null) {
-        if (scopes?.includes("admin")) {
-          // TODO fix admin roles
-          return Promise.reject(new InvalidContextError("You are not admin"));
+      try {
+        const user = JwtService.decode(token);
+        if (user !== null) {
+          if (scopes?.includes("admin")) {
+            // TODO fix admin roles
+            return Promise.reject(new InvalidContextError("You are not admin"));
+          }
+          return Promise.resolve(user);
         }
-        return Promise.resolve(user);
+      } catch (error) {
+        // For dev usage, jwt is not needed
+        if (EnvVars.NodeEnv === NodeEnvs.Dev.valueOf()) {
+          const auth = Number(
+            request.headers["authorization"]?.split("Bearer ")[1],
+          );
+          return Promise.resolve({
+            id: auth as UserId,
+            authProvider: "none",
+          });
+        }
+
+        return Promise.reject(
+          new InvalidContextError(`Invalid jwt ${securityName}`),
+        );
       }
     }
     return Promise.reject(

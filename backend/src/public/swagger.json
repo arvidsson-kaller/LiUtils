@@ -19,6 +19,15 @@
 					"email": {
 						"type": "string"
 					},
+					"picture": {
+						"type": "string",
+						"nullable": true
+					},
+					"choosenMasterPlan": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
 					"createdAt": {
 						"type": "string",
 						"format": "date-time"
@@ -28,6 +37,8 @@
 					"id",
 					"name",
 					"email",
+					"picture",
+					"choosenMasterPlan",
 					"createdAt"
 				],
 				"type": "object",
@@ -92,13 +103,18 @@
 					"authUserId": {
 						"type": "string",
 						"minLength": 3
+					},
+					"picture": {
+						"type": "string",
+						"nullable": true
 					}
 				},
 				"required": [
 					"name",
 					"email",
 					"authProvider",
-					"authUserId"
+					"authUserId",
+					"picture"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -112,21 +128,11 @@
 					"email": {
 						"type": "string",
 						"pattern": "^(.+)@(.+)$"
-					},
-					"authProvider": {
-						"type": "string",
-						"nullable": true
-					},
-					"authUserId": {
-						"type": "string",
-						"nullable": true
 					}
 				},
 				"required": [
 					"name",
-					"email",
-					"authProvider",
-					"authUserId"
+					"email"
 				],
 				"type": "object",
 				"additionalProperties": false
@@ -1014,6 +1020,32 @@
 					}
 				},
 				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				]
+			}
+		},
+		"/masterplan/user/me/{id}": {
+			"post": {
+				"operationId": "SetChoosenMasterPlan",
+				"responses": {
+					"204": {
+						"description": "No content"
+					}
+				},
+				"security": [
+					{
+						"jwt": []
+					}
+				],
 				"parameters": [
 					{
 						"in": "path",

@@ -39,6 +39,7 @@ const authOptions: NextAuthOptions = {
           email: user.email!,
           authProvider: account?.provider!,
           authUserId: account?.providerAccountId!,
+          picture: user?.image ?? null,
         },
       });
       token.backendJwt = respone.jwt;

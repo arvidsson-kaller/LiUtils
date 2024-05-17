@@ -62,6 +62,17 @@ async function getAllByUserId(
   return mapResult(res);
 }
 
+async function countByUserId(
+  userId: UserId,
+  pool: Pool | PoolClient = db,
+): Promise<number> {
+  const res = await pool.query({
+    text: 'SELECT COUNT(*) from "MasterPlan" m, "User" u WHERE m."userId" = u.id AND m."userId"=($1)',
+    values: [userId],
+  });
+  return res.rows[0] as number;
+}
+
 async function findById(
   id: MasterPlanId,
   pool: Pool | PoolClient = db,
@@ -129,6 +140,23 @@ async function create(
   }
 }
 
+async function setChoosenPlan(
+  userId: UserId,
+  choosenMasterPlanId: MasterPlanId,
+  pool: Pool | PoolClient = db,
+): Promise<DbUser> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const data: any[] = [choosenMasterPlanId, userId];
+  const res = await pool.query(
+    'UPDATE "User" SET "choosenMasterPlanId"=($1) WHERE id=($2) RETURNING *',
+    data,
+  );
+  if (res.rows.length == 1) {
+    return res.rows[0] as DbUser;
+  }
+  throw new Error("Not found");
+}
+
 export default {
   getAll,
   findById,
@@ -136,4 +164,6 @@ export default {
   update,
   getAllByUserId,
   deleteById,
+  countByUserId,
+  setChoosenPlan,
 } as const;

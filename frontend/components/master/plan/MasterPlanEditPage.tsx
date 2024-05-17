@@ -28,6 +28,7 @@ import { Semesters } from "./Semesters";
 import { ProgramAndStartYearSelection } from "./ProgramAndStartYearSelection";
 import { SpecializationSelection } from "./SpecializationSelection";
 import { DuplicateButton } from "./DuplicateButton";
+import { FavoriteButton } from "./FavoriteButton";
 
 export default function MasterPlanEditPage({
   allPrograms,
@@ -308,6 +309,7 @@ export default function MasterPlanEditPage({
         currentPlan={currentPlan}
         isOwnPlan={isOwnPlan}
       />
+      <FavoriteButton id={id} isOwnPlan={isOwnPlan} />
       <DeleteButton id={id} isOwnPlan={isOwnPlan} />
       {!isOwnPlan ? (
         <Card

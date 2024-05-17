@@ -35,16 +35,13 @@ export class UserController extends Controller {
   public async oauth2SignIn(
     @Body() request: SignedInRequestDTO,
   ): Promise<SignedInResponseDTO> {
-    const { authProvider, authUserId } = request;
-    let user = await UserRepo.findByOAuth(authProvider, authUserId);
-    if (user == null) {
-      user = await UserRepo.create({
-        name: request.name,
-        email: request.email,
-        authProvider: request.authProvider,
-        authUserId: request.authUserId,
-      });
-    }
+    let user = await UserRepo.create({
+      name: request.name,
+      email: request.email,
+      authProvider: request.authProvider,
+      authUserId: request.authUserId,
+      picture: request.picture,
+    });
     const token = JwtService.encode(user);
     return {
       jwt: token,
@@ -61,8 +58,6 @@ export class UserController extends Controller {
     const user: DbUserInitializer = {
       name: request.name,
       email: request.email,
-      authProvider: request.authProvider,
-      authUserId: request.authUserId,
     };
     await UserRepo.create(user);
   }
@@ -72,6 +67,8 @@ export interface UserDTO {
   id: number;
   name: string;
   email: string;
+  picture: string | null;
+  choosenMasterPlan: number | null;
   createdAt: Date;
 }
 
@@ -80,6 +77,8 @@ export const mapUserToDTO = (user: DbUser): UserDTO => {
     id: user.id,
     name: user.name,
     email: user.email,
+    picture: user.picture,
+    choosenMasterPlan: user.choosenMasterPlanId,
     createdAt: user.createdAt,
   };
 };
@@ -98,9 +97,6 @@ interface CreateUserRequestDTO {
    * @pattern ^(.+)@(.+)$ please provide correct email
    */
   email: string;
-
-  authProvider: string | null;
-  authUserId: string | null;
 }
 
 interface SignedInRequestDTO {
@@ -117,6 +113,8 @@ interface SignedInRequestDTO {
    * @minLength 3
    */
   authUserId: string;
+
+  picture: string | null;
 }
 
 interface SignedInResponseDTO {
