@@ -1,5 +1,5 @@
 import { MasterPlanResponseDTO } from "@/lib/backend-client";
-import { specLabel, stringToColor } from "@/lib/master/helpers";
+import { longStringToColor, specLabel } from "@/lib/master/helpers";
 import { getNumericCourseCredit } from "@/lib/utils";
 import { PieChart } from "@mui/x-charts";
 import React from "react";
@@ -40,7 +40,7 @@ export default function SpecializationOverview({
         id: i,
         value: Number(credits),
         label: specLabel(spec),
-        color: stringToColor(specLabel(spec)),
+        color: longStringToColor(specLabel(spec)),
       }),
     );
     return data.sort((a, b) => b.value - a.value);

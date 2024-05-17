@@ -18,7 +18,12 @@ import {
   styled,
 } from "@mui/material";
 import NextLink from "../../NextLink";
-import { ecvLabel, specLabel, stringToColor } from "@/lib/master/helpers";
+import {
+  ecvLabel,
+  getTextColorFromBackground,
+  specLabel,
+  stringToColor,
+} from "@/lib/master/helpers";
 import React from "react";
 import { keyframes } from "@mui/system";
 import { WarningAmber, WarningOutlined } from "@mui/icons-material";
@@ -142,12 +147,6 @@ export const SemesterPlanOverview = ({
   );
 };
 
-function getTextColorFromBackground(color: string): string {
-  const rgb = color.match(/\d+/g)!.map(Number);
-  const brightness = (rgb[0] * 299 + rgb[1] * 587 + rgb[2] * 114) / 1000;
-  return brightness > 128 ? "black" : "white";
-}
-
 const borderAnimation = keyframes`
   from {
     background-position: 0 0, -34.64px 0, 100% -34.64px, 0 100%;
@@ -248,7 +247,7 @@ function CoursePreview({
   readOnly: boolean;
   highlightCourse: string;
 }) {
-  const color = stringToColor(course.courseName);
+  const color = stringToColor(course.courseCode);
   const textColor = getTextColorFromBackground(color);
   const isHighlighted = course.courseCode === highlightCourse;
 
