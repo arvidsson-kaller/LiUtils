@@ -3,14 +3,12 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Avatar,
   Box,
   Button,
   Card,
   CardActions,
   CardContent,
-  Fade,
-  Paper,
-  Popper,
   Typography,
   styled,
 } from "@mui/material";
@@ -20,20 +18,17 @@ import {
   MasterPlanResponseDTO,
   MasterProgramDTO,
   ProgramsResponseDTO,
-  SemesterPlan,
   StartYearDTO,
   StartYearResponseDTO,
   UserDTO,
 } from "@/lib/backend-client";
-import { SemesterPlanOverview } from "./master/overview/SemesterPlanOverview";
 import { specLabel } from "@/lib/master/helpers";
 import SpecializationOverview from "./master/overview/SpecializationOverview";
-import SemestersOverview, {
-  SemesterPlanWithSpec,
-} from "./master/overview/SemestersOverview";
+import SemestersOverview from "./master/overview/SemestersOverview";
 import NextLink from "./NextLink";
 import { ProxyBackendService } from "@/lib/backend";
 import { ProgramAndStartYearSelection } from "./master/plan/ProgramAndStartYearSelection";
+import Image from "next/image";
 
 const StyledAccordian = styled(Accordion)({
   width: "100%",
@@ -196,7 +191,7 @@ function MasterPlanPreview({
   masterplan: MasterPlanResponseDTO;
 }) {
   const plan = masterplan.plan;
-
+  const user = masterplan.user;
   return (
     <Box>
       <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
@@ -205,9 +200,28 @@ function MasterPlanPreview({
       <Typography sx={{ fontSize: 10 }} color="text.secondary" gutterBottom>
         {plan.startYear.name}
       </Typography>
-      <Typography variant="h5" component="div">
-        {masterplan.title}
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          gap: 1,
+          alignItems: "center",
+        }}
+      >
+        {user.picture ? (
+          <Avatar>
+            <Image src={user.picture} alt={user.name} fill sizes="40px" />
+          </Avatar>
+        ) : (
+          <Avatar>{user.name.at(0)?.toUpperCase()}</Avatar>
+        )}
+
+        <Typography variant="h5" component="div">
+          {masterplan.title}
+          <Typography sx={{ fontSize: 12 }} component="div">
+            by {user.name}
+          </Typography>
+        </Typography>
+      </Box>
       <Box sx={{ display: "flex" }}>
         <Box sx={{ width: 250 }}>
           <SemestersOverview masterplan={masterplan} />

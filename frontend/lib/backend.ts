@@ -26,5 +26,5 @@ export const getUserBackendService = (jwt: string) =>
  * No authentication is needed here, since the proxy takes care of that.
  */
 export const ProxyBackendService = new Service({
-  BASE: "/api/backend/",
+  BASE: "/api/backend",
 }).default;

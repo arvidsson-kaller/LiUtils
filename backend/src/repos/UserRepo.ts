@@ -20,13 +20,17 @@ async function create(user: DbUserInitializer): Promise<DbUser> {
     );
   }
   try {
-    const sql =
-      'INSERT INTO "User" (name, email, "authProvider", "authUserId") VALUES ($1, $2, $3, $4) RETURNING *';
+    const sql = `INSERT INTO "User" (name, email, "authProvider", "authUserId", picture)
+       VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT("authProvider", "authUserId")
+       DO UPDATE SET picture = $5, name = $1, email = $2
+       RETURNING *`;
     const data: string[] = [
       user.name,
       user.email,
       user.authProvider as string,
       user.authUserId as string,
+      user.picture as string,
     ];
     const result = await db.query(sql, data);
     const createdUser: DbUser = result.rows[0] as DbUser;

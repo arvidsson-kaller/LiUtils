@@ -77,6 +77,10 @@ export class MasterPlanController extends Controller {
       data: body.plan,
       userId: request.user.id,
     });
+    const amountOfPlans = await MasterPlanRepo.countByUserId(request.user.id);
+    if (amountOfPlans === 1) {
+      MasterPlanRepo.setChoosenPlan(request.user.id, plan.id);
+    }
     return {
       id: plan.id,
     };
@@ -84,17 +88,26 @@ export class MasterPlanController extends Controller {
 
   @Security("jwt")
   @Put("{id}")
-  public updateMasterPlan(
+  public async updateMasterPlan(
     @Request() request: AuthenticatedRequest,
     @Body() body: UpdateMasterPlanRequestDTO,
     @Path() id: number,
   ) {
-    MasterPlanRepo.update({
+    await MasterPlanRepo.update({
       id: id as MasterPlanId,
       title: body.title,
       data: body.plan,
       userId: request.user.id,
     });
+  }
+
+  @Security("jwt")
+  @Post("user/me/{id}")
+  public async setChoosenMasterPlan(
+    @Request() request: AuthenticatedRequest,
+    @Path() id: number,
+  ) {
+    await MasterPlanRepo.setChoosenPlan(request.user.id, id as MasterPlanId);
   }
 }
 
