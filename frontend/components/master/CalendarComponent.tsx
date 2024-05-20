@@ -71,7 +71,15 @@ ${eventInfo.event.extendedProps.location}
       <br />
       <span>{eventInfo.event.title}</span>
       {eventInfo.event.extendedProps.location && (
-        <div><NextLink sx={{textDecoration: "underline"}} target="_blank" href={`/room/${eventInfo.event.extendedProps.location.replace("Lokal: ", "").replace("/", "%2F")}`}>{eventInfo.event.extendedProps.location}</NextLink></div>
+        <div>
+          <NextLink
+            sx={{ textDecoration: "underline" }}
+            target="_blank"
+            href={`/room/${eventInfo.event.extendedProps.location.replace("Lokal: ", "").replace("/", "%2F")}`}
+          >
+            {eventInfo.event.extendedProps.location}
+          </NextLink>
+        </div>
       )}
     </Box>
   );
@@ -105,7 +113,11 @@ export const CalendarComponent = ({ user }: { user: UserDTO | undefined }) => {
   }, [user]);
 
   if (!user) {
-    return <span>Welcome to LiUtils. Sign in to view the calendar of your favorite plan.</span>
+    return (
+      <span>
+        Welcome to LiUtils. Sign in to view the calendar of your favorite plan.
+      </span>
+    );
   }
 
   if (!icsData || !teProxyURL) {

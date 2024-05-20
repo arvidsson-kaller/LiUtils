@@ -1,7 +1,5 @@
 import { Box, Container } from "@mui/material";
-import {
-  CalendarComponent,
-} from "@/components/master/CalendarComponent";
+import { CalendarComponent } from "@/components/master/CalendarComponent";
 import { getUserSession } from "@/lib/session";
 
 export default async function Home() {
@@ -18,7 +16,7 @@ export default async function Home() {
         }}
       >
         <h1>LiUtils</h1>
-        <CalendarComponent user={user}/>
+        <CalendarComponent user={user} />
       </Box>
     </Container>
   );
