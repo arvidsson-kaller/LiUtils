@@ -22,7 +22,7 @@ export default function Rooms() {
       <h1>Room Index</h1>
       {getAllRooms().map((room) => (
         <Box key={room}>
-          <Link href={`/room/${room}`}>{room}</Link>
+          <Link href={`/room/${room.replace("/", "%2F")}`}>{room}</Link>
         </Box>
       ))}
     </Container>

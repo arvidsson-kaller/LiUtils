@@ -1,4 +1,5 @@
 "use client";
+import { UserDTO } from "@/lib/backend-client";
 import {
   getTextColorFromBackground,
   stringToColor,
@@ -6,8 +7,10 @@ import {
 import { EventContentArg } from "@fullcalendar/core/index.js";
 import FullCalendar from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
-import { Box, styled } from "@mui/material";
+import { Box, CircularProgress, styled } from "@mui/material";
 import Link from "next/link";
+import React from "react";
+import NextLink from "../NextLink";
 
 export type CalendarEvent = {
   type: string;
@@ -68,7 +71,7 @@ ${eventInfo.event.extendedProps.location}
       <br />
       <span>{eventInfo.event.title}</span>
       {eventInfo.event.extendedProps.location && (
-        <div>{eventInfo.event.extendedProps.location}</div>
+        <div><NextLink sx={{textDecoration: "underline"}} target="_blank" href={`/room/${eventInfo.event.extendedProps.location.replace("Lokal: ", "").replace("/", "%2F")}`}>{eventInfo.event.extendedProps.location}</NextLink></div>
       )}
     </Box>
   );
@@ -76,23 +79,50 @@ ${eventInfo.event.extendedProps.location}
 
 const StyledFullCalendarContainer = styled(Box)`
   height: 90%;
+  width: 100%;
 
   .fc {
-    min-width: 50vw;
-    height: 100%;
+    width: 100%;
+    height: 95%;
   }
 `;
 
-export const CalendarComponent = ({
-  icsData,
-  teProxyURL,
-}: {
-  icsData: CalendarEventData;
-  teProxyURL: string;
-}) => {
+export const CalendarComponent = ({ user }: { user: UserDTO | undefined }) => {
+  const [icsData, setIcsData] = React.useState();
+  const [teProxyURL, setTeProxyURL] = React.useState();
+  const [hasLoaded, setHasLoaded] = React.useState(false);
+
+  React.useEffect(() => {
+    if (user) {
+      fetch("/api/mycalendar").then((data) =>
+        data.json().then((data) => {
+          setIcsData(data.data);
+          setTeProxyURL(data.url);
+          setHasLoaded(true);
+        }),
+      );
+    }
+  }, [user]);
+
+  if (!user) {
+    return <span>Welcome to LiUtils. Sign in to view the calendar of your favorite plan.</span>
+  }
+
+  if (!icsData || !teProxyURL) {
+    if (!hasLoaded) {
+      return <CircularProgress />;
+    }
+    return (
+      <span>
+        Could not fetch calendar data. You need to have a favorite plan saved.
+      </span>
+    );
+  }
+
   return (
     <>
       <StyledFullCalendarContainer>
+        <h5>Calendar of {user.name}&apos;s favorite plan:</h5>
         <FullCalendar
           plugins={[timeGridPlugin]}
           initialView="timeGridWeek"
@@ -114,7 +144,7 @@ export const CalendarComponent = ({
       </StyledFullCalendarContainer>
       <Box
         sx={{
-          minWidth: "50vw",
+          width: "100%",
           height: "5%",
           backgroundColor: "white",
           display: "flex",
