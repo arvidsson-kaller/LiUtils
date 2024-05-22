@@ -4,6 +4,8 @@
 
 LiUtils walkthrough https://youtu.be/_YOIDMCNRV0
 
+Albin Arvidsson (albar556) Code Screen-Cast: https://youtu.be/yXKZjOVSAVE
+
 ## Disclaimer
 We will do a lot of scraping of public data from LiU and associated resources.
 To avoid introducing any significant load on LiU resources, we will do a lot of caching of this data.
