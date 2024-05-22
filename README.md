@@ -1,5 +1,15 @@
 # TDDD27_2024_LiUtils
 
+https://www.liutils.se/
+
+## Examination 
+
+LiUtils walkthrough https://youtu.be/_YOIDMCNRV0
+
+Albin Arvidsson (albar556) Code Screen-Cast: https://youtu.be/yXKZjOVSAVE
+
+Martin Kaller (marka727) Kod Skärm-delning: https://youtu.be/ZOIAShnd-lk
+
 ## Disclaimer
 We will do a lot of scraping of public data from LiU and associated resources.
 To avoid introducing any significant load on LiU resources, we will do a lot of caching of this data.
@@ -7,9 +17,7 @@ To avoid introducing any significant load on LiU resources, we will do a lot of 
 ## Features
 
 ### Application basics
-
-* Email/password login
-* User login LiU (Microsoft SSO)
+* Discord SSO
 
 ### Master course planning
 The idea is to help with planning which Master's courses to attend, heavy user interaction.
@@ -26,17 +34,15 @@ The idea is to help with planning which Master's courses to attend, heavy user i
 
 ### Schedule utils
 Extract data from timeedit, provide functions which timeedit do not have.
-* Timeedit scrambles data in URL, UI actions needed to get the scrambled ICS link.
-*  Get ICS from course code by only entering it in link
-  *  https://te.liutils.se/course/tddd27.ics ✅
-*  Get merged ICS, for example `te.liutils.se/course/tddd97+tddd27.ics`
-*  Get ICS link for saved master plan
+* Get ICS from course code by only entering it in link
+* Get ICS link for saved master plan
 * Find empty rooms from timeedit schedules
+Deployed, see https://te.liutils.se/
 
 ### Room utils
 Since `old.liu.se/karta` is removed and rooms are no indexed in search engines, we plan to reintroduce the functionality.
 *  Statically generated sites for each room 
-  * https://www.liutils.se/room/A31 ✅
+  * https://www.liutils.se/room/A31 
 *  Good SEO for every room
 *  Mazemap Embed
 *  Schedule for specific room
